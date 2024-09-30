@@ -2,7 +2,9 @@
 #include"DirectXCommon.h"
 #include"d3dx12.h"
 #include"DirectXTex.h"
+#ifdef _DEBUG
 #include"ImGuiManager.h"
+#endif // _DEBUG
 #include"Input.h"
 #include"ModelManager.h"
 #include"Object3d.h"
@@ -31,7 +33,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///--------------------------------
 
 	/// ---------ImGui---------
+#ifdef _DEBUG
 	ImGuiManager::GetInstance()->Initialize(winApp, dxCommon);
+#endif // _DEBUG
 	/// -----------------------
 
 	///--------SRVManager--------
@@ -139,8 +143,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		/// -------更新処理開始----------
-
+#ifdef _DEBUG
 		ImGuiManager::GetInstance()->Begin();
+#endif // _DEBUG
 
 		// -------Input-------
 		// 入力の更新
@@ -153,9 +158,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		// -------------------
 
+#ifdef _DEBUG
 		ImGui::ShowDemoWindow();
-
 		ImGuiManager::GetInstance()->End();
+#endif // _DEBUG
 
 		/// -------更新処理終了----------
 
@@ -223,8 +229,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		/// ----------------------------------
-
+#ifdef _DEBUG
 		ImGuiManager::GetInstance()->Draw();
+#endif // _DEBUG
 		// 描画後処理
 		dxCommon->PostDraw();
 
@@ -244,8 +251,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// -------ModelCommon-------
 	ModelManager::GetInstance()->Finalize();
 	///--------------------------
-
+#ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
+#endif // _DEBUG
 
 
 	delete object3d[0];

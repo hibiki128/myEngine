@@ -1,4 +1,5 @@
 #include "ImGuiManager.h"
+#ifdef _DEBUG
 #include "imgui.h"
 #include"imgui_impl_win32.h"
 #include <imgui_impl_dx12.h>
@@ -87,3 +88,5 @@ void ImGuiManager::Draw()
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 }
 
+
+#endif //_DEBUG
