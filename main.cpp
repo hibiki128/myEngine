@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	for (uint32_t i = 0; i < 1; ++i) {
 		Sprite* sprite = new Sprite();
 		std::string textureFilePath;
-		textureFilePath = "resources/images/uvChecker.png";
+		textureFilePath = "uvChecker.png";
 		sprite->Initialize(spriteCommon, textureFilePath);
 		sprites.push_back(sprite);
 	}
@@ -115,7 +115,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	audio = Audio::GetInstance();
 	audio->Initialize();
 	uint32_t handle = audio->LoadWave("fanfare.wav");
-	audio->PlayWave(handle,1.0f);
 
 	std::vector<Vector2> positions = {
 	{100, 100}
@@ -171,6 +170,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		input->Update();
 		if (input->TriggerKey(DIK_0)) {
 			audio->StopWave(handle);
+		}
+		if (input->TriggerKey(DIK_1)) {
+			audio->PlayWave(handle, 0.3f);
 		}
 		// -------------------
 

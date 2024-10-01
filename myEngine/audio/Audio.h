@@ -118,5 +118,6 @@ private:
 	std::array<SoundData, kMaxSoundData> soundDatas_;
 	size_t soundDataIndex = 0;  // 次に保存する音声データのインデックス
 	std::set<Voice*> voices_; // 再生中の音声データを管理するセット
+	std::set<std::string> loadedFiles; // 読み込まれたファイルのセット
 };
 
