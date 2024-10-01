@@ -12,6 +12,7 @@ void Audio::Initialize(const std::string& directoryPath)
 
     hr = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
     hr = xAudio2->CreateMasteringVoice(&masterVoice);
+
 }
 
 Audio* Audio::GetInstance()
@@ -24,6 +25,17 @@ Audio* Audio::GetInstance()
 
 uint32_t Audio::LoadWave(const char* filename)
 {
+    // ファイルがすでに読み込まれているかチェック
+    std::string fileStr(filename);
+    if (loadedFiles.find(fileStr) != loadedFiles.end()) {
+        // 既に読み込まれている場合はインデックスを返す
+        for (size_t i = 0; i < kMaxSoundData; ++i) {
+            if (soundDatas_[i].name_ == fileStr) {
+                return static_cast<uint32_t>(i);
+            }
+        }
+    }
+
     // ディレクトリパスとファイル名を組み合わせたフルパスを作成
     std::string fullPath = directoryPath_ + "/" + filename;
 
@@ -82,6 +94,8 @@ uint32_t Audio::LoadWave(const char* filename)
     soundData.buffer = std::move(buffer);  // std::vector のムーブ
     soundData.name_ = filename;  // ファイル名を name_ にセット
 
+    loadedFiles.insert(fileStr); // 読み込んだファイル名をセットに追加
+   
     // 現在のインデックスを返す
     uint32_t currentIndex = static_cast<uint32_t>(soundDataIndex);
 
@@ -174,4 +188,24 @@ void Audio::Finalize()
 {
     delete instance;
     instance = nullptr;
+
+    // マスターボイスを解放
+    if (masterVoice) {
+        masterVoice->DestroyVoice();
+        masterVoice = nullptr;
+    }
+
+    // XAudio2を解放
+    if (xAudio2) {
+        xAudio2.Reset();
+    }
+
+    // 再生中の音声の解放
+    for (auto voice : voices_) {
+        if (voice->sourceVoice) {
+            voice->sourceVoice->DestroyVoice();
+        }
+        delete voice; // Voiceオブジェクトを解放
+    }
+    voices_.clear(); // セットをクリア
 }
