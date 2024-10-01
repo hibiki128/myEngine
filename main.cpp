@@ -1,6 +1,6 @@
 #include"D3DResourceLeakChecker.h"
-#include"DirectXCommon.h"
 #include"d3dx12.h"
+#include"DirectXCommon.h"
 #include"DirectXTex.h"
 #ifdef _DEBUG
 #include"ImGuiManager.h"
@@ -14,6 +14,7 @@
 #include"SrvManager.h"
 #include "StringUtility.h"
 #include"TextureManager.h"
+#include"Audio.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker();
@@ -100,36 +101,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	std::vector<Sprite*>sprites;
 	///----------Sprite------------
-	for (uint32_t i = 0; i < 5; ++i) {
+	for (uint32_t i = 0; i < 1; ++i) {
 		Sprite* sprite = new Sprite();
 		std::string textureFilePath;
-		if (i == 0 || i == 2 || i == 4) {
-			textureFilePath = "resources/images/uvChecker.png";
-		}
-		else {
-			textureFilePath = "resources/images/monsterBall.png";
-		}
+		textureFilePath = "resources/images/uvChecker.png";
 		sprite->Initialize(spriteCommon, textureFilePath);
 		sprites.push_back(sprite);
 	}
 	///----------------------------
 
+	///---------Audio-------------
+	Audio* audio = nullptr;
+	audio = Audio::GetInstance();
+	audio->Initialize();
+	uint32_t handle = audio->LoadWave("fanfare.wav");
+	audio->PlayWave(handle,1.0f);
+
 	std::vector<Vector2> positions = {
-	{0, 300},
-	{240, 300},
-	{480, 300},
-	{720, 300},
-	{960, 300}
+	{100, 100}
 	};
 
 	std::vector<Vector3> Object3dpos = {
 		{0.0f,1.0f,1.0f},
 		{3.0f,1.0f,1.0f},
 	};
-
-	float rotate;
-	Vector4 color;
-	/*Vector3 cameraRotate;*/
 
 	Vector3 objRotate;
 
@@ -143,42 +138,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		/// -------更新処理開始----------
-#ifdef _DEBUG
-		ImGuiManager::GetInstance()->Begin();
-#endif // _DEBUG
 
-		// -------Input-------
-		// 入力の更新
-		input->Update();
-		if (input->TriggerKey(DIK_0)) {
-			OutputDebugStringA("文字列リテラルを出力するよ\n");
-
-			std::string a("stringに埋め込んだ文字列を出力するよ\n");
-			OutputDebugStringA(a.c_str());
-		}
-		// -------------------
-
-#ifdef _DEBUG
-		ImGui::ShowDemoWindow();
-		ImGuiManager::GetInstance()->End();
-#endif // _DEBUG
-
-		/// -------更新処理終了----------
-
-		/// -------描画処理開始-------
-		// 描画前処理
-		dxCommon->PreDraw();
-		srvManager->PreDraw();
-
-		/*cameraRotate - camera->GetRotate();
+			/*cameraRotate - camera->GetRotate();
 		cameraRotate.y +- 0.005f;
 		camera->SetRotate({ cameraRotate.x, cameraRotate.y,cameraRotate.z });*/
 		camera->Update();
-
-
-		// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィクスコマンドを積む
-		object3dCommon->DrawCommonSetting();
-
 
 		object3d[0]->SetPosition(Object3dpos[0]);
 		object3d[1]->SetPosition(Object3dpos[1]);
@@ -190,39 +154,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		object3d[0]->Update();
 		object3d[1]->Update();
 
-		//object3d[0]->Draw();
-		//object3d[1]->Draw();
-
-		// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-		spriteCommon->DrawCommonSetting();
-
 		for (size_t i = 0; i < sprites.size(); ++i) {
-			rotate = sprites[1]->GetRotation();
-			color = sprites[2]->GetColor();
-			rotate += 0.001f;
-			color.x += 0.001f;
-			if (color.x > 1.0f) {
-				color.x -= 1.0f;
-			}
 			if (i < positions.size()) {
 				sprites[i]->SetPosition(positions[i]);
 			}
-			sprites[0]->SetFlipX(true);
-			sprites[1]->SetRotation(rotate);
-			sprites[1]->SetTexturePath("resources/images/uvChecker.png");
-			sprites[1]->SetFlipY(true);
-			sprites[2]->SetColor(color);
-			sprites[2]->SetAnchorPoint(Vector2{ -0.5f, -0.5f });
-			sprites[4]->SetTexLeftTop(Vector2{ 0.0f, 0.0f });
-			sprites[4]->SetTexSize(Vector2{ 64.0f,64.0f });
 		}
 
 		for (auto& sprite : sprites) {
-			sprite->SetSize({ 128, 128 });
+			sprite->SetSize({ 256, 256 });
 			sprite->Update();
 		}
 
+		
+		// -------Input-------
+		// 入力の更新
+		input->Update();
+		if (input->TriggerKey(DIK_0)) {
+			audio->StopWave(handle);
+		}
+		// -------------------
+
+#ifdef _DEBUG
+		ImGuiManager::GetInstance()->Begin();
+		ImGui::SetWindowSize({ 500.0f, 100.0f });
+		ImGui::SliderFloat2("position", &positions[0].x, 0.0f, 1200.0f, "%4.1f");
+		ImGuiManager::GetInstance()->End();
+#endif // _DEBUG
+
+		/// -------更新処理終了----------
+
+		/// -------描画処理開始-------
+		// 描画前処理
+		dxCommon->PreDraw();
+		srvManager->PreDraw();
+
+
+		// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィクスコマンドを積む
+		object3dCommon->DrawCommonSetting();
+
+		//object3d[0]->Draw();
+		//object3d[1]->Draw();
+
+
 		///----------スプライトの描画-----------
+
+		// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
+		spriteCommon->DrawCommonSetting();
 
 		for (auto& sprite : sprites) {
 			sprite->Draw();
@@ -254,6 +231,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
 #endif // _DEBUG
+
+	audio->Unload(handle);
+	audio->Finalize();
 
 
 	delete object3d[0];
