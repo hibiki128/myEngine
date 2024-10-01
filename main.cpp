@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	for (uint32_t i = 0; i < 1; ++i) {
 		Sprite* sprite = new Sprite();
 		std::string textureFilePath;
-		textureFilePath = "resources/images/uvChecker.png";
+		textureFilePath = "uvChecker.png";
 		sprite->Initialize(spriteCommon, textureFilePath);
 		sprites.push_back(sprite);
 	}
