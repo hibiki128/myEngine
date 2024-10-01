@@ -100,6 +100,18 @@
     <Filter Include="ソース ファイル\scene">
       <UniqueIdentifier>{95837f6f-3d18-4d1a-8bca-710414435010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\myGame">
+      <UniqueIdentifier>{3abcb032-86cf-446b-895a-46296685ccd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myGame">
+      <UniqueIdentifier>{bde3d25d-923d-4de5-bf82-7826abaf8eb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myGame\class">
+      <UniqueIdentifier>{48e25249-200d-4a26-8604-44aa92ef092f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myGame\class">
+      <UniqueIdentifier>{a850be59-e334-49f8-ad9c-592605debc1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -183,8 +195,11 @@
     <ClCompile Include="myEngine\audio\Audio.cpp">
       <Filter>ソース ファイル\myEngine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="scene\MyGame.cpp">
-      <Filter>ソース ファイル\scene</Filter>
+    <ClCompile Include="myGame\MyGame.cpp">
+      <Filter>ソース ファイル\myGame</Filter>
+    </ClCompile>
+    <ClCompile Include="myGame\class\GlobalVariables.cpp">
+      <Filter>ソース ファイル\myGame\class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,8 +305,11 @@
     <ClInclude Include="myEngine\audio\Audio.h">
       <Filter>ヘッダー ファイル\myEngine\audio</Filter>
     </ClInclude>
-    <ClInclude Include="scene\MyGame.h">
-      <Filter>ヘッダー ファイル\scene</Filter>
+    <ClInclude Include="myGame\MyGame.h">
+      <Filter>ヘッダー ファイル\myGame</Filter>
+    </ClInclude>
+    <ClInclude Include="myGame\class\GlobalVariables.h">
+      <Filter>ヘッダー ファイル\myGame\class</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
