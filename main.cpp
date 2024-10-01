@@ -14,6 +14,7 @@
 #include"SrvManager.h"
 #include "StringUtility.h"
 #include"TextureManager.h"
+#include"Audio.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker();
@@ -109,6 +110,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	///----------------------------
 
+	///---------Audio-------------
+	Audio* audio = nullptr;
+	audio = Audio::GetInstance();
+	audio->Initialize();
+	uint32_t handle = audio->LoadWave("fanfare.wav");
+	audio->PlayWave(handle,1.0f);
+
 	std::vector<Vector2> positions = {
 	{100, 100}
 	};
@@ -162,10 +170,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 入力の更新
 		input->Update();
 		if (input->TriggerKey(DIK_0)) {
-			OutputDebugStringA("文字列リテラルを出力するよ\n");
-
-			std::string a("stringに埋め込んだ文字列を出力するよ\n");
-			OutputDebugStringA(a.c_str());
+			audio->StopWave(handle);
 		}
 		// -------------------
 
@@ -226,6 +231,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
 #endif // _DEBUG
+
+	audio->Unload(handle);
+	audio->Finalize();
 
 
 	delete object3d[0];
