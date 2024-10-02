@@ -1,6 +1,5 @@
 #pragma once
 #include"memory"
-#include"Camera.h"
 #include"Sprite.h"
 #include"vector"
 #include"Object3dCommon.h"
@@ -40,7 +39,6 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	uint32_t handle;
-	std::unique_ptr<Camera> camera;
 	std::unique_ptr<Object3d> object3d[2];
 	std::vector<std::unique_ptr<Sprite>> sprites;
 	std::vector<Vector2> positions;

@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "math/myMath.h"
+#include "myMath.h"
 #include"fstream"
 #include"sstream"
 #include "TextureManager.h"
