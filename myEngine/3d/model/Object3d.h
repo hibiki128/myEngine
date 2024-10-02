@@ -98,7 +98,6 @@ public: // メンバ関数
 
 private: // メンバ関数
 
-	
 	/// <summary>
 	/// 座標変換行列データ作成
 	/// </summary>

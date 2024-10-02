@@ -1,11 +1,12 @@
 #pragma once
 #include"d3d12.h"
-#include"math/Vector4.h"
-#include"math/Vector2.h"
-#include"math/Vector3.h"
-#include "math/Matrix4x4.h"
+#include"Vector4.h"
+#include"Vector2.h"
+#include"Vector3.h"
+#include "Matrix4x4.h"
 #include"wrl.h"
 #include"string"
+#include"SrvManager.h"
 class SpriteCommon;
 class Sprite
 {
@@ -106,6 +107,7 @@ private:
 	};
 
 	SpriteCommon* spriteCommon_ = nullptr;
+	SrvManager* srvManager_ = nullptr;
 
 	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;

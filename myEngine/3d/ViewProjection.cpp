@@ -25,7 +25,7 @@ void ViewProjection::Map()
 {
 	HRESULT hr = constBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&constMap));
 	if (FAILED(hr)) {
-		// エラーハンドリング
+		// 繧ｨ繝ｩ繝ｼ繝上Φ繝峨Μ繝ｳ繧ｰ
 
 	}
 }

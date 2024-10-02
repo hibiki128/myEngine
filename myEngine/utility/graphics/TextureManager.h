@@ -63,6 +63,8 @@ public:
 	/// <returns></returns>
 	const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
 
+	SrvManager* GetSrvManager() { return srvManager_; }
+
 private:
 	// テクスチャ１枚分のデータ
 	struct TextureData {
