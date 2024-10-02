@@ -9,6 +9,7 @@
 #include "Audio.h"
 #include"Object3d.h"
 #include"BaseScene.h"
+#include"WorldTransform.h"
 
 class GameScene : public BaseScene
 {
@@ -44,8 +45,7 @@ private:
 	std::unique_ptr<Object3d> object3d[2];
 	std::vector<std::unique_ptr<Sprite>> sprites;
 	std::vector<Vector2> positions;
-	std::vector<Vector3> Object3dpos;
-	Vector3 objRotate;
 	std::string modelFilePath[2];
+	WorldTransform modelWorldTransform[2];
 };
 

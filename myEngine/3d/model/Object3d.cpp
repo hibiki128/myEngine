@@ -1,19 +1,21 @@
-#include "Object3d.h"
 #include "cassert"
-#include"Object3dCommon.h"
-#include "math/myMath.h"
 #include "ModelManager.h"
+#include "myMath.h"
+#include "Object3d.h"
+#include"Object3dCommon.h"
 
 
-void Object3d::Initialize(Object3dCommon* obj3dCommon)
+
+void Object3d::Initialize(const std::string& filePath)
 {
-	// NULL検出
-	assert(obj3dCommon);
-	this->obj3dCommon = obj3dCommon;
+	this->obj3dCommon = Object3dCommon::GetInstance();
 
 	CreateTransformationMatrix();
 
 	CreateDirectionLight();
+
+	// モデルを検索してセットする
+	model = ModelManager::GetInstance()->FindModel(filePath);
 
 	// Transform変数を作る
 	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
@@ -21,11 +23,11 @@ void Object3d::Initialize(Object3dCommon* obj3dCommon)
 	this->camera = this->obj3dCommon->GetDefaultCamera();
 }
 
-void Object3d::Update()
+void Object3d::Update(const WorldTransform& worldTransform)
 {
-	transform.translate = { position.x,position.y,position.z };
-	transform.rotate = { rotation.x,rotation.y,rotation.z };
-	transform.scale = { size.x,size.y,size.z };
+	transform.translate = worldTransform.translation_;
+	transform.rotate = worldTransform.rotation_;
+	transform.scale = worldTransform.scale_;
 
 	if (model) {
 		model->Update();
@@ -45,8 +47,10 @@ void Object3d::Update()
 
 }
 
-void Object3d::Draw()
+void Object3d::Draw(const WorldTransform& worldTransform)
 {
+	Update(worldTransform);
+
 	// wvp用のCBufferの場所を設定
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	// DirectionalLight用のCBufferの場所を設定

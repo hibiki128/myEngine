@@ -13,9 +13,15 @@ class Sprite
 public: // メンバ関数
 
 	/// <summary>
-	/// 初期化
+	/// 
 	/// </summary>
-	void Initialize(SpriteCommon* spriteCommon, std::string textureFilePath);
+	/// <param name="textureFilePath">テクスチャハンドル</param>
+	/// <param name="position">座標</param>
+	/// <param name="color">色</param>
+	/// <param name="anchorpoint">アンカーポイント</param>
+	/// <param name="isFlipX">左右反転</param>
+	/// <param name="isFlipY">上下反転</param>
+	void Initialize(std::string& textureFilePath,Vector2 position,Vector4 color={1,1,1,1},Vector2 anchorpoint={0.0f,0.0f},bool isFlipX = false,bool isFlipY = false);
 
 	/// <summary>
 	/// 更新
@@ -31,11 +37,11 @@ public: // メンバ関数
 	/// getter
 	/// </summary>
 	/// <returns></returns>
-	const Vector2& GetPosition()const { return position; }
+	const Vector2& GetPosition()const { return position_; }
 	float GetRotation() const { return rotation; }
 	const Vector2& GetSize() const { return size; }
 	const Vector4& GetColor()const { return materialData->color; }
-	const Vector2& GetAnchorPoint()const { return anchorPoint; }
+	const Vector2& GetAnchorPoint()const { return anchorPoint_; }
 	const bool GetFlipX()const { return isFlipX_; }
 	const bool GetFilpY()const { return isFlipY_; }
 	const Vector2& GetTexLeftTop()const { return textureLeftTop; }
@@ -45,12 +51,12 @@ public: // メンバ関数
 	/// setter
 	/// </summary>
 	/// <param name="position"></param>
-	void SetPosition(const Vector2& position) { this->position = position; }
+	void SetPosition(const Vector2& position) { this->position_ = position; }
 	void SetRotation(float rotation) { this->rotation = rotation; }
 	void SetSize(const Vector2& size) { this->size = size; }
 	void SetColor(const Vector4& color) { materialData->color = color; }
 	void SetTexturePath(std::string textureFilePath);
-	void SetAnchorPoint(const Vector2& anchorPoint) { this->anchorPoint = anchorPoint; }
+	void SetAnchorPoint(const Vector2& anchorPoint) { this->anchorPoint_ = anchorPoint; }
 	void SetFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
 	void SetFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
 	void SetTexLeftTop(const Vector2& textureLeftTop) { this->textureLeftTop = textureLeftTop; }
@@ -130,13 +136,13 @@ private:
 	TransformationMatrix* transformationMatrixData = nullptr;
 
 	// 移動させる用各SRT
-	Vector2 position = { 0.0f,0.0f };
+	Vector2 position_ = { 0.0f,0.0f };
 	float rotation = 0.0f;
 	Vector2 size = { 640.0f,360.0f };
 
 	std::string directoryPath_ = "resources/images";
 	std::string fullpath;
-	Vector2 anchorPoint = { 0.0f,0.0f };
+	Vector2 anchorPoint_ = { 0.0f,0.0f };
 
 	// 左右フリップ
 	bool isFlipX_ = false;

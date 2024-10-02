@@ -1,14 +1,15 @@
 #pragma once
-#include "math/Vector2.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
+#include "Camera.h"
 #include"d3d12.h"
+#include "Matrix4x4.h"
+#include "Model.h"
 #include "string"
 #include "vector"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include"WorldTransform.h"
 #include"wrl.h"
-#include "math/Matrix4x4.h"
-#include "Model.h"
-#include "Camera.h"
 
 class ModelCommon;
 class Object3dCommon;
@@ -64,18 +65,17 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="obj3dCommon"></param>
-	void Initialize(Object3dCommon* obj3dCommon);
+	void Initialize(const std::string& filePath);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const WorldTransform& worldTransform);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const WorldTransform& worldTransform);
 
 	/// <summary>
 	/// getter
