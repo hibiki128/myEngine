@@ -2,6 +2,15 @@
 #include"DirectXCommon.h"
 class SpriteCommon
 {
+
+private:
+	static SpriteCommon* instance;
+
+	SpriteCommon() = default;
+	~SpriteCommon() = default;
+	SpriteCommon(SpriteCommon&) = delete;
+	SpriteCommon& operator=(SpriteCommon&) = delete;
+
 private:
 	DirectXCommon* dxCommon_;
 
@@ -12,6 +21,18 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 
 public: // メンバ関数
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static SpriteCommon* GetInstance();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
+
 	/// <summary>
 	///  初期化
 	/// </summary>

@@ -8,10 +8,30 @@
 // 入力
 class Input
 {
+private:
+	static Input* instance;
+
+	Input() = default;
+	~Input() = default;
+	Input(Input&) = delete;
+	Input& operator=(Input&) = delete;
+
+
 public:
 	// namespace省略
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 public: // メンバ関数
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static Input* GetInstance();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// 初期化
