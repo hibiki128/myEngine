@@ -16,77 +16,77 @@ struct ConstBufferDataViewProjection {
 class ViewProjection
 {
 public:
-	// ƒ[ƒJƒ‹‰ñ“]Šp
+	// ãƒ­ãƒ¼ã‚«ãƒ«å›è»¢è§’
 	Vector3 rotation_ = { 0.0f,0.0f,0.0f };
-	// ƒ[ƒJƒ‹À•W
+	// ãƒ­ãƒ¼ã‚«ãƒ«åº§æ¨™
 	Vector3 translation_ = { 0.0f,0.0f,-50.0f };
 
-	// ‚’¼•ûŒü‹–ìŠp
-	float fovAngleY = 45.0f * std::numbers::pi_v<float>;
-	// ƒrƒ…[ƒ|[ƒg‚ÌƒAƒXƒyƒNƒg”ä
-	float aspectRatio = (float)16 / 9;
-	// [“xŒÀŠE(è‘O‘¤)
+	// å‚ç›´æ–¹å‘è¦–é‡è§’
+	float fovAngleY = 45.0f;
+	// ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+	float aspectRatio = float(WinApp::kClientWidth) / float(WinApp::kClientHeight);
+	// æ·±åº¦é™ç•Œ(æ‰‹å‰å´)
 	float nearZ = 0.1f;
-	// [“xŒÀŠE(‰œ‘¤)
+	// æ·±åº¦é™ç•Œ(å¥¥å´)
 	float farZ = 1000.0f;
 
-	// ƒrƒ…[s—ñ
+	// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—
 	Matrix4x4 matView_;
-	// Ë‰es—ñ
+	// å°„å½±è¡Œåˆ—
 	Matrix4x4 matProjection_;
 
 	ViewProjection() = default;
 	~ViewProjection() = default;
 
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Initialize();
 
 	/// <summary>
-	/// ’è”ƒoƒbƒtƒ@¶¬
+	/// å®šæ•°ãƒãƒƒãƒ•ã‚¡ç”Ÿæˆ
 	/// </summary>
 	void CreateConstBuffer();
 
 	/// <summary>
-	/// ƒ}ƒbƒsƒ“ƒO‚·‚é
+	/// ãƒãƒƒãƒ”ãƒ³ã‚°ã™ã‚‹
 	/// </summary>
 	void Map();
 
 	/// <summary>
-	/// s—ñ‚ğXV‚·‚é
+	/// è¡Œåˆ—ã‚’æ›´æ–°ã™ã‚‹
 	/// </summary>
 	void UpdateMatrix();
 
 	/// <summary>
-	/// s—ñ‚ğ“]‘—‚·‚é
+	/// è¡Œåˆ—ã‚’è»¢é€ã™ã‚‹
 	/// </summary>
 	void TransferMatrix();
 
 	/// <summary>
-	/// ƒrƒ…[s—ñ‚ğXV‚·‚é
+	/// ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ã‚’æ›´æ–°ã™ã‚‹
 	/// </summary>
 	void UpdateViewMatrix();
 
 	/// <summary>
-	/// Ë‰es—ñ‚ğXV‚·‚é
+	/// å°„å½±è¡Œåˆ—ã‚’æ›´æ–°ã™ã‚‹
 	/// </summary>
 	void UpdateProjectionMatrix();
 
 	/// <summary>
-	/// ’è”ƒoƒbƒtƒ@‚Ìæ“¾
+	/// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®å–å¾—
 	/// </summary>
-	/// <returns>’è”ƒoƒbƒtƒ@</returns>
+	/// <returns>å®šæ•°ãƒãƒƒãƒ•ã‚¡</returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
 
-	// ’è”ƒoƒbƒtƒ@
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡
 	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;
-	// ƒ}ƒbƒsƒ“ƒOÏ‚İƒAƒhƒŒƒX
+	// ãƒãƒƒãƒ”ãƒ³ã‚°æ¸ˆã¿ã‚¢ãƒ‰ãƒ¬ã‚¹
 	ConstBufferDataViewProjection* constMap = nullptr;
-	// ƒRƒs[‹Ö~
+	// ã‚³ãƒ”ãƒ¼ç¦æ­¢
 	ViewProjection(const ViewProjection&) = delete;
 	ViewProjection& operator=(const ViewProjection&) = delete;
 

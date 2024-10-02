@@ -10,12 +10,9 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	input_ = Input::GetInstance();
 
-	///---------Camera-------------
-	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.3f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
-	objCommon_->SetDefaultCamera(camera.get());
-	///----------------------------
+	viewProjection.Initialize();
+	viewProjection.rotation_ = { 0.3f,0.0f,0.0f };
+	viewProjection.translation_ = { 0.0f,4.0f,-10.0f };
 
 	modelFilePath[0] = "axis.obj";
 	modelFilePath[1] = "plane.obj";
@@ -26,18 +23,15 @@ void TitleScene::Initialize()
 	///----------Object3d----------
 	object3d[0] = std::make_unique<Object3d>();
 	object3d[1] = std::make_unique<Object3d>();
-	object3d[0]->Initialize(objCommon_);
-	object3d[0]->SetModel(modelFilePath[0]);
+	object3d[0]->Initialize(modelFilePath[0]);
+	object3d[1]->Initialize(modelFilePath[1]);
 	///----------------------------
-
-	object3d[1]->Initialize(objCommon_);
-	object3d[1]->SetModel(modelFilePath[1]);
 
 	///----------Sprite------------
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto sprite = std::make_unique<Sprite>();
 		std::string textureFilePath = "uvChecker.png";
-		sprite->Initialize(spCommon_, textureFilePath);
+		sprite->Initialize(textureFilePath, { 0.0f,0.0f });
 		sprites.push_back(std::move(sprite)); // unique_ptrをvectorに移動
 	}
 	///----------------------------
@@ -48,10 +42,10 @@ void TitleScene::Initialize()
 		{100, 100}
 	};
 
-	Object3dpos = {
-		{0.0f,1.0f,1.0f},
-		{3.0f,1.0f,1.0f},
-	};
+	modelWorldTransform[0].Initialize();
+	modelWorldTransform[1].Initialize();
+	modelWorldTransform[0].translation_ = { 0.0f,1.0f,1.0f };
+	modelWorldTransform[1].translation_ = { 3.0f, 1.0f, 1.0f };
 }
 
 void TitleScene::Finalize()
@@ -61,18 +55,9 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-
-	camera->Update();
-
-	object3d[0]->SetPosition(Object3dpos[0]);
-	object3d[1]->SetPosition(Object3dpos[1]);
-
-	objRotate = object3d[0]->GetRotation();
-	objRotate.y += 0.01f;
-	object3d[0]->SetRotation(objRotate);
-
-	object3d[0]->Update();
-	object3d[1]->Update();
+	modelWorldTransform[0].rotation_ = object3d[0]->GetRotation();
+	modelWorldTransform[0].rotation_.y += 0.01f;
+	object3d[0]->SetRotation(modelWorldTransform[0].rotation_);
 
 	for (size_t i = 0; i < sprites.size(); ++i) {
 		if (i < positions.size()) {
@@ -98,12 +83,15 @@ void TitleScene::Update()
 
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Begin();
-	ImGui::SetWindowSize({ 500.0f, 100.0f });
 	ImGui::SliderFloat2("position", &positions[0].x, 0.0f, 1200.0f, "%4.1f");
-	ImGui::SliderFloat3("3dposition", &Object3dpos[0].x, -6.0f, 5.0f, "%4.1f");
+	ImGui::SliderFloat2("positions", &modelWorldTransform[0].translation_.x, -5.0f, 5.0f, "%4.1f");
+	ImGui::DragFloat3("view", &viewProjection.translation_.x, 0.1f);
+	ImGui::DragFloat3("viewrote", &viewProjection.rotation_.x, 0.1f);
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
-
+	modelWorldTransform[0].UpdateMatrix();
+	modelWorldTransform[1].UpdateMatrix();
+	viewProjection.UpdateMatrix();
 
 }
 
@@ -115,8 +103,8 @@ void TitleScene::Draw()
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィクスコマンドを積む
 	objCommon_->DrawCommonSetting();
 
-	object3d[0]->Draw();
-	object3d[1]->Draw();
+	object3d[0]->Draw(modelWorldTransform[0],viewProjection);
+	object3d[1]->Draw(modelWorldTransform[1],viewProjection);
 
 	///----------スプライトの描画-----------
 	// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む

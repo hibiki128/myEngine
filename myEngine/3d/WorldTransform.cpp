@@ -2,13 +2,13 @@
 
 void WorldTransform::Initialize()
 {
-	// ƒXƒP[ƒ‹A‰ñ“]A•½sˆÚ“®‚ğ‰Šú‰»
-	scale_ = { 1.0f, 1.0f, 1.0f }; // ƒfƒtƒHƒ‹ƒg‚ÌƒXƒP[ƒ‹
-	rotation_ = { 0.0f, 0.0f, 0.0f }; // ƒfƒtƒHƒ‹ƒg‚Ì‰ñ“]
-	translation_ = { 0.0f, 0.0f, 0.0f }; // ƒfƒtƒHƒ‹ƒg‚ÌˆÊ’u
+	// ã‚¹ã‚±ãƒ¼ãƒ«ã€å›è»¢ã€å¹³è¡Œç§»å‹•ã‚’åˆæœŸåŒ–
+	scale_ = { 1.0f, 1.0f, 1.0f }; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ã‚¹ã‚±ãƒ¼ãƒ«
+	rotation_ = { 0.0f, 0.0f, 0.0f }; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®å›è»¢
+	translation_ = { 0.0f, 0.0f, 0.0f }; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ä½ç½®
 	dxCommon_ = DirectXCommon::GetInstance();
-	// s—ñ‚Ì‰Šú‰»
-	matWorld_ = MakeIdentity4x4(); // ’PˆÊs—ñ‚Å‰Šú‰»
+	// è¡Œåˆ—ã®åˆæœŸåŒ–
+	matWorld_ = MakeIdentity4x4(); // å˜ä½è¡Œåˆ—ã§åˆæœŸåŒ–
 
 	CreateConstBuffer();
 	Map();
@@ -17,10 +17,10 @@ void WorldTransform::Initialize()
 
 void WorldTransform::TransferMatrix()
 {
-	// ƒ[ƒ‹ƒhs—ñ‚ğŒvZ
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’è¨ˆç®—
 	matWorld_ = MakeAffineMatrix(scale_, rotation_,translation_);
 
-	// ’è”ƒoƒbƒtƒ@‚É“]‘—
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã«è»¢é€
 	if (constMap) {
 		constMap->matWorld = matWorld_;
 	}
@@ -34,24 +34,24 @@ void WorldTransform::CreateConstBuffer()
 
 void WorldTransform::Map()
 {
-	// ƒoƒbƒtƒ@‚Ìƒ}ƒbƒsƒ“ƒO
+	// ãƒãƒƒãƒ•ã‚¡ã®ãƒãƒƒãƒ”ãƒ³ã‚°
 	HRESULT hr = constBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&constMap));
 	if (FAILED(hr)) {
-		// ƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO
+		// ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚°
 	}
 }
 
 void WorldTransform::UpdateMatrix()
 {
-	// ƒXƒP[ƒ‹A‰ñ“]A•½sˆÚ“®‚ğ‡¬‚µ‚Äs—ñ‚ğŒvZ‚·‚é
+	// ã‚¹ã‚±ãƒ¼ãƒ«ã€å›è»¢ã€å¹³è¡Œç§»å‹•ã‚’åˆæˆã—ã¦è¡Œåˆ—ã‚’è¨ˆç®—ã™ã‚‹
 	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
 
-	// e‚ª‚ ‚ê‚Îe‚Ìƒ[ƒ‹ƒhs—ñ‚ğŠ|‚¯‚é
+	// è¦ªãŒã‚ã‚Œã°è¦ªã®ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã‚’æ›ã‘ã‚‹
 	if (parent_) {
 		matWorld_ *= parent_->matWorld_;
 	}
 
-	// ’è”ƒoƒbƒtƒ@‚É“]‘—‚·‚é
+	// å®šæ•°ãƒãƒƒãƒ•ã‚¡ã«è»¢é€ã™ã‚‹
 	TransferMatrix();
 }
 

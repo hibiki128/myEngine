@@ -1,9 +1,9 @@
 #pragma once
 #include"ModelCommon.h"
-#include "math/Vector4.h"
-#include "math/Matrix4x4.h"
-#include "math/Vector3.h"
-#include "math/Vector2.h"
+#include "Vector4.h"
+#include "Matrix4x4.h"
+#include "Vector3.h"
+#include "Vector2.h"
 #include"SrvManager.h"
 class Model
 {

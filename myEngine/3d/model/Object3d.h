@@ -1,14 +1,15 @@
 #pragma once
-#include "math/Vector2.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
 #include"d3d12.h"
+#include "Matrix4x4.h"
+#include "Model.h"
 #include "string"
 #include "vector"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include"WorldTransform.h"
 #include"wrl.h"
-#include "math/Matrix4x4.h"
-#include "Model.h"
-#include "Camera.h"
+#include"ViewProjection.h"
 
 class ModelCommon;
 class Object3dCommon;
@@ -52,8 +53,7 @@ private: // メンバ変数
 
 	Model* model = nullptr;
 	ModelCommon* modelCommon = nullptr;
-	Camera* camera = nullptr;
-
+	
 	// 移動させる用各SRT
 	Vector3 position = { 0.0f,0.0f,0.0f };
 	Vector3 rotation = { 0.0f,0.0f,0.0f };
@@ -64,18 +64,17 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="obj3dCommon"></param>
-	void Initialize(Object3dCommon* obj3dCommon);
+	void Initialize(const std::string& filePath);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// getter
@@ -90,7 +89,6 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position"></param>
 	void SetModel(Model* model) { this->model = model; }
-	void SetCamera(Camera* camera) { this->camera = camera; }
 	void SetPosition(const Vector3& position) { this->position = position; }
 	void SetRotation(const Vector3& rotation) { this->rotation = rotation; }
 	void SetSize(const Vector3& size) { this->size = size; }
@@ -98,7 +96,6 @@ public: // メンバ関数
 
 private: // メンバ関数
 
-	
 	/// <summary>
 	/// 座標変換行列データ作成
 	/// </summary>
