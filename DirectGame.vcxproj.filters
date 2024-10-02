@@ -100,17 +100,17 @@
     <Filter Include="ソース ファイル\scene">
       <UniqueIdentifier>{95837f6f-3d18-4d1a-8bca-710414435010}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\myGame">
-      <UniqueIdentifier>{3abcb032-86cf-446b-895a-46296685ccd2}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\myEngine\core">
+      <UniqueIdentifier>{5e0afa5b-eced-4948-821f-d10e3417bccd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\myGame">
-      <UniqueIdentifier>{bde3d25d-923d-4de5-bf82-7826abaf8eb0}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\myEngine\core">
+      <UniqueIdentifier>{42f15624-7310-492c-9d87-d7429536a028}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\myGame\class">
-      <UniqueIdentifier>{48e25249-200d-4a26-8604-44aa92ef092f}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\myEngine\utility\scene">
+      <UniqueIdentifier>{dd6651c2-42e3-40d0-8c88-b87489664c41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\myGame\class">
-      <UniqueIdentifier>{a850be59-e334-49f8-ad9c-592605debc1d}</UniqueIdentifier>
+    <Filter Include="ヘッダー ファイル\myEngine\utility\scene">
+      <UniqueIdentifier>{5671d93f-1565-434e-9fef-ab7ed699ebe1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -195,11 +195,29 @@
     <ClCompile Include="myEngine\audio\Audio.cpp">
       <Filter>ソース ファイル\myEngine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="myGame\MyGame.cpp">
-      <Filter>ソース ファイル\myGame</Filter>
+    <ClCompile Include="myEngine\core\MyGame.cpp">
+      <Filter>ソース ファイル\myEngine\core</Filter>
     </ClCompile>
-    <ClCompile Include="myGame\class\GlobalVariables.cpp">
-      <Filter>ソース ファイル\myGame\class</Filter>
+    <ClCompile Include="myEngine\core\Framework.cpp">
+      <Filter>ソース ファイル\myEngine\core</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\GameScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\TitleScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\BaseScene.cpp">
+      <Filter>ソース ファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\scene\SceneManager.cpp">
+      <Filter>ソース ファイル\myEngine\utility\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp">
+      <Filter>ソース ファイル\myEngine\utility\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\WorldTransform.cpp">
+      <Filter>ソース ファイル\myEngine\3d</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -305,11 +323,32 @@
     <ClInclude Include="myEngine\audio\Audio.h">
       <Filter>ヘッダー ファイル\myEngine\audio</Filter>
     </ClInclude>
-    <ClInclude Include="myGame\MyGame.h">
-      <Filter>ヘッダー ファイル\myGame</Filter>
+    <ClInclude Include="myEngine\core\MyGame.h">
+      <Filter>ヘッダー ファイル\myEngine\core</Filter>
     </ClInclude>
-    <ClInclude Include="myGame\class\GlobalVariables.h">
-      <Filter>ヘッダー ファイル\myGame\class</Filter>
+    <ClInclude Include="myEngine\core\Framework.h">
+      <Filter>ヘッダー ファイル\myEngine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\GameScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\TitleScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\BaseScene.h">
+      <Filter>ヘッダー ファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\scene\SceneManager.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\scene\SceneFactory.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\WorldTransform.h">
+      <Filter>ヘッダー ファイル\myEngine\3d</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -61,6 +61,9 @@ void ImGuiManager::Finalize()
 
 	// デスクリプタヒープを解放
 	srvHeap_.Reset();
+
+	delete instance;
+	instance = nullptr;
 }
 
 void ImGuiManager::Begin()
