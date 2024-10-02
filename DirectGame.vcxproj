@@ -103,6 +103,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="myEngine\3d\ViewProjection.cpp" />
     <ClCompile Include="myEngine\3d\WorldTransform.cpp" />
     <ClCompile Include="myEngine\core\Framework.cpp" />
     <ClCompile Include="myEngine\audio\Audio.cpp" />
@@ -147,6 +148,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="myEngine\3d\ViewProjection.h" />
     <ClInclude Include="myEngine\3d\WorldTransform.h" />
     <ClInclude Include="myEngine\core\Framework.h" />
     <ClInclude Include="myEngine\audio\Audio.h" />

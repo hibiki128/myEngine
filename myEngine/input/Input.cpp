@@ -9,7 +9,7 @@ Input* Input::instance = nullptr;
 Input* Input::GetInstance()
 {
 	if (instance == nullptr) {
-		instance = new Input;
+		instance = new Input();
 	}
 	return instance;
 }

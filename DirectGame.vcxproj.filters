@@ -219,6 +219,9 @@
     <ClCompile Include="myEngine\3d\WorldTransform.cpp">
       <Filter>ソース ファイル\myEngine\3d</Filter>
     </ClCompile>
+    <ClCompile Include="myEngine\3d\ViewProjection.cpp">
+      <Filter>ソース ファイル\myEngine\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -348,6 +351,9 @@
       <Filter>ヘッダー ファイル\myEngine\utility\scene</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\3d\WorldTransform.h">
+      <Filter>ヘッダー ファイル\myEngine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\ViewProjection.h">
       <Filter>ヘッダー ファイル\myEngine\3d</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,20 +33,20 @@ void Framework::Initialize()
 
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
-	dxCommon = std::make_unique<DirectXCommon>();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp.get());
 	///--------------------------------
 
 	/// ---------ImGui---------
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxCommon.get());
+	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxCommon);
 #endif // _DEBUG
 	/// -----------------------
 
 	///--------SRVManager--------
 	// SRVマネージャの初期化
 	srvManager = std::make_unique<SrvManager>();
-	srvManager->Initialize(dxCommon.get());
+	srvManager->Initialize(dxCommon);
 	///--------------------------
 
 	///----------Input-----------
@@ -56,23 +56,23 @@ void Framework::Initialize()
 	///--------------------------
 
 	///-----------TextureManager----------
-	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
+	TextureManager::GetInstance()->Initialize(dxCommon, srvManager.get());
 	///-----------------------------------
 
 	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
+	ModelManager::GetInstance()->Initialize(dxCommon, srvManager.get());
 	///----------------------------------
 
 	///----------SpriteCommon------------
 	// スプライト共通部の初期化
 	spriteCommon = SpriteCommon::GetInstance();
-	spriteCommon->Initialize(dxCommon.get());
+	spriteCommon->Initialize(dxCommon);
 	///----------------------------------
 
 	///----------Object3dCommon-----------
 	// 3Dオブジェクト共通部の初期化
 	object3dCommon = Object3dCommon::GetInstance();
-	object3dCommon->Initialize(dxCommon.get());
+	object3dCommon->Initialize(dxCommon);
 	///-----------------------------------
 
 	///---------Audio-------------
@@ -105,6 +105,7 @@ void Framework::Finalize()
 	input->Finalize();
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
+	dxCommon->Finalize();
 	delete sceneFactory_;
 }
 

@@ -100,6 +100,7 @@ void TitleScene::Update()
 	ImGuiManager::GetInstance()->Begin();
 	ImGui::SetWindowSize({ 500.0f, 100.0f });
 	ImGui::SliderFloat2("position", &positions[0].x, 0.0f, 1200.0f, "%4.1f");
+	ImGui::SliderFloat3("3dposition", &Object3dpos[0].x, -6.0f, 5.0f, "%4.1f");
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
 

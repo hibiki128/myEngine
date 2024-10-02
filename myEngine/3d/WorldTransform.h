@@ -3,6 +3,8 @@
 #include"Matrix4x4.h"
 #include"wrl.h"
 #include "d3d12.h"
+#include"myMath.h"
+#include"DirectXCommon.h"
 
 // 定数バッファ用データ構造体
 struct ConstBufferDataWorldTransform {
@@ -19,7 +21,7 @@ public:
 	// ローカル座標
 	Vector3 translation_ = { 0.0f,0.0f,0.0f };
 	// ローカルからワールド変換行列
-	Matrix4x4 matworld_;
+	Matrix4x4 matWorld_;
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
 
@@ -47,12 +49,20 @@ public:
 	void Map();
 
 	/// <summary>
+	/// 行列を計算・転送する
+	/// </summary>
+	void UpdateMatrix();
+
+	/// <summary>
 	/// 定数バッファの取得
 	/// </summary>
 	/// <returns></returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 
 private:
+
+	DirectXCommon* dxCommon_ = nullptr;
+
 	// 定数バッファ
 	Microsoft::WRL::ComPtr<ID3D12Resource>constBuffer_;
 	// マッピング済み

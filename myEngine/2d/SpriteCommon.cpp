@@ -6,7 +6,7 @@ SpriteCommon* SpriteCommon::instance = nullptr;
 SpriteCommon* SpriteCommon::GetInstance()
 {
 	if (instance == nullptr) {
-		instance = new SpriteCommon;
+		instance = new SpriteCommon();
 	}
 	return instance;
 }

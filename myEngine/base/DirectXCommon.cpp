@@ -17,6 +17,23 @@ using namespace StringUtility;
 
 using namespace Microsoft::WRL;
 
+DirectXCommon* DirectXCommon::instance = nullptr;
+
+
+DirectXCommon* DirectXCommon::GetInstance()
+{
+	if (instance == nullptr) {
+		instance = new DirectXCommon();
+	}
+	return instance;
+}
+
+void DirectXCommon::Finalize()
+{
+	delete instance;
+	instance = nullptr;
+}
+
 void DirectXCommon::Initialize(WinApp* winApp) {
 
 	// NULL検出
@@ -50,9 +67,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	ScissorRectInitialize();
 	// DXCコンパイラの生成
 	CreateDXCompiler();
-	// ImGuiの初期化
-	ImGuiInitialize();
-
 }
 
 void DirectXCommon::PreDraw()
@@ -377,23 +391,6 @@ void DirectXCommon::CreateDXCompiler()
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
 	///==============================================
-}
-
-void DirectXCommon::ImGuiInitialize()
-{
-	/*///=============ImGuiの初期化====================
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApp_->GetHwnd());
-	ImGui_ImplDX12_Init(device.Get(),
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-	///==============================================*/
-
 }
 
 void DirectXCommon::InitializeFixFPS()

@@ -6,7 +6,7 @@ Object3dCommon* Object3dCommon::instance = nullptr;
 Object3dCommon* Object3dCommon::GetInstance()
 {
 	if (instance == nullptr) {
-		instance = new Object3dCommon;
+		instance = new Object3dCommon();
 	}
 	return instance;
 }
