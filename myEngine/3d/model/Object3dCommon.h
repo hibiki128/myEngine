@@ -1,6 +1,5 @@
 #pragma once
 #include"DirectXCommon.h"
-#include"Camera.h"
 class Object3dCommon
 {
 private:
@@ -48,18 +47,15 @@ public: // メンバ関数
 	/// setter
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 
 	/// <summary>
 	///  getter
 	/// </summary>
 	/// <returns></returns>
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
-	Camera* GetDefaultCamera()const { return defaultCamera; }
 
 private:
 	DirectXCommon* dxCommon_;
-	Camera* defaultCamera = nullptr;
 
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

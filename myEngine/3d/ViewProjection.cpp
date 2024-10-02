@@ -2,9 +2,6 @@
 
 void ViewProjection::Initialize()
 {
-	rotation_ = { 0.0f,0.0f,0.0f };
-	translation_ = { 0.0f,0.0f,0.0f };
-
 	matView_ = MakeIdentity4x4();
 	matProjection_ = MakeIdentity4x4();
 
@@ -40,9 +37,6 @@ void ViewProjection::UpdateMatrix()
 
 void ViewProjection::TransferMatrix()
 {
-	UpdateViewMatrix();
-	UpdateProjectionMatrix();
-
 	if (constMap) {
 		constMap->view = matView_;
 		constMap->projection = matProjection_;

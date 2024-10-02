@@ -46,5 +46,6 @@ private:
 	std::vector<Vector2> positions;
 	std::string modelFilePath[2];
 	WorldTransform modelWorldTransform[2];
+	ViewProjection viewProjection;
 };
 

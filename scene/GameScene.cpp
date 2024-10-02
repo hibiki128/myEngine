@@ -11,12 +11,9 @@ void GameScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	input_ = Input::GetInstance();
 
-	///---------Camera-------------
-	camera = std::make_unique<Camera>();
-	camera->SetRotate({ 0.3f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,4.0f,-10.0f });
-	objCommon_->SetDefaultCamera(camera.get());
-	///----------------------------
+	viewProjection.Initialize();
+	viewProjection.rotation_ = { 0.3f,0.0f,0.0f };
+	viewProjection.translation_ = { 0.0f,4.0f,-10.0f };
 
 	modelFilePath[0] = "axis.obj";
 	modelFilePath[1] = "plane.obj";
@@ -35,7 +32,7 @@ void GameScene::Initialize()
 	for (uint32_t i = 0; i < 1; ++i) {
 		auto sprite = std::make_unique<Sprite>();
 		std::string textureFilePath = "uvChecker.png";
-		sprite->Initialize(textureFilePath,{0.0f,0.0f});
+		sprite->Initialize(textureFilePath, { 0.0f,0.0f });
 		sprites.push_back(std::move(sprite)); // unique_ptrをvectorに移動
 	}
 	///----------------------------
@@ -48,8 +45,8 @@ void GameScene::Initialize()
 
 	modelWorldTransform[0].Initialize();
 	modelWorldTransform[1].Initialize();
-	modelWorldTransform[0].translation_ = 0.0f,1.0f,1.0f;
-	modelWorldTransform[1].translation_ = 3.0f,1.0f,1.0f;
+	modelWorldTransform[0].translation_ = { 0.0f,1.0f,1.0f };
+	modelWorldTransform[1].translation_ = {3.0f, 1.0f, 1.0f};
 }
 
 void GameScene::Finalize()
@@ -59,8 +56,6 @@ void GameScene::Finalize()
 
 void GameScene::Update()
 {
-
-	camera->Update();
 
 	modelWorldTransform[0].rotation_ = object3d[0]->GetRotation();
 	modelWorldTransform[0].rotation_.y += 0.01f;
@@ -90,12 +85,12 @@ void GameScene::Update()
 
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Begin();
-	ImGui::SetWindowSize({ 500.0f, 100.0f });
 	ImGui::SliderFloat2("position", &positions[0].x, 0.0f, 1200.0f, "%4.1f");
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
 	modelWorldTransform[0].UpdateMatrix();
 	modelWorldTransform[1].UpdateMatrix();
+	viewProjection.UpdateMatrix();
 
 }
 
@@ -107,8 +102,8 @@ void GameScene::Draw()
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィクスコマンドを積む
 	objCommon_->DrawCommonSetting();
 
-	object3d[0]->Draw(modelWorldTransform[0]);
-	object3d[1]->Draw(modelWorldTransform[1]);
+	object3d[0]->Draw(modelWorldTransform[0],viewProjection);
+	object3d[1]->Draw(modelWorldTransform[1], viewProjection);
 
 	///----------スプライトの描画-----------
 	// Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
