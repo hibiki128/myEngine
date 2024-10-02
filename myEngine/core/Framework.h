@@ -63,8 +63,8 @@ protected:
 	SceneManager* sceneManager_ = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
+	DirectXCommon* dxCommon = nullptr;
 	std::unique_ptr<WinApp> winApp;
-	std::unique_ptr<DirectXCommon> dxCommon;
 	std::unique_ptr<SrvManager> srvManager;
 	bool endRequest_;
 	// シーンファクトリー
