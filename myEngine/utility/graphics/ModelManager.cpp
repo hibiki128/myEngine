@@ -38,10 +38,10 @@ Model* ModelManager::FindModel(const std::string& filePath)
 	return nullptr;
 }
 
-void ModelManager::Initialize(DirectXCommon* dxCommon,SrvManager* srvManager)
+void ModelManager::Initialize(SrvManager* srvManager)
 {
 	modelCommon = new ModelCommon;
-	modelCommon->Initialize(dxCommon);
+	modelCommon->Initialize();
 	this->srvManager = srvManager;
 
 }

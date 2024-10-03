@@ -3,9 +3,9 @@
 
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
-void SrvManager::Initialize(DirectXCommon* dxCommon)
+void SrvManager::Initialize()
 {
-	this->dxCommon = dxCommon;
+	this->dxCommon = DirectXCommon::GetInstance();
 
 	// デスクリプタヒープの生成
 	descriptorHeap = dxCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,kMaxSRVCount,true);

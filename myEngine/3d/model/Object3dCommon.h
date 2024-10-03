@@ -1,5 +1,6 @@
 #pragma once
 #include"DirectXCommon.h"
+#include"PipeLineManager.h"
 class Object3dCommon
 {
 private:
@@ -26,27 +27,12 @@ public: // メンバ関数
 	/// <summary>
     ///  初期化
     /// </summary>
-	void  Initialize(DirectXCommon* dxCommon);
-
-	/// <summary>
-	/// ルートシグネチャの作成
-	/// </summary>
-	void CreateRootSignature();
-
-	/// <summary>
-	/// グラフィックスパイプラインの作成
-	/// </summary>
-	void CreateGraphicsPipeLine();
+	void  Initialize();
 
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawCommonSetting();
-
-	/// <summary>
-	/// setter
-	/// </summary>
-	/// <param name="camera"></param>
 
 	/// <summary>
 	///  getter
@@ -56,11 +42,6 @@ public: // メンバ関数
 
 private:
 	DirectXCommon* dxCommon_;
-
-	// ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-
-	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
 };
 

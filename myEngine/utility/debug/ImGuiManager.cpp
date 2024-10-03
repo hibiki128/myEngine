@@ -6,10 +6,10 @@
 
 ImGuiManager* ImGuiManager::instance = nullptr;
 
-void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon)
+void ImGuiManager::Initialize(WinApp* winApp)
 {
 
-	dxCommon_ = dxCommon;
+	dxCommon_ = DirectXCommon::GetInstance();
 
 	// ImGuiのコンテキストを生成
 	ImGui::CreateContext();

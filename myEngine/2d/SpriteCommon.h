@@ -1,5 +1,6 @@
 #pragma once
 #include"DirectXCommon.h"
+#include "PipeLineManager.h"
 class SpriteCommon
 {
 
@@ -13,12 +14,7 @@ private:
 
 private:
 	DirectXCommon* dxCommon_;
-
-	// ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
-
-	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
 
 public: // メンバ関数
 
@@ -36,17 +32,7 @@ public: // メンバ関数
 	/// <summary>
 	///  初期化
 	/// </summary>
-	void  Initialize(DirectXCommon* dxCommon);
-
-	/// <summary>
-	/// ルートシグネチャの作成
-	/// </summary>
-	void CreateRootSignature();
-
-	/// <summary>
-	/// グラフィックスパイプラインの作成
-	/// </summary>
-	void CreateGraphicsPipeLine();
+	void  Initialize();
 
 	/// <summary>
 	/// 共通描画設定

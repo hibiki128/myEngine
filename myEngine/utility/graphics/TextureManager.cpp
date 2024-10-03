@@ -43,9 +43,9 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
 }
 
-void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
+void TextureManager::Initialize(SrvManager* srvManager)
 {
-	dxCommon_ = dxCommon;
+	dxCommon_ = DirectXCommon::GetInstance();
 	srvManager_ = srvManager;
 	// SRVの数と同数
 	textureDatas.reserve(SrvManager::kMaxSRVCount);
