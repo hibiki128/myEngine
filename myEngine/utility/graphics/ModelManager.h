@@ -19,7 +19,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(SrvManager* srvManager);
 
 	/// <summary>
 	/// 終了

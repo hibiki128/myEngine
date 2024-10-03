@@ -39,14 +39,14 @@ void Framework::Initialize()
 
 	/// ---------ImGui---------
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxCommon);
+	ImGuiManager::GetInstance()->Initialize(winApp.get());
 #endif // _DEBUG
 	/// -----------------------
 
 	///--------SRVManager--------
 	// SRVマネージャの初期化
 	srvManager = std::make_unique<SrvManager>();
-	srvManager->Initialize(dxCommon);
+	srvManager->Initialize();
 	///--------------------------
 
 	///----------Input-----------
@@ -56,23 +56,23 @@ void Framework::Initialize()
 	///--------------------------
 
 	///-----------TextureManager----------
-	TextureManager::GetInstance()->Initialize(dxCommon, srvManager.get());
+	TextureManager::GetInstance()->Initialize(srvManager.get());
 	///-----------------------------------
 
 	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(dxCommon, srvManager.get());
+	ModelManager::GetInstance()->Initialize(srvManager.get());
 	///----------------------------------
 
 	///----------SpriteCommon------------
 	// スプライト共通部の初期化
 	spriteCommon = SpriteCommon::GetInstance();
-	spriteCommon->Initialize(dxCommon);
+	spriteCommon->Initialize();
 	///----------------------------------
 
 	///----------Object3dCommon-----------
 	// 3Dオブジェクト共通部の初期化
 	object3dCommon = Object3dCommon::GetInstance();
-	object3dCommon->Initialize(dxCommon);
+	object3dCommon->Initialize();
 	///-----------------------------------
 
 	///---------Audio-------------

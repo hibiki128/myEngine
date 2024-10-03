@@ -37,6 +37,10 @@ void ViewProjection::UpdateMatrix()
 
 void ViewProjection::TransferMatrix()
 {
+
+	matView_ = Inverse(MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_));
+	matProjection_ = MakePerspectiveFovMatrix(fovAngleY, aspectRatio, nearZ, farZ);
+
 	if (constMap) {
 		constMap->view = matView_;
 		constMap->projection = matProjection_;

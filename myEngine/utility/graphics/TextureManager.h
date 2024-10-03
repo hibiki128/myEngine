@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon,SrvManager* srvManager);
+	void Initialize(SrvManager* srvManager);
 
 	/// <summary>
 	/// シングルトンインスタンスの取得

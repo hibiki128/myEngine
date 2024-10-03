@@ -129,6 +129,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\3d\model\Object3dCommon.cpp" />
     <ClCompile Include="myEngine\2d\Sprite.cpp" />
     <ClCompile Include="myEngine\2d\SpriteCommon.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\ParticleManager.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp" />
     <ClCompile Include="myEngine\utility\graphics\SrvManager.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneManager.cpp" />
@@ -179,6 +181,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\3d\model\Object3dCommon.h" />
     <ClInclude Include="myEngine\2d\Sprite.h" />
     <ClInclude Include="myEngine\2d\SpriteCommon.h" />
+    <ClInclude Include="myEngine\utility\graphics\ParticleManager.h" />
+    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h" />
     <ClInclude Include="myEngine\utility\graphics\SrvManager.h" />
     <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h" />
     <ClInclude Include="myEngine\utility\scene\SceneFactory.h" />
