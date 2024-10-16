@@ -41,7 +41,6 @@ void TitleScene::Draw()
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
 
-	line->Draw();
 	//-----------------------------
 
 	/// Spriteの描画準備

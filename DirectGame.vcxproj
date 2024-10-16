@@ -103,6 +103,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleManager.cpp" />
     <ClCompile Include="myEngine\utility\edit\LevelData.cpp" />

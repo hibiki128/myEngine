@@ -246,9 +246,6 @@
     <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
       <Filter>ソース ファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="myEngine\utility\edit\Liner.cpp">
       <Filter>ソース ファイル\myEngine\utility\edit</Filter>
     </ClCompile>
@@ -278,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="myEngine\3d\line\LineManager.cpp">
       <Filter>ソース ファイル\myEngine\3d\line</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
