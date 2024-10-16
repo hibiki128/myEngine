@@ -18,6 +18,7 @@
 #include"Audio.h"
 #include"SceneManager.h"
 #include"AbstractSceneFactory.h"
+#include"ParticleCommon.h"
 
 class Framework
 {
@@ -63,9 +64,10 @@ protected:
 	SceneManager* sceneManager_ = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
+	ParticleCommon* particleCommon = nullptr;
+	DirectXCommon* dxCommon = nullptr;
 	std::unique_ptr<WinApp> winApp;
-	std::unique_ptr<DirectXCommon> dxCommon;
-	std::unique_ptr<SrvManager> srvManager;
+	SrvManager* srvManager=nullptr;
 	bool endRequest_;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

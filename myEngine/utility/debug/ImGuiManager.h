@@ -16,7 +16,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinApp* winApp,DirectXCommon* dxCommon);
+	void Initialize(WinApp* winApp);
 
 	/// <summary>
 	/// シングルトンインスタンスの取得

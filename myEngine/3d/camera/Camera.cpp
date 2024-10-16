@@ -11,7 +11,7 @@ Camera::Camera()
 	, worldMatrix(MakeAffineMatrix(transform.scale,transform.rotate,transform.translate))
 	, viewMatrix(Inverse(worldMatrix))
 	, projectionMatrix(MakePerspectiveFovMatrix(fovY,aspectRatio,nearClip,farClip))
-	, viewProjectionMatrix(Multiply(viewMatrix,projectionMatrix))
+	, viewProjectionMatrix(viewMatrix *projectionMatrix)
 {}
 
 void Camera::Update()
@@ -19,5 +19,5 @@ void Camera::Update()
 	worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	viewMatrix = Inverse(worldMatrix);
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
-	viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
+	viewProjectionMatrix = viewMatrix * projectionMatrix;
 }

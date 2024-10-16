@@ -1,6 +1,7 @@
 #pragma once
 #include"Matrix4x4.h"
 #include "Vector3.h"
+#include "Vector4.h"
 #include "assert.h"
 #include "cmath"
 
@@ -8,16 +9,14 @@
 static const int kColumnWidth = 60;
 static const int kRowHeight = 20;
 
-float Dot(const Vector3& v1, const Vector3& v2);
+float Lerp(float _start, float _end, float _t);
+Vector3 Lerp(const Vector3& _start, const Vector3& _end, float _t);
+Vector4 Lerp(const Vector4& _start, const Vector4& _end, float _t);
 
-float LengthSquared(const Vector3& v);
 
-float Length(const Vector3& v);
-
-Vector3 Cross(const Vector3& v1, const Vector3& v2);
-
-Vector3 Normalize(const Vector3& v);
-
+float Lerp(float _start, float _end, float _t);
+Vector3 Lerp(const Vector3& _start, const Vector3& _end, float _t);
+Vector4 Lerp(const Vector4& _start, const Vector4& _end, float _t);
 // 平行移動行列
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
@@ -27,14 +26,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 // 座標変換
 Vector3 Transformation(const Vector3& vector, const Matrix4x4& matrix);
 
-// 行列の加法
-Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
-
-// 行列の減法
-Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2);
-
-// 行列の積
-Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2);
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m);
@@ -52,7 +44,7 @@ Matrix4x4 MakeRotateYMatrix(float radian);
 // Z軸回転行列							
 Matrix4x4 MakeRotateZMatrix(float radian);
 // X,Y,Z軸回転行列を合成した行列
-Matrix4x4 MakeRotateXYZMatrix(Vector3& radian);
+Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
@@ -67,6 +59,7 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 
 // ビューポート変換行列
 Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+
 
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);

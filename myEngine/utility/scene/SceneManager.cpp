@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include <cassert>
+#include <ImGuiManager.h>
 
 SceneManager* SceneManager::instance = nullptr;
 
@@ -40,8 +41,19 @@ void SceneManager::Update()
 		scene_->Initialize();
 	}
 
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->Begin();
+#endif // _DEBUG
+
 	// 実行中シーンを更新する
 	scene_->Update();
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->End();
+#endif // _DEBUG
 }
 
 void SceneManager::Draw()

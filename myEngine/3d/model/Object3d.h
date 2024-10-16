@@ -1,14 +1,21 @@
 #pragma once
-#include "math/Vector2.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
 #include"d3d12.h"
+#include "Matrix4x4.h"
+#include "Model.h"
 #include "string"
 #include "vector"
+#include "Vector2.h" 
+#include "Vector3.h"
+#include "Vector4.h"
+#include"WorldTransform.h"
 #include"wrl.h"
-#include "math/Matrix4x4.h"
-#include "Model.h"
-#include "Camera.h"
+#include"ViewProjection.h"
+#include"ObjColor.h"
+
+enum class LightType {
+	Directional,
+	Point,
+};
 
 class ModelCommon;
 class Object3dCommon;
@@ -26,6 +33,7 @@ private: // メンバ変数
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 World;
+		Matrix4x4 WorldInverseTranspose;
 	};
 
 	// 平行光源データ
@@ -33,6 +41,29 @@ private: // メンバ変数
 		Vector4 color; //!< ライトの色
 		Vector3 direction; //!< ライトの向き
 		float intensity;//!< 輝度
+		int32_t active;
+	};
+
+	// マテリアルデータ
+	struct Material {
+		Vector4 color;
+		int32_t enableLighting;
+		float padding[3];
+		Matrix4x4 uvTransform;
+		float shininess;
+	};
+
+	struct CameraForGPU {
+		Vector3 worldPosition;
+	};
+
+	struct PointLight {
+		Vector4 color;
+		Vector3 position;
+		float intensity;
+		int32_t active;
+		float radius;
+		float decay;
 	};
 
 	Object3dCommon* obj3dCommon = nullptr;
@@ -47,12 +78,26 @@ private: // メンバ変数
 	// バッファリソース内のデータを指すポインタ
 	DirectionLight* directionalLightData = nullptr;
 
+	// バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
+	// バッファリソース内のデータを指すポインタ
+	PointLight* pointLightData = nullptr;
+
+	// バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
+	// バッファリソース内のデータを指すポインタ
+	Material* materialData = nullptr;
+
+	// バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource;
+	// バッファリソース内のデータを指すポインタ
+	CameraForGPU* cameraForGPUData = nullptr;
+
 	Transform transform;
 	//Transform cameraTransform;
 
 	Model* model = nullptr;
 	ModelCommon* modelCommon = nullptr;
-	Camera* camera = nullptr;
 
 	// 移動させる用各SRT
 	Vector3 position = { 0.0f,0.0f,0.0f };
@@ -64,18 +109,17 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="obj3dCommon"></param>
-	void Initialize(Object3dCommon* obj3dCommon);
+	void Initialize(const std::string& filePath);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
 
 	/// <summary>
 	/// getter
@@ -90,15 +134,42 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position"></param>
 	void SetModel(Model* model) { this->model = model; }
-	void SetCamera(Camera* camera) { this->camera = camera; }
 	void SetPosition(const Vector3& position) { this->position = position; }
 	void SetRotation(const Vector3& rotation) { this->rotation = rotation; }
 	void SetSize(const Vector3& size) { this->size = size; }
 	void SetModel(const std::string& filePath);
 
+	/// <summary>
+	/// 平行光源の設定
+	/// </summary>
+	/// <param name="color">ライトの色</param>
+	/// <param name="direction">ライトの向き</param>
+	/// <param name="intensity">ライトの輝度</param>
+	void SetDirectionalLight
+	(Vector3 direction = { 0.0f,-1.0f,0.0f }, float intensity = { 1.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
+
+	/// <summary>
+	/// 点光源の設定
+	/// </summary>
+	/// <param name="position"></param>
+	/// <param name="intensity"></param>
+	/// <param name="color"></param>
+	void SetPointLight(Vector3 position = { 0.0f,-1.0f,0.0f }, float intensity = { 1.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f },float decay = 1.0f,float radius = 2.0f);
+
+	/// <summary>
+	/// ライトの種類設定
+	/// </summary>
+	/// <param name="lightType"></param>
+	void SetLightType(LightType lightType = LightType::Directional);
+
+	/// <summary>
+	/// 光沢度の設定
+	/// </summary>
+	/// <param name="shininess">マテリアルの光沢度</param>
+	void SetShininess(float shininess = 20.0f);
+
 private: // メンバ関数
 
-	
 	/// <summary>
 	/// 座標変換行列データ作成
 	/// </summary>
@@ -109,5 +180,19 @@ private: // メンバ関数
 	/// </summary>
 	void CreateDirectionLight();
 
+	/// <summary>
+	/// マテリアルデータ作成
+	/// </summary>
+	void CreateMaterial();
+
+	/// <summary>
+	/// カメラ作成
+	/// </summary>
+	void CreateCamera();
+
+	/// <summary>
+	/// 点光源データ作成
+	/// </summary>
+	void CreatePointLight();
 };
 

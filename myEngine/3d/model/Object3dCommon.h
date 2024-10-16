@@ -1,6 +1,6 @@
 #pragma once
 #include"DirectXCommon.h"
-#include"Camera.h"
+#include"PipeLineManager.h"
 class Object3dCommon
 {
 private:
@@ -27,17 +27,7 @@ public: // メンバ関数
 	/// <summary>
     ///  初期化
     /// </summary>
-	void  Initialize(DirectXCommon* dxCommon);
-
-	/// <summary>
-	/// ルートシグネチャの作成
-	/// </summary>
-	void CreateRootSignature();
-
-	/// <summary>
-	/// グラフィックスパイプラインの作成
-	/// </summary>
-	void CreateGraphicsPipeLine();
+	void  Initialize();
 
 	/// <summary>
 	/// 共通描画設定
@@ -45,21 +35,19 @@ public: // メンバ関数
 	void DrawCommonSetting();
 
 	/// <summary>
-	/// setter
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
-
-	/// <summary>
 	///  getter
 	/// </summary>
 	/// <returns></returns>
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
-	Camera* GetDefaultCamera()const { return defaultCamera; }
+
+	/// <summary>
+	/// ブレンドモードの切り替え
+	/// </summary>
+	void ChangeBlendMode(BlendMode blendMode);
 
 private:
 	DirectXCommon* dxCommon_;
-	Camera* defaultCamera = nullptr;
+	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
 
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

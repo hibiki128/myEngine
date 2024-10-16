@@ -9,43 +9,46 @@ uint32_t TextureManager::kSRVIndexTop = 1;
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
-	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
-		return;
-	}
+    // 読み込み済みテクスチャを検索
+    if (textureDatas.contains(filePath)) {
+        return;
+    }
 
-	// テクスチャ枚数上限をチェック
-	assert(srvManager_->CanAllocate());
+    // テクスチャ枚数上限をチェック
+    assert(srvManager_->CanAllocate());
 
-	// テクスチャファイルを読んでプログラムで扱えるようにする
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(hr));
+    // テクスチャファイルを読んでプログラムで扱えるようにする
+    DirectX::ScratchImage image{};
+    std::wstring filePathW = StringUtility::ConvertString(filePath);
+    HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+    assert(SUCCEEDED(hr));
 
-	// ミニマップの作成
-	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
+    DirectX::ScratchImage* imageToUse = &image; // 初期値はオリジナルのイメージ
 
-	// テクスチャデータを追加して書き込む
-	TextureData& textureData = textureDatas[filePath];
+    // ミニマップの作成
+    DirectX::ScratchImage mipImages{};
+    hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+    if (SUCCEEDED(hr)) {
+        imageToUse = &mipImages; // ミップマップが生成された場合はこれを使用
+    }
 
-    textureData.metadata = image.GetMetadata();
+    // テクスチャデータを追加して書き込む
+    TextureData& textureData = textureDatas[filePath];
+
+    textureData.metadata = imageToUse->GetMetadata();
     textureData.resource = dxCommon_->CreateTextureResource(textureData.metadata);
-	textureData.intermediateResource = dxCommon_->UploadTextureData(textureData.resource, image);
+    textureData.intermediateResource = dxCommon_->UploadTextureData(textureData.resource, *imageToUse); // ミップマップも含めてアップロード
 
-	textureData.srvIndex = srvManager_->Allocate()+kSRVIndexTop;
-	textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
-	textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
+    textureData.srvIndex = srvManager_->Allocate() + kSRVIndexTop;
+    textureData.srvHandleCPU = srvManager_->GetCPUDescriptorHandle(textureData.srvIndex);
+    textureData.srvHandleGPU = srvManager_->GetGPUDescriptorHandle(textureData.srvIndex);
 
-	srvManager_->CreateSRVforTexture2D(textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
-
+    srvManager_->CreateSRVforTexture2D(textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
 }
 
-void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
+void TextureManager::Initialize(SrvManager* srvManager)
 {
-	dxCommon_ = dxCommon;
+	dxCommon_ = DirectXCommon::GetInstance();
 	srvManager_ = srvManager;
 	// SRVの数と同数
 	textureDatas.reserve(SrvManager::kMaxSRVCount);
@@ -61,8 +64,14 @@ TextureManager* TextureManager::GetInstance()
 
 void TextureManager::Finalize()
 {
-	delete instance;
-	instance = nullptr;
+    // 全テクスチャのSRVインデックスを解放
+    for (auto& pair : textureDatas) {
+        srvManager_->Free(pair.second.srvIndex - kSRVIndexTop);
+    }
+
+    // インスタンスの削除
+    delete instance;
+    instance = nullptr;
 }
 
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath)

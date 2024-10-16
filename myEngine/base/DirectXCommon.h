@@ -10,7 +10,26 @@
 
 // DirectX基盤
 class DirectXCommon {
+private:
+	static DirectXCommon* instance;
+
+	DirectXCommon() = default;
+	~DirectXCommon() = default;
+	DirectXCommon(DirectXCommon&) = delete;
+	DirectXCommon& operator=(DirectXCommon&) = delete;
+
 public: // メンバ関数
+
+	/// <summary>
+    /// シングルトンインスタンスの取得
+    /// </summary>
+    /// <returns></returns>
+	static DirectXCommon* GetInstance();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// 初期化
@@ -155,11 +174,6 @@ private: // メンバ関数
 	/// DXCコンパイラの生成
 	/// </summary>
 	void CreateDXCompiler();
-
-	/// <summary>
-	/// ImGuiの初期化
-	/// </summary>
-	void ImGuiInitialize();
 
 	/// <summary>
 	/// FPS固定初期化

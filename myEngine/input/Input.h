@@ -59,6 +59,13 @@ public: // メンバ関数
 	/// <returns></returns>
 	bool TriggerKey(BYTE keyNumber);
 
+	/// <summary>
+	/// キーのリリースをチェック
+	/// </summary>
+	/// <param name="keyNumber"></param>
+	/// <returns></returns>
+	bool ReleaseKey(BYTE keyNumber);
+
 private: // メンバ変数
 
 	// キーボードのデバイス

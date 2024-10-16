@@ -3,16 +3,14 @@
 #include "math/myMath.h"
 #include "TextureManager.h"
 
-void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
+void Sprite::Initialize(std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// 引数で受け取ってメンバ変数に記録する
-	spriteCommon_ = spriteCommon;
+	spriteCommon_ = SpriteCommon::GetInstance();
 
 	fullpath = directoryPath_ + "/" + textureFilePath;
 
 	TextureManager::GetInstance()->LoadTexture(fullpath);
-
-	TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath);
 
 	CreateVartexData();
 
@@ -20,16 +18,22 @@ void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 
 	CreateTransformationMatrix();
 
+	position_ = position;
+	materialData->color = color;
+	anchorPoint_ = anchorpoint;
+	isFlipX_ = isFlipX;
+	isFlipY_ = isFlipY;
+
 	AdjustTextureSize();
 }
 
 void Sprite::Update()
 {
 
-	float left = 0.0f - anchorPoint.x;
-	float right = 1.0f - anchorPoint.x;
-	float top = 0.0f - anchorPoint.y;
-	float bottom = 1.0f - anchorPoint.y;
+	float left = 0.0f - anchorPoint_.x;
+	float right = 1.0f - anchorPoint_.x;
+	float top = 0.0f - anchorPoint_.y;
+	float bottom = 1.0f - anchorPoint_.y;
 
 	// 左右反転
 	if (isFlipX_) {
@@ -76,14 +80,14 @@ void Sprite::Update()
 
 	Transform transform{ {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
-	transform.translate = { position.x,position.y,0.0f };
+	transform.translate = { position_.x,position_.y,0.0f };
 	transform.rotate = { 0.0f,0.0f,rotation };
 	transform.scale = { size.x,size.y,1.0f };
 
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-	Matrix4x4 worldProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+	Matrix4x4 worldProjectionMatrix = (worldMatrix *(viewMatrix * projectionMatrix));
 	transformationMatrixData->WVP = worldProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
 }
@@ -99,7 +103,8 @@ void Sprite::Draw()
 	// TransformationMatrixCBufferの場所を設定
 	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	// 使うSRVの切り替え
-	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(fullpath));
+	srvManager_ = TextureManager::GetInstance()->GetSrvManager();
+	srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath));
 	// 描画！(DrawCall/ドローコール)
 	spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }

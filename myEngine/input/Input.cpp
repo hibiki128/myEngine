@@ -9,7 +9,7 @@ Input* Input::instance = nullptr;
 Input* Input::GetInstance()
 {
 	if (instance == nullptr) {
-		instance = new Input;
+		instance = new Input();
 	}
 	return instance;
 }
@@ -66,6 +66,16 @@ bool Input::TriggerKey(BYTE keyNumber)
 {
 	// 指定キーを押した瞬間trueを返す
 	if (!keyPre[keyNumber] && key[keyNumber]) {
+		return true;
+	}
+	// そうでなければfalseを返す
+	return false;
+}
+
+bool Input::ReleaseKey(BYTE keyNumber)
+{
+	// 指定キーを離した瞬間trueを返す
+	if (keyPre[keyNumber] && !key[keyNumber]) {
 		return true;
 	}
 	// そうでなければfalseを返す

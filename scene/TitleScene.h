@@ -1,14 +1,13 @@
 #pragma once
-#include"memory"
-#include"Camera.h"
-#include"Sprite.h"
-#include"vector"
-#include"Object3dCommon.h"
-#include "Input.h"
-#include "SpriteCommon.h"
 #include "Audio.h"
-#include"Object3d.h"
 #include"BaseScene.h"
+#include "Input.h"
+#include"Object3dCommon.h"
+#include "SpriteCommon.h"
+#include"ParticleCommon.h"
+#include"line/LineManager.h"
+#include"ViewProjection.h"
+#include "application/Screw.h"
 
 class TitleScene :public BaseScene
 {
@@ -39,13 +38,11 @@ private:
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
-	uint32_t handle;
-	std::unique_ptr<Camera> camera;
-	std::unique_ptr<Object3d> object3d[2];
-	std::vector<std::unique_ptr<Sprite>> sprites;
-	std::vector<Vector2> positions;
-	std::vector<Vector3> Object3dpos;
-	Vector3 objRotate;
-	std::string modelFilePath[2];
+	ParticleCommon* ptCommon_;
+	ViewProjection vp_;
+	std::unique_ptr<LineManager> line = nullptr;
+	std::vector<Vector3>start;
+	std::vector<Vector3>end;
+	std::unique_ptr <Screw>screw_;
 };
 

@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon,SrvManager* srvManager);
+	void Initialize(SrvManager* srvManager);
 
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -62,6 +62,8 @@ public:
 	/// <param name="textureIndex"></param>
 	/// <returns></returns>
 	const DirectX::TexMetadata& GetMetaData(const std::string& filePath);
+
+	SrvManager* GetSrvManager() { return srvManager_; }
 
 private:
 	// テクスチャ１枚分のデータ

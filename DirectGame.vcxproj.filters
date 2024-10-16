@@ -112,6 +112,48 @@
     <Filter Include="ヘッダー ファイル\myEngine\utility\scene">
       <UniqueIdentifier>{5671d93f-1565-434e-9fef-ab7ed699ebe1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\myEngine\utility\edit">
+      <UniqueIdentifier>{54deca81-c90e-4f6b-9d27-f4774c60ac8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\utility\edit">
+      <UniqueIdentifier>{16a8c3f1-cc19-4cdd-9ce1-60f677afe044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myEngine\3d\transform">
+      <UniqueIdentifier>{873222c9-bf91-438d-8445-ff8816e191fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\3d\transform">
+      <UniqueIdentifier>{a49fd1ee-09b9-46fa-abb8-3b9b75ef6ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myEngine\3d\particle">
+      <UniqueIdentifier>{5f933ab0-68d6-4252-8412-c3497cd78c54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\3d\particle">
+      <UniqueIdentifier>{4d5f4902-d5f2-44d5-9952-5d0b055870ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application">
+      <UniqueIdentifier>{6980ffec-7ac4-4c92-b754-de1537ba64d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\player">
+      <UniqueIdentifier>{5a04a23b-20f8-4947-a7aa-6318e9d30f04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application">
+      <UniqueIdentifier>{39ceb12b-a207-454b-877b-e4e57b815660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\player">
+      <UniqueIdentifier>{da9876c5-1789-4d3c-a0d7-0a1c8eee7113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\Particle">
+      <UniqueIdentifier>{7bb5c6c3-8800-4118-9093-9e49e3d17a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\Particle">
+      <UniqueIdentifier>{f346bb79-e651-4f6e-9a37-6f8c42d3bcb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myEngine\3d\line">
+      <UniqueIdentifier>{9b71ce02-e930-4a1b-9211-f79b51440955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\3d\line">
+      <UniqueIdentifier>{ceb32e7b-adad-4a27-a144-d00997a86b49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -216,13 +258,70 @@
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp">
       <Filter>ソース ファイル\myEngine\utility\scene</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\3d\WorldTransform.cpp">
+    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
+      <Filter>ソース ファイル\myEngine\utility\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\edit\Liner.cpp">
+      <Filter>ソース ファイル\myEngine\utility\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="math\Quaternion.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\transform\ObjColor.cpp">
+      <Filter>ソース ファイル\myEngine\3d\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\transform\WorldTransform.cpp">
+      <Filter>ソース ファイル\myEngine\3d\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\camera\ViewProjection.cpp">
+      <Filter>ソース ファイル\myEngine\3d\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\edit\LevelData.cpp">
+      <Filter>ソース ファイル\myEngine\utility\edit</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\particle\ParticleManager.cpp">
+      <Filter>ソース ファイル\myEngine\3d\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\particle\ParticleEmitter.cpp">
+      <Filter>ソース ファイル\myEngine\3d\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp">
+      <Filter>ソース ファイル\myEngine\3d\particle</Filter>
+   </ClCompile>
+    <ClCompile Include="myEngine\3d\ObjColor.cpp">
       <Filter>ソース ファイル\myEngine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="application\player\Player.cpp">
+      <Filter>ソース ファイル\application\player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\player\PlayerBullet.cpp">
+      <Filter>ソース ファイル\application\player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Collider.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\CollisionManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Enemy.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Screw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\line\LineManager.cpp">
+      <Filter>ソース ファイル\myEngine\3d\line</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="Resources\shaders\Object3d.hlsli">
+      <Filter>リソース ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Particle.hlsli">
       <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>
@@ -347,8 +446,59 @@
     <ClInclude Include="myEngine\utility\scene\SceneFactory.h">
       <Filter>ヘッダー ファイル\myEngine\utility\scene</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\3d\WorldTransform.h">
-      <Filter>ヘッダー ファイル\myEngine\3d</Filter>
+    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\edit\Liner.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\transform\WorldTransform.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\transform\ObjColor.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\camera\ViewProjection.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\edit\LevelData.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\particle\ParticleManager.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\particle\ParticleEmitter.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\particle\ParticleCommon.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Collider.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\CollisionManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Enemy.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Screw.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="application\player\Player.h">
+      <Filter>ヘッダー ファイル\application\player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\player\PlayerBullet.h">
+      <Filter>ヘッダー ファイル\application\player</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\line\LineManager.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -358,10 +508,21 @@
     <FxCompile Include="Resources\shaders\Object3d.VS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">
       <Filter>imgui</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="myEngine.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

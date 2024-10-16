@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "math/myMath.h"
+#include "myMath.h"
 #include"fstream"
 #include"sstream"
 #include "TextureManager.h"
@@ -14,12 +14,12 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 	
 	CreateVartexData();
 
-	CreateMaterial();
-
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
 
 	// 単位行列を書き込んでおく
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+
+	Update();
 }
 
 void Model::Update()
@@ -41,11 +41,10 @@ void Model::Update()
 
 void Model::Draw()
 {
+
 	modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView); // VBVを設定
-	// マテリアルCBufferの場所を設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath));
+	srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath));
 	// 描画！（DrawCall/ドローコール）
 	modelCommon_->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 }
@@ -63,19 +62,6 @@ void Model::CreateVartexData()
 
 	// 頂点データの設定
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-}
-
-void Model::CreateMaterial()
-{
-	// Sprite用のマテリアルリソースをつくる
-	materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-	// 書き込むためのアドレスを取得
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	// 色の設定
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	// Lightingの設定
-	materialData->enableLighting = true;
-	materialData->uvTransform = MakeIdentity4x4();
 }
 
 Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
@@ -96,6 +82,11 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 			// 連結してファイルパスにする
 			materialData.textureFilePath = directoryPath + "/" + textureFilename;
 		}
+	}
+
+	// テクスチャが張られていない場合の処理
+	if (materialData.textureFilePath.empty()) {
+		materialData.textureFilePath = directoryPath + "/../images/white1x1.png";
 	}
 
 	return materialData;
@@ -128,6 +119,7 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
+			texcoord.x = 1.0f - texcoord.x;
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
@@ -159,10 +151,10 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 				modelData.vertices.push_back(vertex);
 				triangle[faceVertex] = { position,texcoord,normal };
 			}
-			// 頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
+			//// 頂点を逆順で登録することで、周り順を逆にする
+			//modelData.vertices.push_back(triangle[2]);
+			//modelData.vertices.push_back(triangle[1]);
+			//modelData.vertices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			// materialTemplateLibraryファイルの名前を取得する

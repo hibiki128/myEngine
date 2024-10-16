@@ -9,8 +9,31 @@
 
 class Audio
 {
+
+	class VoiceCallback : public IXAudio2VoiceCallback {
+	public:
+		// 未使用のコールバックメソッドは空実装
+		void STDMETHODCALLTYPE OnStreamEnd() override {}
+		void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() override {}
+		void STDMETHODCALLTYPE OnVoiceProcessingPassStart(UINT32) override {}
+		void STDMETHODCALLTYPE OnBufferStart(void*) override {}
+		void STDMETHODCALLTYPE OnLoopEnd(void*) override {}
+		void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT) override {}
+
+		// バッファが終了したときに呼ばれるコールバック
+		void STDMETHODCALLTYPE OnBufferEnd(void* pBufferContext) override {
+			if (pBufferContext) {
+				Voice* voice = reinterpret_cast<Voice*>(pBufferContext);
+				if (voice) {
+					// Audioシステムから該当の音声を停止
+					Audio::GetInstance()->StopWave(voice->handle);
+				}
+			}
+		}
+	};
+
 private:
-	static const int kMaxSoundData = 256;
+	static const int kMaxSoundData = 1024;
 
 	static Audio* instance;
 
@@ -119,5 +142,12 @@ private:
 	size_t soundDataIndex = 0;  // 次に保存する音声データのインデックス
 	std::set<Voice*> voices_; // 再生中の音声データを管理するセット
 	std::set<std::string> loadedFiles; // 読み込まれたファイルのセット
+	// フォーマット情報を読み込む
+	uint16_t audioFormat;
+	uint16_t numChannels;
+	uint32_t sampleRate;
+	uint32_t byteRate;
+	uint16_t blockAlign;
+	uint16_t bitsPerSample;
 };
 

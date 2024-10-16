@@ -33,20 +33,20 @@ void Framework::Initialize()
 
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
-	dxCommon = std::make_unique<DirectXCommon>();
+	dxCommon = DirectXCommon::GetInstance();
 	dxCommon->Initialize(winApp.get());
 	///--------------------------------
 
 	/// ---------ImGui---------
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxCommon.get());
+	ImGuiManager::GetInstance()->Initialize(winApp.get());
 #endif // _DEBUG
 	/// -----------------------
 
 	///--------SRVManager--------
 	// SRVマネージャの初期化
-	srvManager = std::make_unique<SrvManager>();
-	srvManager->Initialize(dxCommon.get());
+	srvManager = SrvManager::GetInstance();
+	srvManager->Initialize();
 	///--------------------------
 
 	///----------Input-----------
@@ -56,24 +56,29 @@ void Framework::Initialize()
 	///--------------------------
 
 	///-----------TextureManager----------
-	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
+	TextureManager::GetInstance()->Initialize(srvManager);
 	///-----------------------------------
 
 	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
+	ModelManager::GetInstance()->Initialize(srvManager);
 	///----------------------------------
 
 	///----------SpriteCommon------------
 	// スプライト共通部の初期化
 	spriteCommon = SpriteCommon::GetInstance();
-	spriteCommon->Initialize(dxCommon.get());
+	spriteCommon->Initialize();
 	///----------------------------------
 
 	///----------Object3dCommon-----------
 	// 3Dオブジェクト共通部の初期化
 	object3dCommon = Object3dCommon::GetInstance();
-	object3dCommon->Initialize(dxCommon.get());
+	object3dCommon->Initialize();
 	///-----------------------------------
+
+	///----------ParticleCommon------------
+	particleCommon = ParticleCommon::GetInstance();
+	particleCommon->Initialize(dxCommon);
+	///------------------------------------
 
 	///---------Audio-------------
 	audio = Audio::GetInstance();
@@ -101,10 +106,13 @@ void Framework::Finalize()
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
 #endif // _DEBUG
+	srvManager->Finalize();
 	audio->Finalize();
 	input->Finalize();
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
+	particleCommon->Finalize();
+	dxCommon->Finalize();
 	delete sceneFactory_;
 }
 
@@ -124,4 +132,5 @@ void Framework::Update()
 
 void Framework::Draw()
 {
+
 }
