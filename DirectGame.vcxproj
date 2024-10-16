@@ -106,12 +106,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleManager.cpp" />
     <ClCompile Include="myEngine\utility\edit\LevelData.cpp" />
-    <ClCompile Include="application\Collider.cpp" />
-    <ClCompile Include="application\CollisionManager.cpp" />
-    <ClCompile Include="application\Enemy.cpp" />
-    <ClCompile Include="application\player\Player.cpp" />
-    <ClCompile Include="application\player\PlayerBullet.cpp" />
-    <ClCompile Include="application\Screw.cpp" />
     <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="myEngine\3d\transform\ObjColor.cpp" />
     <ClCompile Include="myEngine\utility\edit\Liner.cpp" />
@@ -127,7 +121,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="math\myMath.cpp" />
     <ClCompile Include="myEngine\3d\camera\Camera.cpp" />
     <ClCompile Include="myEngine\utility\debug\D3DResourceLeakChecker.cpp" />
@@ -170,12 +163,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\3d\particle\ParticleCommon.h" />
     <ClInclude Include="myEngine\3d\particle\ParticleManager.h" />
     <ClInclude Include="myEngine\utility\edit\LevelData.h" />
-    <ClInclude Include="application\Collider.h" />
-    <ClInclude Include="application\CollisionManager.h" />
-    <ClInclude Include="application\Enemy.h" />
-    <ClInclude Include="application\player\Player.h" />
-    <ClInclude Include="application\player\PlayerBullet.h" />
-    <ClInclude Include="application\Screw.h" />
     <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="myEngine\3d\transform\ObjColor.h" />
     <ClInclude Include="myEngine\utility\edit\Liner.h" />

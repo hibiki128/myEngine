@@ -133,20 +133,8 @@
     <Filter Include="ソース ファイル\application">
       <UniqueIdentifier>{6980ffec-7ac4-4c92-b754-de1537ba64d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\application\player">
-      <UniqueIdentifier>{5a04a23b-20f8-4947-a7aa-6318e9d30f04}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\application">
       <UniqueIdentifier>{39ceb12b-a207-454b-877b-e4e57b815660}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\player">
-      <UniqueIdentifier>{da9876c5-1789-4d3c-a0d7-0a1c8eee7113}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application\Particle">
-      <UniqueIdentifier>{7bb5c6c3-8800-4118-9093-9e49e3d17a60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\application\Particle">
-      <UniqueIdentifier>{f346bb79-e651-4f6e-9a37-6f8c42d3bcb3}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\myEngine\3d\line">
       <UniqueIdentifier>{9b71ce02-e930-4a1b-9211-f79b51440955}</UniqueIdentifier>
@@ -156,9 +144,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -290,27 +275,6 @@
     </ClCompile>
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp">
       <Filter>ソース ファイル\myEngine\3d\particle</Filter>
-   </ClCompile>
-    <ClCompile Include="myEngine\3d\ObjColor.cpp">
-      <Filter>ソース ファイル\myEngine\3d</Filter>
-    </ClCompile>
-    <ClCompile Include="application\player\Player.cpp">
-      <Filter>ソース ファイル\application\player</Filter>
-    </ClCompile>
-    <ClCompile Include="application\player\PlayerBullet.cpp">
-      <Filter>ソース ファイル\application\player</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Collider.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\CollisionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Screw.cpp">
-      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\line\LineManager.cpp">
       <Filter>ソース ファイル\myEngine\3d\line</Filter>
@@ -478,24 +442,6 @@
     </ClInclude>
     <ClInclude Include="math\Quaternion.h">
       <Filter>ヘッダー ファイル\math</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Collider.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\CollisionManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Screw.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="application\player\Player.h">
-      <Filter>ヘッダー ファイル\application\player</Filter>
-    </ClInclude>
-    <ClInclude Include="application\player\PlayerBullet.h">
-      <Filter>ヘッダー ファイル\application\player</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\3d\line\LineManager.h">
       <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>

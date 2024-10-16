@@ -5,9 +5,6 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
-#include"line/LineManager.h"
-#include"ViewProjection.h"
-#include "application/Screw.h"
 
 class TitleScene :public BaseScene
 {
@@ -39,10 +36,5 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-	ViewProjection vp_;
-	std::unique_ptr<LineManager> line = nullptr;
-	std::vector<Vector3>start;
-	std::vector<Vector3>end;
-	std::unique_ptr <Screw>screw_;
 };
 
