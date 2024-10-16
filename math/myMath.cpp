@@ -1,4 +1,5 @@
 #include"myMath.h"
+#include <cassert>
 
 float Lerp(float _start, float _end, float _t)
 {
@@ -46,6 +47,17 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
 	};
+
+	return result;
+}
+
+Vector3 TransformVector(const Vector3& vector, const Matrix4x4& matrix) {
+	Vector3 result;
+
+	// 行列による変換
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + matrix.m[3][2];
 
 	return result;
 }
@@ -166,6 +178,64 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth) {
 	return { width / 2.0f, 0, 0, 0, 0, -height / 2.0f, 0, 0, 0, 0, maxDepth - minDepth, 0, left + width / 2.0f, top + height / 2.0f, minDepth, 1.0f };
 }
+
+Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {
+	const float s = 0.5f;
+	float t2 = t * t;
+	float t3 = t2 * t;
+
+	Vector3 e3 = -p0 + 3 * p1 - 3 * p2 + p3;
+	Vector3 e2 = 2 * p0 - 5 * p1 + 4 * p2 - p3;
+	Vector3 e1 = -p0 + p2;
+	Vector3 e0 = 2 * p1;
+
+	return s * (e3 * t3 + e2 * t2 + e1 * t + e0);
+}
+
+Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
+	assert(points.size() >= 4 && "制御点は4点以上必要です");
+
+	// 区間数は制御点の数-1
+	size_t division = points.size() - 1;
+	// 1区間の長さ（全体を1.0とした割合）
+	float areaWidth = 1.0f / division;
+
+	// 区間内の始点を0.0f、終点を1.0fとしたときの現在位置
+	float t_2 = std::fmod(t, areaWidth) * division;
+	// 下限(0.0f)と上限(1.0f)の範囲に収める
+	t_2 = std::clamp(t_2, 0.0f, 1.0f);
+
+	// 区間番号
+	size_t index = static_cast<size_t>(t / areaWidth);
+	// 区間番号が上限を超えないように収める
+	index = std::min(index, points.size() - 2);
+
+	// 4点分のインデックス
+	size_t index0 = index - 1;
+	size_t index1 = index;
+	size_t index2 = index + 1;
+	size_t index3 = index + 2;
+
+	// 最初の区間のp0はo1を重複使用する
+	if (index == 0) {
+		index0 = index1;
+	}
+
+	// 最後の区間のp3は重複使用する
+	if (index3 >= points.size()) {
+		index3 = index2;
+	}
+
+	// 4点の座標
+	const Vector3& p0 = points[index0];
+	const Vector3& p1 = points[index1];
+	const Vector3& p2 = points[index2];
+	const Vector3& p3 = points[index3];
+
+	// 4点を指定してCatmull-Rom補間
+	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
+}
+
 
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {

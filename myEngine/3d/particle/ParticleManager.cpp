@@ -195,7 +195,7 @@ ParticleManager::TestParticle ParticleManager::MakeNewParticle(
 	particle.lifeTime = distLifeTime(randomEngine);
 	particle.currentTime = 0.0f;
 
-	return particle;
+	return std::move(particle);
 }
 
 ParticleManager::MaterialData ParticleManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)

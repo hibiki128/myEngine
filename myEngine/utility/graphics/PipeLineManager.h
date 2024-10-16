@@ -35,7 +35,7 @@ public:
     /// <summary>
     /// グラフィックスパイプラインの作成
     /// </summary>
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,BlendMode blendMode_);
     
     /// <summary>
     /// パーティクル用のルートシグネチャの作成
@@ -45,34 +45,13 @@ public:
     /// <summary>
     /// パーティクル用パイプラインの作成
     /// </summary>
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateParticleGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
-
-    /// <summary>
-   /// Primitive用のルートシグネチャの作成
-   /// </summary>
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> CreatePrimitiveRootSignature(Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
-
-    /// <summary>
-    /// Primitive用パイプラインの作成
-    /// </summary>
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreatePrimitiveGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateParticleGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_);
 
     /// <summary>
     /// 共通描画設定
     /// </summary>
     void DrawCommonSetting(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
 
-    /// <summary>
-    /// セッター (静的メンバ関数)
-    /// </summary>
-    /// <param name="blendMode"></param>
-    static void SetBlendMode(BlendMode blendMode) {
-        blendMode_ = blendMode;
-    }
-
 private:
     DirectXCommon* dxCommon_;
-
-    // 静的なブレンドモード変数
-    static BlendMode blendMode_;
 };

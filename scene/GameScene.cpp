@@ -11,6 +11,7 @@ void GameScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
+
 }
 
 void GameScene::Finalize()
@@ -20,11 +21,14 @@ void GameScene::Finalize()
 
 void GameScene::Update()
 {
+
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneManager_->ChangeScene("TITLE");
 	}
 	//----------------------
+
+	
 }
 
 void GameScene::Draw()
@@ -34,13 +38,12 @@ void GameScene::Draw()
 	/// 3Dオブジェクトの描画準備
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-
+	
 	//-----------------------------
 
 	/// Spriteの描画準備

@@ -6,6 +6,7 @@
 #include "SpriteCommon.h"
 #include "ParticleCommon.h"
 
+
 class GameScene : public BaseScene
 {
 public: // メンバ関数
@@ -35,4 +36,5 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+	
 };

@@ -27,19 +27,19 @@ void Framework::Initialize()
 
 	///---------WinApp--------
 	// WindowsAPIの初期化
-	winApp = std::make_unique<WinApp>();
+	winApp = WinApp::GetInstance();
 	winApp->Initialize();
 	///-----------------------
 
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
 	dxCommon = DirectXCommon::GetInstance();
-	dxCommon->Initialize(winApp.get());
+	dxCommon->Initialize(winApp);
 	///--------------------------------
 
 	/// ---------ImGui---------
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->Initialize(winApp.get());
+	ImGuiManager::GetInstance()->Initialize(winApp);
 #endif // _DEBUG
 	/// -----------------------
 
@@ -52,7 +52,7 @@ void Framework::Initialize()
 	///----------Input-----------
 	// 入力の初期化
 	input = Input::GetInstance();
-	input->Initialize(winApp.get());
+	input->Initialize(winApp);
 	///--------------------------
 
 	///-----------TextureManager----------

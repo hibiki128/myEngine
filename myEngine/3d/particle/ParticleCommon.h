@@ -33,6 +33,8 @@ public:
 	/// </summary>
 	void DrawCommonSetting();
 
+	void SetBlendMode();
+
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
 private:
 	DirectXCommon* dxCommon_;
@@ -42,5 +44,8 @@ private:
 
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+
+	BlendMode blendMode_ = BlendMode::kNormal;
+
 };
 

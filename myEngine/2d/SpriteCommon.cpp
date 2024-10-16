@@ -24,7 +24,7 @@ void SpriteCommon::Initialize()
 	psoManager_ = std::make_unique<PipeLineManager>();
 	psoManager_->Initialize(dxCommon_);
 	rootSignature = psoManager_->CreateRootSignature(rootSignature);
-	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature);
+	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature,blendMode_);
 }
 
 void SpriteCommon::DrawCommonSetting()
@@ -32,8 +32,7 @@ void SpriteCommon::DrawCommonSetting()
 	psoManager_->DrawCommonSetting(graphicsPipelineState,rootSignature);
 }
 
-void SpriteCommon::ChangeBlendMode(BlendMode blendMode)
+void SpriteCommon::SetBlendMode(BlendMode blendMode)
 {
-	PipeLineManager::SetBlendMode(blendMode);
-	Initialize();
+	psoManager_->CreateGraphicsPipeLine(graphicsPipelineState, rootSignature, blendMode);
 }

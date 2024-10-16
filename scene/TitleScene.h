@@ -5,6 +5,10 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
+#include"line/LineManager.h"
+#include"ViewProjection.h"
+#include"memory"
+#include"DebugCamera.h"
 
 class TitleScene :public BaseScene
 {
@@ -36,5 +40,12 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+	std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
+	ViewProjection vP_;
+	std::unique_ptr<LineManager> line_;
+	std::vector<Vector3>start;
+	std::vector<Vector3>end;
+	bool isDebugCameraActive_ = false;
+	int move = 0;
 };
 

@@ -66,7 +66,7 @@ protected:
 	Object3dCommon* object3dCommon = nullptr;
 	ParticleCommon* particleCommon = nullptr;
 	DirectXCommon* dxCommon = nullptr;
-	std::unique_ptr<WinApp> winApp;
+	WinApp* winApp;
 	SrvManager* srvManager=nullptr;
 	bool endRequest_;
 	// シーンファクトリー

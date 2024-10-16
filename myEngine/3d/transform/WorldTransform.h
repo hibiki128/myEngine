@@ -59,6 +59,7 @@ public:
 	/// <returns></returns>
 	const Microsoft::WRL::ComPtr<ID3D12Resource>& GetConstBuffer() const { return constBuffer_; }
 
+	void UpdateWorld();
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
