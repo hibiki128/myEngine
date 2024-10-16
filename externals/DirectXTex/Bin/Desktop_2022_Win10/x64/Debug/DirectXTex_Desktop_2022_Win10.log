@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿  DirectXTexUtil.cpp
   BC.cpp
   BC4BC5.cpp
@@ -20,3 +21,6 @@
   DirectXTexTGA.cpp
   DirectXTexWIC.cpp
   DirectXTex_Desktop_2022_Win10.vcxproj -> C:\Users\hagiw\授業課題\2年後期\TD2\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
+=======
+﻿  DirectXTex_Desktop_2022_Win10.vcxproj -> C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3

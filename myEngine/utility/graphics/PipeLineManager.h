@@ -1,4 +1,5 @@
 #pragma once
+<<<<<<< HEAD
 #include "wrl.h"
 #include "d3d12.h"
 #include <DirectXCommon.h>
@@ -76,3 +77,42 @@ private:
     // 静的なブレンドモード変数
     static BlendMode blendMode_;
 };
+=======
+#include"wrl.h"
+#include "d3d12.h"
+#include <DirectXCommon.h>
+
+class PipeLineManager
+{
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// ルートシグネチャの作成
+	/// </summary>
+	void CreateRootSignature();
+
+	/// <summary>
+	/// グラフィックスパイプラインの作成
+	/// </summary>
+	void CreateGraphicsPipeLine();
+
+	/// <summary>
+	/// 共通描画設定
+	/// </summary>
+	void DrawCommonSetting();
+private:
+	DirectXCommon* dxCommon_;
+
+	// ルートシグネチャ
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+
+	// グラフィックスパイプライン
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+};
+
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3

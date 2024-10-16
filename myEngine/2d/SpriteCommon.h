@@ -15,12 +15,15 @@ private:
 private:
 	DirectXCommon* dxCommon_;
 	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
+<<<<<<< HEAD
 
 	// ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+=======
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 
 public: // メンバ関数
 

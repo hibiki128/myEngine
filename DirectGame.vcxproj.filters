@@ -279,6 +279,15 @@
     <ClCompile Include="myEngine\3d\line\LineManager.cpp">
       <Filter>ソース ファイル\myEngine\3d\line</Filter>
     </ClCompile>
+    <ClCompile Include="myEngine\3d\ViewProjection.cpp">
+      <Filter>ソース ファイル\myEngine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\graphics\ParticleManager.cpp">
+      <Filter>ソース ファイル\myEngine\utility\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
+      <Filter>ソース ファイル\myEngine\utility\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -445,6 +454,15 @@
     </ClInclude>
     <ClInclude Include="myEngine\3d\line\LineManager.h">
       <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\ViewProjection.h">
+      <Filter>ヘッダー ファイル\myEngine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\graphics\ParticleManager.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

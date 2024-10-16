@@ -4,18 +4,25 @@
 #include "Model.h"
 #include "string"
 #include "vector"
+<<<<<<< HEAD
 #include "Vector2.h" 
+=======
+#include "Vector2.h"
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 #include "Vector3.h"
 #include "Vector4.h"
 #include"WorldTransform.h"
 #include"wrl.h"
 #include"ViewProjection.h"
+<<<<<<< HEAD
 #include"ObjColor.h"
 
 enum class LightType {
 	Directional,
 	Point,
 };
+=======
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 
 class ModelCommon;
 class Object3dCommon;
@@ -98,7 +105,11 @@ private: // メンバ変数
 
 	Model* model = nullptr;
 	ModelCommon* modelCommon = nullptr;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	// 移動させる用各SRT
 	Vector3 position = { 0.0f,0.0f,0.0f };
 	Vector3 rotation = { 0.0f,0.0f,0.0f };
@@ -119,7 +130,11 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
+<<<<<<< HEAD
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
+=======
+	void Draw(const WorldTransform& worldTransform,const ViewProjection& viewProjection);
+>>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 
 	/// <summary>
 	/// getter
