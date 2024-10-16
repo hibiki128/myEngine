@@ -103,7 +103,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleManager.cpp" />
     <ClCompile Include="myEngine\utility\edit\LevelData.cpp" />
@@ -113,10 +112,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\3d\particle\ParticleEmitter.cpp" />
     <ClCompile Include="myEngine\3d\camera\ViewProjection.cpp" />
     <ClCompile Include="myEngine\3d\transform\WorldTransform.cpp" />
-=======
-    <ClCompile Include="myEngine\3d\ViewProjection.cpp" />
-    <ClCompile Include="myEngine\3d\WorldTransform.cpp" />
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
     <ClCompile Include="myEngine\core\Framework.cpp" />
     <ClCompile Include="myEngine\audio\Audio.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
@@ -140,10 +135,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\3d\model\Object3dCommon.cpp" />
     <ClCompile Include="myEngine\2d\Sprite.cpp" />
     <ClCompile Include="myEngine\2d\SpriteCommon.cpp" />
-<<<<<<< HEAD
-=======
-    <ClCompile Include="myEngine\utility\graphics\ParticleManager.cpp" />
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
     <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp" />
     <ClCompile Include="myEngine\utility\graphics\SrvManager.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp" />
@@ -169,7 +160,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <ClInclude Include="myEngine\3d\particle\ParticleCommon.h" />
     <ClInclude Include="myEngine\3d\particle\ParticleManager.h" />
     <ClInclude Include="myEngine\utility\edit\LevelData.h" />
@@ -179,10 +169,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\3d\particle\ParticleEmitter.h" />
     <ClInclude Include="myEngine\3d\camera\ViewProjection.h" />
     <ClInclude Include="myEngine\3d\transform\WorldTransform.h" />
-=======
-    <ClInclude Include="myEngine\3d\ViewProjection.h" />
-    <ClInclude Include="myEngine\3d\WorldTransform.h" />
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
     <ClInclude Include="myEngine\core\Framework.h" />
     <ClInclude Include="myEngine\audio\Audio.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
@@ -212,10 +198,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\3d\model\Object3dCommon.h" />
     <ClInclude Include="myEngine\2d\Sprite.h" />
     <ClInclude Include="myEngine\2d\SpriteCommon.h" />
-<<<<<<< HEAD
-=======
-    <ClInclude Include="myEngine\utility\graphics\ParticleManager.h" />
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
     <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h" />
     <ClInclude Include="myEngine\utility\graphics\SrvManager.h" />
     <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h" />

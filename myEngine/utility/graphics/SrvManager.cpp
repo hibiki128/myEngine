@@ -3,13 +3,7 @@
 
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
-<<<<<<< HEAD
 SrvManager* SrvManager::instance = nullptr;
-=======
-void SrvManager::Initialize()
-{
-	this->dxCommon = DirectXCommon::GetInstance();
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 
 SrvManager* SrvManager::GetInstance()
 {

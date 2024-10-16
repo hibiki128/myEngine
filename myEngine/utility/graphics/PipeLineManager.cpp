@@ -1,7 +1,6 @@
 #include "PipeLineManager.h"
 #include "Logger.h"
 
-<<<<<<< HEAD
 // 静的メンバ変数の定義
 BlendMode PipeLineManager::blendMode_ = BlendMode::kNormal;
 
@@ -11,14 +10,6 @@ void PipeLineManager::Initialize(DirectXCommon* dxCommon)
 }
 
 Microsoft::WRL::ComPtr<ID3D12RootSignature> PipeLineManager::CreateRootSignature(Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature)
-=======
-void PipeLineManager::Initialize()
-{
-	dxCommon_ = DirectXCommon::GetInstance();
-}
-
-void PipeLineManager::CreateRootSignature()
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 {
 	HRESULT hr;
 	// RootSignature作成
@@ -34,11 +25,7 @@ void PipeLineManager::CreateRootSignature()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// RootParameter作成。複数設定できるので配列。
-<<<<<<< HEAD
 	D3D12_ROOT_PARAMETER rootParameters[6] = {};
-=======
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // VertexShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0とバインド
@@ -52,15 +39,12 @@ void PipeLineManager::CreateRootSignature()
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[3].Descriptor.ShaderRegister = 1; // レジスタ番号1とバインド
-<<<<<<< HEAD
 	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[4].Descriptor.ShaderRegister = 2; // レジスタ番号1とバインド
 	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[5].Descriptor.ShaderRegister = 3; // レジスタ番号1とバインド
-=======
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
 
@@ -89,23 +73,12 @@ void PipeLineManager::CreateRootSignature()
 	hr = dxCommon_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
-<<<<<<< HEAD
 	return rootSignature;
 }
 
 Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature)
 {
 
-=======
-
-}
-
-void PipeLineManager::CreateGraphicsPipeLine()
-{
-
-	CreateRootSignature();
-
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	HRESULT hr;
 
 	// InputLayout
@@ -129,7 +102,6 @@ void PipeLineManager::CreateGraphicsPipeLine()
 	// BlendStageの設定
 	D3D12_BLEND_DESC blendDesc{};
 	// すべての色要素を書き込む
-<<<<<<< HEAD
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
@@ -170,10 +142,6 @@ void PipeLineManager::CreateGraphicsPipeLine()
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 
-=======
-	blendDesc.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	// ResiterzerStateの設定
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// 裏面（時計回り）を表示しない
@@ -181,22 +149,12 @@ void PipeLineManager::CreateGraphicsPipeLine()
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// Shaderをコンパイルする
-<<<<<<< HEAD
 	IDxcBlob* vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
 	IDxcBlob* pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
-=======
-	IDxcBlob* vertexShaderBlob = dxCommon_->CompileShader(L"./Resources/shaders/Object3D.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-
-	IDxcBlob* pixelShaderBlob = dxCommon_->CompileShader(L"./Resources/shaders/Object3D.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
-
-
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	///=========DepthStencilStateの設定==========
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	// Depthの機能を有効化する
@@ -232,7 +190,6 @@ void PipeLineManager::CreateGraphicsPipeLine()
 	hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
-<<<<<<< HEAD
 	return graphicsPipelineState;
 }
 
@@ -476,11 +433,6 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreatePrimitiveGrap
 }
 
 void PipeLineManager::DrawCommonSetting(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature)
-=======
-}
-
-void PipeLineManager::DrawCommonSetting()
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 {
 	// RootSignatureを設定。PSOに設定しているけど別途設定が必要
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());

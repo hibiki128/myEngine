@@ -10,13 +10,8 @@ void Sprite::Initialize(std::string& textureFilePath, Vector2 position, Vector4 
 
 	fullpath = directoryPath_ + "/" + textureFilePath;
 
-	
-
-<<<<<<< HEAD
-=======
 	TextureManager::GetInstance()->LoadTexture(fullpath);
 
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	CreateVartexData();
 
 	CreateMaterial();

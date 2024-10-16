@@ -45,11 +45,7 @@ void Framework::Initialize()
 
 	///--------SRVManager--------
 	// SRVマネージャの初期化
-<<<<<<< HEAD
 	srvManager = SrvManager::GetInstance();
-=======
-	srvManager = std::make_unique<SrvManager>();
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	srvManager->Initialize();
 	///--------------------------
 
@@ -60,19 +56,11 @@ void Framework::Initialize()
 	///--------------------------
 
 	///-----------TextureManager----------
-<<<<<<< HEAD
 	TextureManager::GetInstance()->Initialize(srvManager);
 	///-----------------------------------
 
 	///-----------ModelManager------------
 	ModelManager::GetInstance()->Initialize(srvManager);
-=======
-	TextureManager::GetInstance()->Initialize(srvManager.get());
-	///-----------------------------------
-
-	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(srvManager.get());
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	///----------------------------------
 
 	///----------SpriteCommon------------
@@ -123,10 +111,7 @@ void Framework::Finalize()
 	input->Finalize();
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
-<<<<<<< HEAD
 	particleCommon->Finalize();
-=======
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	dxCommon->Finalize();
 	delete sceneFactory_;
 }

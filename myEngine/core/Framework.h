@@ -64,16 +64,10 @@ protected:
 	SceneManager* sceneManager_ = nullptr;
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
-<<<<<<< HEAD
 	ParticleCommon* particleCommon = nullptr;
 	DirectXCommon* dxCommon = nullptr;
 	std::unique_ptr<WinApp> winApp;
 	SrvManager* srvManager=nullptr;
-=======
-	DirectXCommon* dxCommon = nullptr;
-	std::unique_ptr<WinApp> winApp;
-	std::unique_ptr<SrvManager> srvManager;
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	bool endRequest_;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

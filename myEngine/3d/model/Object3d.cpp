@@ -27,9 +27,6 @@ void Object3d::Initialize(const std::string& filePath)
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
 
-	// モデルを検索してセットする
-	model = ModelManager::GetInstance()->FindModel(filePath);
-
 	// Transform変数を作る
 	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }
@@ -54,7 +51,6 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 
 }
 
-<<<<<<< HEAD
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)
 {
 	if (color) {
@@ -68,12 +64,6 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	Update(worldTransform, viewProjection);
 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-=======
-void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
-{
-	Update(worldTransform, viewProjection);
-
->>>>>>> 588d19cc7ec69ea69ec2b4e7b1eb2ed8ab6bceb3
 	// wvp用のCBufferの場所を設定
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	if (materialData->enableLighting != 0) {
