@@ -2,7 +2,10 @@
 #include "ImGuiManager.h"
 #include "SceneManager.h"
 #include "ParticleManager.h"
+#include <ModelManager.h>
 #include"SceneManager.h"
+#include"ModelManager.h"
+#include "application/CollisionManager.h"
 
 void GameScene::Initialize()
 {
@@ -15,16 +18,14 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
-
+	audio_->StopWave(BGMSet_);
 }
 
 void GameScene::Update()
 {
-	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneManager_->ChangeScene("TITLE");
 	}
-	//----------------------
 }
 
 void GameScene::Draw()
@@ -34,7 +35,7 @@ void GameScene::Draw()
 	/// 3Dオブジェクトの描画準備
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	
+
 	//--------------------------
 
 	/// Particleの描画準備

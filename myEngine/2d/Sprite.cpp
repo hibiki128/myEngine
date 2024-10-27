@@ -3,7 +3,7 @@
 #include "math/myMath.h"
 #include "TextureManager.h"
 
-void Sprite::Initialize(std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
+void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// 引数で受け取ってメンバ変数に記録する
 	spriteCommon_ = SpriteCommon::GetInstance();

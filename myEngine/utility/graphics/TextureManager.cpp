@@ -46,6 +46,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
     srvManager_->CreateSRVforTexture2D(textureData.srvIndex, textureData.resource.Get(), textureData.metadata.format, UINT(textureData.metadata.mipLevels));
 }
 
+
 void TextureManager::Initialize(SrvManager* srvManager)
 {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -76,15 +77,15 @@ void TextureManager::Finalize()
 
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath)
 {
-	// unordered_mapを使って直接インデックスを取得
-	auto it = textureDatas.find(filePath);
-	if (it != textureDatas.end()) {
-		return it->second.srvIndex;
-	}
+    // unordered_mapを使って直接インデックスを取得
+    auto it = textureDatas.find(filePath);
+    if (it != textureDatas.end()) {
+        return it->second.srvIndex;
+    }
 
-	// 見つからない場合はassertでエラーにする
-	assert(0);
-	return 0;
+    // 見つからない場合はassertでエラーにする
+    assert(0);
+    return 0;
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)

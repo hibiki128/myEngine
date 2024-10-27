@@ -19,19 +19,21 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneManager_->ChangeScene("GAME");
 	}
-	//----------------------
 }
 
 void TitleScene::Draw()
 {
 	/// -------描画処理開始-------
 
+	/// Spriteの描画準備
+	spCommon_->DrawCommonSetting();
+	//-----Spriteの描画開始-----
 
-	/// 3Dオブジェクトの描画準備
+	//------------------------
+
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 
@@ -42,13 +44,6 @@ void TitleScene::Draw()
 	//------Particleの描画開始-------
 
 	//-----------------------------
-
-	/// Spriteの描画準備
-	spCommon_->DrawCommonSetting();
-	//-----Spriteの描画開始-----
-
-	//------------------------
-
 
 
 	/// ----------------------------------

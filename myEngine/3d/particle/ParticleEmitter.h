@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include "WorldTransform.h"  // Transformの定義があるヘッダーをインクルード
 #include "ParticleManager.h" // ParticleManagerのインクルード
@@ -6,6 +7,7 @@
 #include "imgui.h" // ImGuiのインクルード
 #endif // _DEBUG
 #include "Object3d.h"
+#include"GlobalVariables.h"
 
 class ParticleEmitter {
 public:
@@ -23,9 +25,17 @@ public:
 
     void RenderImGui(); // ImGui用の関数を追加
 
+    void SetPosition(Vector3& position) { transform_.translation_ = position; }
+    void SetScale(Vector3& scale) { transform_.scale_ = scale; }
+    void SetCount(int& count) { count_ = count; }
+
 private:
     // パーティクルを発生させるEmit関数
     void Emit();
+
+    void ApplyGlobalVariables();
+    void SetValue();
+    void AddItem();
 
     std::string name_;          // パーティクルの名前
     WorldTransform transform_;       // 位置や回転などのトランスフォーム
@@ -38,6 +48,12 @@ private:
     Vector3 velocityMax_;       // 速度の最大値
     float lifeTimeMin_;         // ライフタイムの最小値
     float lifeTimeMax_;         // ライフタイムの最大値
+    Vector3 startScale_;
+    Vector3 endScale_;
+    Vector3 startAcce_;
+    Vector3 endAcce_;
+    Vector3 startRote_ = {};
+    Vector3 endRote_ = {};
 
     float deltaTime = 1.0f / 60.0f;
 
@@ -47,4 +63,8 @@ private:
 
     std::unique_ptr<Object3d> emitterObj;
     std::unique_ptr<ParticleManager> Manager_;
+
+    GlobalVariables* globalVariables = nullptr;
+    const char* groupName = nullptr;
+
 };

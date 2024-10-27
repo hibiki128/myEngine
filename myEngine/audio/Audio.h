@@ -100,7 +100,7 @@ public:
 	/// </summary>
 	/// <param name="filename"></param>
 	/// <returns></returns>
-	uint32_t LoadWave(const char* filename);
+	uint32_t LoadWave(const std::string& filename);
 
 	/// <summary>
 	/// 音声データ解放
@@ -113,7 +113,7 @@ public:
 	/// </summary>
 	/// <param name="xAudio2"></param>
 	/// <param name="soundData"></param>
-	void PlayWave(uint32_t soundIndex, float volume);
+	void PlayWave(uint32_t soundIndex, float volume, bool loop = false);
 
 	/// <summary>
 	/// 音声停止
@@ -150,4 +150,3 @@ private:
 	uint16_t blockAlign;
 	uint16_t bitsPerSample;
 };
-

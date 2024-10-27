@@ -68,13 +68,19 @@ private:
 		MaterialData material;
 	};
 
-	struct TestParticle {
+	struct Particle {
 		WorldTransform transform; // 位置
 		Vector3 velocity;  // 速度
+		Vector3 Acce;
 		Vector4 color;     // 色
 		float lifeTime;    // ライフタイム
 		float currentTime; // 現在の時間
-		Vector3 size;        // 現在のサイズ
+		Vector3 startScale;
+		Vector3 endScale;
+		Vector3 startAcce;
+		Vector3 endAcce;
+		Vector3 startRote;
+		Vector3 endRote;
 	};
 
 	// マテリアルデータ
@@ -90,7 +96,7 @@ private:
 		// マテリアルデータ
 		MaterialData material;
 		// パーティクルのリスト (std::list<Particle> 型)
-		std::list<TestParticle> particles;
+		std::list<Particle> particles;
 		// インスタンシングデータ用SRVインデックス
 		uint32_t instancingSRVIndex = 0;
 		// インスタンシングリソース
@@ -133,7 +139,7 @@ private:
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
-	std::list<TestParticle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale, const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax);
+	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale, const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale, const Vector3& particleEndScale,const Vector3& startAcce,const Vector3& endAcce,const Vector3& startRote,const Vector3& endRote);
 
 
 private:
@@ -159,10 +165,11 @@ private:
 	/// </summary>
 	void CreateMaterial();
 
-	TestParticle MakeNewParticle(std::mt19937& randomEngine,
+	Particle MakeNewParticle(std::mt19937& randomEngine,
 		const Vector3& translate,
 		const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax, 
-		float lifeTimeMin, float lifeTimeMax);
+		float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale,const Vector3& particleEndScale,
+		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote);
 };
 

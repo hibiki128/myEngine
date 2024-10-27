@@ -21,7 +21,7 @@ public: // メンバ関数
 	/// <param name="anchorpoint">アンカーポイント</param>
 	/// <param name="isFlipX">左右反転</param>
 	/// <param name="isFlipY">上下反転</param>
-	void Initialize(std::string& textureFilePath,Vector2 position,Vector4 color={1,1,1,1},Vector2 anchorpoint={0.0f,0.0f},bool isFlipX = false,bool isFlipY = false);
+	void Initialize(const std::string& textureFilePath,Vector2 position,Vector4 color={1,1,1,1},Vector2 anchorpoint={0.0f,0.0f},bool isFlipX = false,bool isFlipY = false);
 
 	/// <summary>
 	/// 更新
