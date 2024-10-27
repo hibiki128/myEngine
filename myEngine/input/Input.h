@@ -4,6 +4,7 @@
 #include "windows.h"
 #include "wrl.h"
 #include "WinApp.h"
+#include"Vector2.h"
 
 // 入力
 class Input
@@ -97,6 +98,8 @@ public: // メンバ関数
     /// </summary>
     /// <returns>ホイールの回転量</returns>
     int GetWheel() const { return wheelState; }
+
+    Vector2 GetMousePos();
 
 private: // メンバ変数
     // キーボードのデバイス

@@ -10,21 +10,21 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
+	
 	line_ = std::make_unique<LineManager>();
 	line_->Initialize(SrvManager::GetInstance());
-	line_->CreateParticleGroup("line", "plane.obj");
+	line_->CreateParticleGroup("line0", "plane.obj");
 	vP_.Initialize();
-	// startとendの初期化
-	start.resize(1); // 要素数10のベクトルをリサイズ
-	end.resize(1);   // 要素数10のベクトルをリサイズ
+	
+	controlPoints_ = {
+		{0,  0,  600},
+		{100, 100, 610},
+		{100, 150, 430},
+		{200, 150, 430},
+		{200, 0,  600},
+		{300, 0,  600},
+	};
 
-	debugCamera_ = std::make_unique<DebugCamera>(1280, 720);
-	debugCamera_->Initialize();
-
-	for (int i = 0; i < 1; ++i) {
-		start[i] = Vector3(0.0f + i, 0.0f, 0.0f); // startのxを+1ずつ増やす
-		end[i] = Vector3(0.5f + i, 0.5f + i, 0.0f);   // endのxを+1ずつ増やす
-	}
 }
 
 void TitleScene::Finalize()
@@ -34,11 +34,8 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-	move = input_->GetWheel();
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("translate", &vP_.translation_.x, 0.1f);
-	ImGui::Text("isDebugCamera %s", isDebugCameraActive_ ? "true" : "false");
-	ImGui::Text("move %d", move);
 	ImGui::End();
 
 	//-----シーン切り替え-----
@@ -47,23 +44,9 @@ void TitleScene::Update()
 	}
 	//----------------------
 
-	if (input_->TriggerKey(DIK_F1)) {
-		isDebugCameraActive_ = !isDebugCameraActive_;
-	}
+	vP_.UpdateMatrix();
+	LineDraw();
 
-	if (isDebugCameraActive_) {
-		debugCamera_->Update();
-	/*	vP_.matView_ = debugCamera_->GetViewProjection().matView_;
-		vP_.matProjection_ = debugCamera_->GetViewProjection().matProjection_;*/
-		vP_.translation_ = debugCamera_->GetViewProjection().translation_;
-		vP_.rotation_ = debugCamera_->GetViewProjection().rotation_;
-		vP_.TransferMatrix();
-	}
-	else {
-		vP_.UpdateMatrix();
-	}
-
-	line_->Update(vP_, start, end);
 }
 
 void TitleScene::Draw()
@@ -96,4 +79,31 @@ void TitleScene::Draw()
 	ImGuiManager::GetInstance()->Draw();
 #endif // _DEBUG
 	/// -------描画処理終了-------
+}
+
+void TitleScene::LineDraw()
+{
+	// 線分の数
+	const size_t segmentCount = 100;
+
+	// 始点と終点のリストを作成
+	std::vector<Vector3> startPoints;
+	std::vector<Vector3> endPoints;
+
+	// 線分の数+1個分の頂点座標を計算
+	for (size_t i = 0; i < segmentCount; i++) {
+		float t1 = static_cast<float>(i) / segmentCount;
+		float t2 = static_cast<float>(i + 1) / segmentCount;
+
+		// Catmull-Rom 補間で始点と終点を計算
+		Vector3 startPoint = CatmullRomPosition(controlPoints_, t1);
+		Vector3 endPoint = CatmullRomPosition(controlPoints_, t2);
+
+		// 始点と終点をそれぞれのベクターに追加
+		startPoints.push_back(startPoint);
+		endPoints.push_back(endPoint);
+	}
+
+	// LineManager を使って全てのラインを更新
+	line_->Update(vP_, startPoints, endPoints);
 }

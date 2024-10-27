@@ -18,6 +18,7 @@ void ParticleCommon::Finalize()
 
 void ParticleCommon::Initialize(DirectXCommon* dxCommon)
 {
+	assert(dxCommon);
 	dxCommon_ = dxCommon;
 	psoManager_ = std::make_unique<PipeLineManager>();
 	psoManager_->Initialize(dxCommon_);

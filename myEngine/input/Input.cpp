@@ -98,3 +98,16 @@ bool Input::TriggerMouseButton(int buttonNumber)
     // 指定マウスボタンを押した瞬間trueを返す
     return !(mouseStatePre.rgbButtons[buttonNumber] & 0x80) && (mouseState.rgbButtons[buttonNumber] & 0x80);
 }
+
+Vector2 Input::GetMousePos()
+{
+    // マウスの現在の位置を取得
+    POINT cursorPos;
+    GetCursorPos(&cursorPos);
+
+    // ウィンドウ内のマウス座標に変換
+    ScreenToClient(WinApp::GetInstance()->GetHwnd(), &cursorPos);
+
+    // POINTからVector2へ変換して返す
+    return Vector2(static_cast<float>(cursorPos.x), static_cast<float>(cursorPos.y));
+}

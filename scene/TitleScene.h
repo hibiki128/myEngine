@@ -34,18 +34,19 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+
+	void LineDraw();
+
 private:
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-	std::unique_ptr<DebugCamera> debugCamera_ = nullptr;
 	ViewProjection vP_;
+	
 	std::unique_ptr<LineManager> line_;
-	std::vector<Vector3>start;
-	std::vector<Vector3>end;
-	bool isDebugCameraActive_ = false;
-	int move = 0;
+
+	std::vector<Vector3> controlPoints_;
 };
 

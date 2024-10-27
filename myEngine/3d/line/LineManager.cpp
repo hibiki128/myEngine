@@ -13,59 +13,60 @@ void LineManager::Initialize(SrvManager* srvManager)
 
 void LineManager::Update(const ViewProjection& viewProjection, const std::vector<Vector3>& startPoints, const std::vector<Vector3>& endPoints)
 {
-	// startPoints と endPoints のサイズが一致するか確認
 	assert(startPoints.size() == endPoints.size() && "startPoints and endPoints must have the same number of elements");
+
+	// モデルの間隔を定義
+	const float modelPadding = 0.5f;  // モデル同士の間隔を定義
 
 	for (auto& [groupName, lineGroup] : lineGroups) {
 		uint32_t numInstance = 0;
-
-		// まずは instanceCount をリセット
 		lineGroup.instanceCount = 0;
 
-		// lines のサイズを startPoints のサイズに合わせて調整
-		size_t previousSize = lineGroup.lines.size(); // 前のサイズを保存
+		// lines のサイズを startPoints に合わせて調整
+		auto lineIterator = lineGroup.lines.begin();
+		size_t previousSize = lineGroup.lines.size();
+
 		if (previousSize > startPoints.size()) {
-			// lines の要素数が startPoints のサイズを上回る場合、余分な要素を削除
-			lineGroup.lines.resize(startPoints.size());
+			// lines の要素数が startPoints のサイズを超えている場合は削除
+			auto toErase = lineGroup.lines.begin();
+			std::advance(toErase, startPoints.size());
+			lineGroup.lines.erase(toErase, lineGroup.lines.end());
 		}
 		else {
-			// lines のサイズを startPoints のサイズに合わせて追加
+			// 足りない分を追加
 			while (lineGroup.lines.size() < startPoints.size()) {
-				Line newLine; // Line クラスのインスタンスを生成
+				Line newLine;
 				newLine.transform.Initialize();
-				newLine.transform.scale_ = { 0.5f,0.5f,0.5f };
-				newLine.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // デフォルトの色を設定（必要に応じて変更）
+				newLine.transform.scale_ = { 0.5f, 0.5f, 0.5f };
+				newLine.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);  // デフォルトの色
 				lineGroup.lines.push_back(newLine);
 			}
 		}
 
 		// 各ラインの更新
-		auto lineIterator = lineGroup.lines.begin();
+		lineIterator = lineGroup.lines.begin();  // イテレータをリセット
 		for (size_t i = 0; i < startPoints.size(); ++i) {
-			if (lineIterator == lineGroup.lines.end()) {
-				// lines の要素が不足している場合、処理を終了
-				break;
-			}
-
 			const Vector3& startPoint = startPoints[i];
 			const Vector3& endPoint = endPoints[i];
 
-			// 中点の計算（始点と終点の中間点を求める）
-			Vector3 midPoint = (startPoint + endPoint) * 0.5f;
-			lineIterator->transform.translation_ = midPoint;
-
-			// スケールの計算（始点と終点の距離を求めてスケールに反映）
+			// ラインのベクトル
 			Vector3 lineVector = endPoint - startPoint;
-			float length = lineVector.Length(); // 2点間の距離
-			lineIterator->transform.scale_ = Vector3(length, 1.0f, 1.0f); // X方向に線の長さを反映、他の軸は0.2
+			float length = lineVector.Length();
 
-			// クォータニオンで回転の計算（始点から終点への回転を計算）
+			// モデルの配置を調整するための距離を計算
+			Vector3 midPoint = (startPoint + endPoint) * 0.5f;
+			midPoint += lineVector.Normalize() * (modelPadding * 0.5f);  // 間隔分の補正
+
+			// モデルのスケールと位置の調整
+			lineIterator->transform.translation_ = midPoint;
+			lineIterator->transform.scale_ = Vector3(length - modelPadding, 1.0f, 1.0f);  // X方向に線の長さを反映し、間隔を減算
+
+			// 回転を設定
 			Quaternion rotationQuat;
-			rotationQuat.SetFromTo(Vector3(1.0f, 0.0f, 0.0f), lineVector.Normalize()); // X軸方向から目的の方向への回転を計算
-			Vector3 eulerRotation = rotationQuat.ToEulerAngles(); // オイラー角に変換して設定
-			lineIterator->transform.rotation_ = eulerRotation;
+			rotationQuat.SetFromTo(Vector3(1.0f, 0.0f, 0.0f), lineVector.Normalize());
+			lineIterator->transform.rotation_ = rotationQuat.ToEulerAngles();
 
-			// アフィン行列（ワールド行列）を作成
+			// ワールド行列を作成
 			Matrix4x4 worldMatrix = MakeAffineMatrix(
 				lineIterator->transform.scale_,
 				lineIterator->transform.rotation_,
@@ -80,14 +81,14 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 			if (numInstance < kNumMaxInstance) {
 				instancingData[numInstance].WVP = worldViewProjectionMatrix;
 				instancingData[numInstance].World = worldMatrix;
-				instancingData[numInstance].color = lineIterator->color; // colorも更新
+				instancingData[numInstance].color = lineIterator->color;
 				++numInstance;
 			}
 
-			// ライン処理が終わったら instanceCount を+1
+			// instanceCount の更新
 			lineGroup.instanceCount++;
 
-			// 次のライン要素に進む
+			// 次のラインに進む
 			++lineIterator;
 		}
 
