@@ -3,7 +3,7 @@
 #include "math/myMath.h"
 #include "TextureManager.h"
 
-void Sprite::Initialize(std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
+void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// 引数で受け取ってメンバ変数に記録する
 	spriteCommon_ = SpriteCommon::GetInstance();
@@ -57,19 +57,15 @@ void Sprite::Update()
 	// 1枚目の三角形
 	vertexData[0].position = { left,bottom,0.0f,1.0f }; // 左下
 	vertexData[0].texcoord = { tex_left,tex_bottom };
-	vertexData[0].normal = { 0.0f,0.0f,-1.0f };
 
 	vertexData[1].position = { left,top,0.0f,1.0f }; // 左上
 	vertexData[1].texcoord = { tex_left,tex_top };
-	vertexData[1].normal = { 0.0f,0.0f,-1.0f };
 
 	vertexData[2].position = { right,bottom,0.0f,1.0f }; // 右下
 	vertexData[2].texcoord = { tex_right,tex_bottom };
-	vertexData[2].normal = { 0.0f,0.0f,-1.0f };
 
 	vertexData[3].position = { right,top,0.0f,1.0f }; // 右上
 	vertexData[3].texcoord = { tex_right,tex_top };
-	vertexData[3].normal = { 0.0f,0.0f,-1.0f };
 	///==========================================================
 
 	// インデックスリソースにデータを書き込む（sprite用）
@@ -94,6 +90,9 @@ void Sprite::Update()
 
 void Sprite::Draw()
 {
+
+	Update();
+
 	// Spriteの描画。変更が必要な物だけ変更する
 	spriteCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView); // VBVを設定
 	// IBVを設定
@@ -154,7 +153,6 @@ void Sprite::CreateMaterial()
 	// 色の設定
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	// Lightingの設定
-	materialData->enableLighting = false;
 	materialData->uvTransform = MakeIdentity4x4();
 }
 

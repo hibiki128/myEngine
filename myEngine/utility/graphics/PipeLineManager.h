@@ -48,6 +48,16 @@ public:
     Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateParticleGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_);
 
     /// <summary>
+    /// ルートシグネチャの作成
+    /// </summary>
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSpriteRootSignature(Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
+
+    /// <summary>
+    /// グラフィックスパイプラインの作成
+    /// </summary>
+    Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateSpriteGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_);
+
+    /// <summary>
     /// 共通描画設定
     /// </summary>
     void DrawCommonSetting(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);

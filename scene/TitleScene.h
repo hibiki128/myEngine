@@ -9,7 +9,8 @@
 #include"ViewProjection.h"
 #include"memory"
 #include"DebugCamera.h"
-
+#include"Sprite.h"
+#include"Object3d.h"
 class TitleScene :public BaseScene
 {
 public: // メンバ関数
@@ -47,6 +48,7 @@ private:
 	
 	std::unique_ptr<LineManager> line_;
 
-	std::vector<Vector3> controlPoints_;
+	// 制御点リスト
+	std::vector<Vector3> controlPoints = { Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) };
 };
 

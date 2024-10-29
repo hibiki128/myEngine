@@ -15,4 +15,14 @@ public:
 
     // クォータニオンをオイラー角に変換
     Vector3 ToEulerAngles() const;
+
+    // クォータニオン同士の掛け算をオーバーロード
+    Quaternion operator*(const Quaternion& q) const {
+        return Quaternion(
+            w * q.w - x * q.x - y * q.y - z * q.z,                      // スカラー成分
+            w * q.x + x * q.w + y * q.z - z * q.y,                      // x成分
+            w * q.y - x * q.z + y * q.w + z * q.x,                      // y成分
+            w * q.z + x * q.y - y * q.x + z * q.w                       // z成分
+        );
+    }
 };

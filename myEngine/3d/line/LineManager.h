@@ -14,7 +14,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(SrvManager* srvManager);
+	void Initialize(const std::string& filename);
 
 	/// <summary>
 	/// 更新
@@ -51,7 +51,6 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	struct MaterialData

@@ -23,8 +23,8 @@ void SpriteCommon::Initialize()
 	dxCommon_ = DirectXCommon::GetInstance();
 	psoManager_ = std::make_unique<PipeLineManager>();
 	psoManager_->Initialize(dxCommon_);
-	rootSignature = psoManager_->CreateRootSignature(rootSignature);
-	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature,blendMode_);
+	rootSignature = psoManager_->CreateSpriteRootSignature(rootSignature);
+	graphicsPipelineState = psoManager_->CreateSpriteGraphicsPipeLine(graphicsPipelineState,rootSignature,blendMode_);
 }
 
 void SpriteCommon::DrawCommonSetting()

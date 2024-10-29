@@ -10,21 +10,10 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
-	
-	line_ = std::make_unique<LineManager>();
-	line_->Initialize(SrvManager::GetInstance());
-	line_->CreateParticleGroup("line0", "plane.obj");
-	vP_.Initialize();
-	
-	controlPoints_ = {
-		{0,  0,  600},
-		{100, 100, 610},
-		{100, 150, 430},
-		{200, 150, 430},
-		{200, 0,  600},
-		{300, 0,  600},
-	};
 
+	line_ = std::make_unique<LineManager>();
+	line_->Initialize("plane.obj");
+	vP_.Initialize();
 }
 
 void TitleScene::Finalize()
@@ -36,6 +25,7 @@ void TitleScene::Update()
 {
 	ImGui::Begin("camera");
 	ImGui::DragFloat3("translate", &vP_.translation_.x, 0.1f);
+	ImGui::DragFloat3("rotate", &vP_.rotation_.x, 0.1f);
 	ImGui::End();
 
 	//-----シーン切り替え-----
@@ -44,8 +34,8 @@ void TitleScene::Update()
 	}
 	//----------------------
 
-	vP_.UpdateMatrix();
 	LineDraw();
+	vP_.UpdateMatrix();
 
 }
 
@@ -83,27 +73,39 @@ void TitleScene::Draw()
 
 void TitleScene::LineDraw()
 {
-	// 線分の数
-	const size_t segmentCount = 100;
+	// ImGuiウィンドウの開始
+	ImGui::Begin("Control Points");
 
-	// 始点と終点のリストを作成
+	// 「Add Control Point」ボタンを作成
+	if (ImGui::Button("Add Control Point")) {
+		// 最後の制御点の位置を基に新たな制御点を追加
+		Vector3 lastPoint = controlPoints.back();
+		controlPoints.push_back(Vector3(lastPoint.x + 1.0f, lastPoint.y + 1.0f, lastPoint.z));
+	}
+
+	// 各制御点の位置を編集可能にする
+	for (size_t i = 0; i < controlPoints.size(); ++i) {
+		std::string label = "Control Point " + std::to_string(i);
+		ImGui::DragFloat3(label.c_str(), &controlPoints[i].x, 0.1f);
+	}
+	ImGui::End();
+
+	// 線分の数（制御点の数 - 1）を計算
+	size_t segmentCount = controlPoints.size() - 1;
+
+	// 始点と終点のリストをクリア
 	std::vector<Vector3> startPoints;
 	std::vector<Vector3> endPoints;
 
-	// 線分の数+1個分の頂点座標を計算
-	for (size_t i = 0; i < segmentCount; i++) {
-		float t1 = static_cast<float>(i) / segmentCount;
-		float t2 = static_cast<float>(i + 1) / segmentCount;
+	// 各制御点ペアに基づいて始点と終点を設定
+	for (size_t i = 0; i < segmentCount; ++i) {
+		Vector3 startPoint = controlPoints[i];
+		Vector3 endPoint = controlPoints[i + 1];
 
-		// Catmull-Rom 補間で始点と終点を計算
-		Vector3 startPoint = CatmullRomPosition(controlPoints_, t1);
-		Vector3 endPoint = CatmullRomPosition(controlPoints_, t2);
-
-		// 始点と終点をそれぞれのベクターに追加
 		startPoints.push_back(startPoint);
 		endPoints.push_back(endPoint);
 	}
 
-	// LineManager を使って全てのラインを更新
+	// LineManagerを使って全てのラインを更新
 	line_->Update(vP_, startPoints, endPoints);
 }

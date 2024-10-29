@@ -4,12 +4,16 @@
 #include"fstream"
 #include <Quaternion.h>
 
-void LineManager::Initialize(SrvManager* srvManager)
+void LineManager::Initialize(const std::string& filename)
 {
 	particleCommon = ParticleCommon::GetInstance();
-	srvManager_ = srvManager;
+	srvManager_ = SrvManager::GetInstance();
 	randomEngine.seed(seedGenerator());
+
+	CreateParticleGroup("line0", filename);
 }
+
+#include <cmath> // M_PIを使用するために必要
 
 void LineManager::Update(const ViewProjection& viewProjection, const std::vector<Vector3>& startPoints, const std::vector<Vector3>& endPoints)
 {
@@ -49,22 +53,23 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 			const Vector3& startPoint = startPoints[i];
 			const Vector3& endPoint = endPoints[i];
 
-			// ラインのベクトル
+			// 中点を求めてtransform.translation_に設定
+			Vector3 midPoint = (startPoint + endPoint) * 0.5f;
+			lineIterator->transform.translation_ = midPoint;
+
+			// 始点から終点までのベクトルを求め、スケールと回転を設定
 			Vector3 lineVector = endPoint - startPoint;
 			float length = lineVector.Length();
 
-			// モデルの配置を調整するための距離を計算
-			Vector3 midPoint = (startPoint + endPoint) * 0.5f;
-			midPoint += lineVector.Normalize() * (modelPadding * 0.5f);  // 間隔分の補正
+			// スケールをX方向に設定
+			lineIterator->transform.scale_ = { length, 1.0f, 1.0f };  // X方向に線の長さを設定
 
-			// モデルのスケールと位置の調整
-			lineIterator->transform.translation_ = midPoint;
-			lineIterator->transform.scale_ = Vector3(length - modelPadding, 1.0f, 1.0f);  // X方向に線の長さを反映し、間隔を減算
+			// 方向ベクトルを正規化し、Z軸からlineVectorへの回転を計算
+			lineVector.Normalize();
+			float angle = atan2(lineVector.y, lineVector.x);  // XY平面での回転角度を計算
 
-			// 回転を設定
-			Quaternion rotationQuat;
-			rotationQuat.SetFromTo(Vector3(1.0f, 0.0f, 0.0f), lineVector.Normalize());
-			lineIterator->transform.rotation_ = rotationQuat.ToEulerAngles();
+			// Z軸を基準に回転を設定
+			lineIterator->transform.rotation_ = { 0.0f, 0.0f, angle };
 
 			// ワールド行列を作成
 			Matrix4x4 worldMatrix = MakeAffineMatrix(
@@ -98,6 +103,7 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 		}
 	}
 }
+
 
 void LineManager::Draw()
 {
@@ -200,7 +206,6 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 {
 	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
-	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行目を格納するもの
 
@@ -227,12 +232,6 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1.0f;
-			normals.push_back(normal);
-		}
 		else if (identifier == "f") {
 			VertexData triangle[3];
 			// 面は三角形限定。その他は未対応
@@ -250,10 +249,9 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+				VertexData vertex = { position,texcoord };
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
+				triangle[faceVertex] = { position,texcoord };
 			}
 			// 頂点を逆順で登録することで、周り順を逆にする
 			modelData.vertices.push_back(triangle[2]);
