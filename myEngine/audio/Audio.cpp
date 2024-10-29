@@ -23,13 +23,13 @@ Audio* Audio::GetInstance()
 	return instance;
 }
 
-uint32_t Audio::LoadWave(const char* filename) {
+uint32_t Audio::LoadWave(const std::string& filename) {
+
 	// ファイルがすでに読み込まれているかチェック
-	std::string fileStr(filename);
-	if (loadedFiles.find(fileStr) != loadedFiles.end()) {
+	if (loadedFiles.find(filename) != loadedFiles.end()) {
 		// 既に読み込まれている場合はインデックスを返す
 		for (size_t i = 0; i < kMaxSoundData; ++i) {
-			if (soundDatas_[i].name_ == fileStr) {
+			if (soundDatas_[i].name_ == filename) {
 				return static_cast<uint32_t>(i);
 			}
 		}
@@ -110,7 +110,7 @@ uint32_t Audio::LoadWave(const char* filename) {
 	soundData.buffer = std::move(buffer);  // std::vector のムーブ
 	soundData.name_ = filename;  // ファイル名を name_ にセット
 
-	loadedFiles.insert(fileStr); // 読み込んだファイル名をセットに追加
+	loadedFiles.insert(filename); // 読み込んだファイル名をセットに追加
 
 	// 現在のインデックスを返す
 	uint32_t currentIndex = static_cast<uint32_t>(soundDataIndex);
@@ -120,6 +120,7 @@ uint32_t Audio::LoadWave(const char* filename) {
 
 	return currentIndex;
 }
+
 
 
 void Audio::Unload(uint32_t soundIndex)
@@ -134,8 +135,7 @@ void Audio::Unload(uint32_t soundIndex)
 	soundData.name_.clear();  // 名前もクリア
 }
 
-void Audio::PlayWave(uint32_t soundIndex, float volume)
-{
+void Audio::PlayWave(uint32_t soundIndex, float volume, bool loop) {
 	HRESULT result;
 
 	assert(soundIndex >= 0 && soundIndex < kMaxSoundData);
@@ -144,7 +144,7 @@ void Audio::PlayWave(uint32_t soundIndex, float volume)
 
 	Voice* voice = new Voice(); // Voiceインスタンスを作成
 	voice->handle = soundIndex; // 音声ハンドルを設定
-	voice->volume = volume; // 指定された音量を設定
+	voice->volume = volume;     // 指定された音量を設定
 
 	// XAudio2のコールバックインスタンスを作成
 	VoiceCallback* voiceCallback = new VoiceCallback();
@@ -159,6 +159,14 @@ void Audio::PlayWave(uint32_t soundIndex, float volume)
 	buf.AudioBytes = static_cast<uint32_t>(soundData.buffer.size());
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 	buf.pContext = voice;  // コールバック用のコンテキストとしてVoiceインスタンスを渡す
+
+	// ループ再生の設定
+	if (loop) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE;  // 無限ループで再生
+	}
+	else {
+		buf.LoopCount = 0;  // ループしない
+	}
 
 	// ソースボイスにバッファを送信
 	result = voice->sourceVoice->SubmitSourceBuffer(&buf);
@@ -178,7 +186,7 @@ void Audio::PlayWave(uint32_t soundIndex, float volume)
 void Audio::StopWave(uint32_t soundIndex)
 {
 	// soundIndexの範囲をチェック
-	assert(soundIndex >= 0 && soundIndex < kMaxSoundData);
+   	assert(soundIndex >= 0 && soundIndex < kMaxSoundData);
 
 	// 再生中の音声を探す
 	for (auto it = voices_.begin(); it != voices_.end(); ) {
@@ -240,3 +248,4 @@ void Audio::Finalize()
 	instance = nullptr;
 
 }
+

@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include"GlobalVariables.h"
 
 void Framework::Run()
 {
@@ -85,6 +86,8 @@ void Framework::Initialize()
 	audio->Initialize();
 
 	sceneManager_ = SceneManager::GetInstance();
+
+	GlobalVariables::GetInstance()->LoadFiles();
 	
 }
 

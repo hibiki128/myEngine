@@ -51,4 +51,3 @@ private:
 	// 制御点リスト
 	std::vector<Vector3> controlPoints = { Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) };
 };
-

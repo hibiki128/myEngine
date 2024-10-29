@@ -38,30 +38,45 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				particleIterator = particleGroup.particles.erase(particleIterator);
 				continue;
 			}
-
+			float t = (*particleIterator).currentTime / (*particleIterator).lifeTime;
+			t = std::clamp(t, 0.0f, 1.0f);
+			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
+			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
+			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
+			(*particleIterator).velocity += (*particleIterator).Acce;
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;
 			(*particleIterator).currentTime += kDeltaTime;
 
+
 			// アルファ値の計算
 			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
-
-			// スケール、平行移動行列の作成
-			Matrix4x4 scaleMatrix = MakeScaleMatrix((*particleIterator).transform.scale_);
-			Matrix4x4 translateMatrix = MakeTranslateMatrix((*particleIterator).transform.translation_);
 
 			// ワールド行列の計算
 			Matrix4x4 worldMatrix{};
 			if (isBillboard) {
 				// ビルボード処理の場合、カメラ方向に向ける
-				worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
+				worldMatrix = MakeScaleMatrix((*particleIterator).transform.scale_) * billboardMatrix *
+					MakeTranslateMatrix((*particleIterator).transform.translation_);
 			}
 			else {
 				// 通常のアフィン変換行列を使用
 				worldMatrix = MakeAffineMatrix((*particleIterator).transform.scale_,
 					(*particleIterator).transform.rotation_,
 					(*particleIterator).transform.translation_);
+			}
+
+			
+			// パーティクルのワールド位置をチェック
+			WorldTransform particleWorldTransform;
+			particleWorldTransform.translation_ = (*particleIterator).transform.translation_;
+
+			// 視野外判定
+			if (viewProjection.IsOutsideViewFrustum(particleWorldTransform)) {
+				// 視野外であれば、パーティクルを削除
+				particleIterator = particleGroup.particles.erase(particleIterator);
+				continue;
 			}
 
 			// ワールド・ビュー・プロジェクション行列の計算
@@ -157,12 +172,15 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
 
-ParticleManager::TestParticle ParticleManager::MakeNewParticle(
+ParticleManager::Particle ParticleManager::MakeNewParticle(
 	std::mt19937& randomEngine,
 	const Vector3& translate,
 	const Vector3& scale, // スケールを引数として受け取る
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲
-	float lifeTimeMin, float lifeTimeMax) // サイズの開始値と終了値をVector3で受け取る
+	float lifeTimeMin, float lifeTimeMax,
+	const Vector3& particleStartScale, const Vector3& particleEndScale, 
+	const Vector3& startAcce, const Vector3& endAcce,
+	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値をVector3で受け取る
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
@@ -170,7 +188,7 @@ ParticleManager::TestParticle ParticleManager::MakeNewParticle(
 	std::uniform_real_distribution<float> distVelocityZ(velocityMin.z, velocityMax.z);
 	std::uniform_real_distribution<float> distLifeTime(lifeTimeMin, lifeTimeMax);
 
-	TestParticle particle;
+	Particle particle;
 
 	// スケールを考慮したランダムな位置を計算
 	Vector3 randomTranslate = {
@@ -180,12 +198,21 @@ ParticleManager::TestParticle ParticleManager::MakeNewParticle(
 	};
 	particle.transform.translation_ = translate + randomTranslate;
 
+	particle.startScale = particleStartScale;
+	particle.endScale = particleEndScale;
+	particle.startAcce = startAcce;
+	particle.endAcce = endAcce;
+	particle.startRote = startRote;
+	particle.endRote = endRote;
+
 	// 速度をランダムに設定
 	particle.velocity = {
 		distVelocityX(randomEngine),
 		distVelocityY(randomEngine),
 		distVelocityZ(randomEngine)
 	};
+
+
 
 	// ランダムな色を設定
 	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
@@ -315,13 +342,16 @@ void ParticleManager::CreateMaterial()
 	materialData->uvTransform = MakeIdentity4x4();
 }
 
-std::list<ParticleManager::TestParticle> ParticleManager::Emit(
+std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const std::string name,
 	const Vector3& position,
 	uint32_t count,
 	const Vector3& scale, // スケールを引数として追加
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲を引数として追加
-	float lifeTimeMin, float lifeTimeMax) // サイズの開始値と終了値を引数として追加
+	float lifeTimeMin, float lifeTimeMax,
+	const Vector3& particleStartScale, const Vector3& particleEndScale, 
+	const Vector3& startAcce, const Vector3& endAcce, 
+	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値を引数として追加
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -330,17 +360,23 @@ std::list<ParticleManager::TestParticle> ParticleManager::Emit(
 	ParticleGroup& particleGroup = particleGroups[name];
 
 	// 新しいパーティクルを生成し、パーティクルグループに追加
-	std::list<TestParticle> newParticles;
+	std::list<Particle> newParticles;
 	for (uint32_t nowCount = 0; nowCount < count; ++nowCount) {
 		// 新たなパーティクルを作成
-		TestParticle particle = MakeNewParticle(
+		Particle particle = MakeNewParticle(
 			randomEngine,
 			position,
 			scale,          // 追加されたスケール
 			velocityMin,
 			velocityMax,    // 追加された速度の範囲
 			lifeTimeMin,
-			lifeTimeMax    // 追加されたライフタイムの範囲
+			lifeTimeMax,    // 追加されたライフタイムの範囲
+			particleStartScale,
+			particleEndScale,
+			startAcce,
+			endAcce,
+			startRote,
+			endRote
 		);
 		newParticles.push_back(particle);
 	}

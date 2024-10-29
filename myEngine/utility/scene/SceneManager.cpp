@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include <cassert>
 #include <ImGuiManager.h>
+#include"GlobalVariables.h"
 
 SceneManager* SceneManager::instance = nullptr;
 
@@ -45,8 +46,10 @@ void SceneManager::Update()
 #ifdef _DEBUG
 
 	ImGuiManager::GetInstance()->Begin();
+	GlobalVariables::GetInstance()->Update();
 #endif // _DEBUG
 
+	
 	// 実行中シーンを更新する
 	scene_->Update();
 

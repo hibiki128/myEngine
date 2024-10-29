@@ -17,9 +17,6 @@ void WorldTransform::Initialize()
 
 void WorldTransform::TransferMatrix()
 {
-	// ワールド行列を計算
-	matWorld_ = MakeAffineMatrix(scale_, rotation_,translation_);
-
 	// 定数バッファに転送
 	if (constMap) {
 		constMap->matWorld = matWorld_;

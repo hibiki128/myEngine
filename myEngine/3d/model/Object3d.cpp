@@ -27,25 +27,22 @@ void Object3d::Initialize(const std::string& filePath)
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
 
-	// Transform変数を作る
-	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 }
 
 void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
-	transform.translate = worldTransform.translation_;
-	transform.rotate = worldTransform.rotation_;
-	transform.scale = worldTransform.scale_;
-
 	cameraForGPUData->worldPosition = viewProjection.translation_;
+	Matrix4x4 worldMatrix = MakeAffineMatrix(worldTransform.scale_, worldTransform.rotation_, worldTransform.translation_);
 
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	if (worldTransform.parent_) {
+		worldMatrix *= worldTransform.parent_->matWorld_;
+	}	
 	Matrix4x4 worldViewProjectionMatrix;
 	const Matrix4x4& viewProjectionMatrix = viewProjection.matView_ * viewProjection.matProjection_;
 	worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->World = worldMatrix;
+	transformationMatrixData->World = worldTransform.matWorld_;
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
 	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
 
@@ -53,6 +50,11 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)
 {
+
+	//if (viewProjection.IsOutsideViewFrustum(worldTransform)) {
+	//	return;
+	//}
+
 	if (color) {
 		materialData->color = color->GetColor();
 	}

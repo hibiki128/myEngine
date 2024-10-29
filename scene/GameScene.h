@@ -30,6 +30,7 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw()override;
+
 private:
 	Audio* audio_;
 	Input* input_;

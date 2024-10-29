@@ -339,7 +339,7 @@ void DirectXCommon::DepthStencilViewInitialize()
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // Format。基本的にはResourceに合わせる
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2dTexture
-	
+
 	// DSVHeapの先頭にDSVを作る
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 	///=================================================
@@ -574,7 +574,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 	D3D12_RESOURCE_DESC ResourceDesc{};
 	// バッファリソース。テクスチャの場合はまた別の設定をする
 	ResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	ResourceDesc.Width = sizeInBytes;// リソースのサイズ。 
+	ResourceDesc.Width = sizeInBytes;// リソースのサイズ。
 	// バッファの場合はこれらを1にする決まり
 	ResourceDesc.Height = 1;
 	ResourceDesc.DepthOrArraySize = 1;

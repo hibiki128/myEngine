@@ -41,6 +41,27 @@ Vector3 Transformation(const Vector3& vector, const Matrix4x4& matrix) {
 	return result;
 }
 
+// Vector4をMatrix4x4で変換する関数
+Vector4 Transformation(const Vector4& vector, const Matrix4x4& matrix) {
+	Vector4 result;
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + vector.w * matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + vector.w * matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + vector.w * matrix.m[3][2];
+	result.w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + vector.w * matrix.m[3][3];
+
+	// wが0でないことを確認
+	assert(result.w != 0.0f);
+
+	// 正規化
+	result.x /= result.w;
+	result.y /= result.w;
+	result.z /= result.w;
+	result.w = 1.0f; // 正規化後のwは1.0f
+
+	return result;
+}
+
+
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	Vector3 result{
 		v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0],

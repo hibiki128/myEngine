@@ -126,12 +126,6 @@
     <Filter Include="ヘッダー ファイル\myEngine\3d\particle">
       <UniqueIdentifier>{4d5f4902-d5f2-44d5-9952-5d0b055870ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\application">
-      <UniqueIdentifier>{6980ffec-7ac4-4c92-b754-de1537ba64d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ヘッダー ファイル\application">
-      <UniqueIdentifier>{39ceb12b-a207-454b-877b-e4e57b815660}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\myEngine\3d\line">
       <UniqueIdentifier>{9b71ce02-e930-4a1b-9211-f79b51440955}</UniqueIdentifier>
     </Filter>
@@ -144,6 +138,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -246,6 +243,9 @@
     <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
       <Filter>ソース ファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="myEngine\utility\edit\Liner.cpp">
       <Filter>ソース ファイル\myEngine\utility\edit</Filter>
     </ClCompile>
@@ -276,8 +276,11 @@
     <ClCompile Include="myEngine\3d\line\LineManager.cpp">
       <Filter>ソース ファイル\myEngine\3d\line</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="math\Easing.cpp">
+      <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\debug\GlobalVariables.cpp">
+      <Filter>ソース ファイル\myEngine\utility\debug</Filter>
     </ClCompile>
     <ClCompile Include="application\RailCamera.cpp">
       <Filter>ソース ファイル\application</Filter>
@@ -455,11 +458,19 @@
     <ClInclude Include="myEngine\3d\line\LineManager.h">
       <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="application\RailCamera.h">
       <Filter>ヘッダー ファイル\application</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\myEngine\3d\camera</Filter>
+=======
+    <ClInclude Include="math\Easing.h">
+      <Filter>ヘッダー ファイル\math</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\debug\GlobalVariables.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\debug</Filter>
+>>>>>>> master
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

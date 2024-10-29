@@ -1,6 +1,5 @@
 #pragma once
 #include"Matrix4x4.h"
-#include "Vector3.h"
 #include "Vector4.h"
 #include "assert.h"
 #include "cmath"
@@ -27,6 +26,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale);
 
 // 座標変換
 Vector3 Transformation(const Vector3& vector, const Matrix4x4& matrix);
+Vector4 Transformation(const Vector4& vector, const Matrix4x4& matrix);
 
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
