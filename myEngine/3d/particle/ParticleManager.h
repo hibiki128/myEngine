@@ -59,7 +59,6 @@ private:
 	struct MaterialData
 	{
 		std::string textureFilePath;
-		uint32_t textureIndex = 0;
 	};
 
 	struct ModelData
@@ -120,9 +119,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
 	// バッファリソース内のデータを指すポインタ
 	Material* materialData = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;
-	ParticleForGPU* instancingData = nullptr;
 
 	SrvManager* srvManager_;
 	

@@ -72,22 +72,22 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			WorldTransform particleWorldTransform;
 			particleWorldTransform.translation_ = (*particleIterator).transform.translation_;
 
-			// 視野外判定
-			if (viewProjection.IsOutsideViewFrustum(particleWorldTransform)) {
-				// 視野外であれば、パーティクルを削除
-				particleIterator = particleGroup.particles.erase(particleIterator);
-				continue;
-			}
+			//// 視野外判定
+			//if (viewProjection.IsOutsideViewFrustum(particleWorldTransform)) {
+			//	// 視野外であれば、パーティクルを削除
+			//	particleIterator = particleGroup.particles.erase(particleIterator);
+			//	continue;
+			//}
 
 			// ワールド・ビュー・プロジェクション行列の計算
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 			// インスタンスデータに設定
 			if (numInstance < kNumMaxInstance) {
-				instancingData[numInstance].WVP = worldViewProjectionMatrix;
-				instancingData[numInstance].World = worldMatrix;
-				instancingData[numInstance].color = (*particleIterator).color;
-				instancingData[numInstance].color.w = alpha;  // アルファ値の設定
+				particleGroup.instancingData[numInstance].WVP = worldViewProjectionMatrix;
+				particleGroup.instancingData[numInstance].World = worldMatrix;
+				particleGroup.instancingData[numInstance].color = (*particleIterator).color;
+				particleGroup.instancingData[numInstance].color.w = alpha;  // アルファ値の設定
 				++numInstance;
 			}
 
@@ -96,11 +96,6 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 
 		// インスタンス数の更新
 		particleGroup.instanceCount = numInstance;
-
-		// インスタンシングデータのコピー
-		if (particleGroup.instancingData) {
-			std::memcpy(particleGroup.instancingData, instancingData, sizeof(ParticleForGPU) * numInstance);
-		}
 	}
 }
 
@@ -133,7 +128,6 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 	CreateVartexData(filename);
 	particleGroup.material.textureFilePath = modelData.material.textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	particleGroup.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 	particleGroup.instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
 	particleGroup.instancingSRVIndex = srvManager_->Allocate() + 1;
@@ -147,17 +141,6 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 
 void ParticleManager::CreateVartexData(const std::string& filename)
 {
-	// インスタンス用のTransformationMatrixリソースを作る
-	instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
-	// 書き込むためのアドレスを取得
-	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-		instancingData[index].WVP = MakeIdentity4x4();
-		instancingData[index].World = MakeIdentity4x4();
-		instancingData[index].color = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
 	modelData = LoadObjFile("resources/models/", filename);
 
 	// 頂点リソースを作る

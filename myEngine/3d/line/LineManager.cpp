@@ -13,65 +13,60 @@ void LineManager::Initialize(const std::string& filename)
 	CreateParticleGroup("line0", filename);
 }
 
-#include <cmath> // M_PIを使用するために必要
-
 void LineManager::Update(const ViewProjection& viewProjection, const std::vector<Vector3>& startPoints, const std::vector<Vector3>& endPoints)
 {
+	// startPoints と endPoints のサイズが一致するか確認
 	assert(startPoints.size() == endPoints.size() && "startPoints and endPoints must have the same number of elements");
-
-	// モデルの間隔を定義
-	const float modelPadding = 0.5f;  // モデル同士の間隔を定義
 
 	for (auto& [groupName, lineGroup] : lineGroups) {
 		uint32_t numInstance = 0;
+
+		// まずは instanceCount をリセット
 		lineGroup.instanceCount = 0;
 
-		// lines のサイズを startPoints に合わせて調整
-		auto lineIterator = lineGroup.lines.begin();
-		size_t previousSize = lineGroup.lines.size();
-
+		// lines のサイズを startPoints のサイズに合わせて調整
+		size_t previousSize = lineGroup.lines.size(); // 前のサイズを保存
 		if (previousSize > startPoints.size()) {
-			// lines の要素数が startPoints のサイズを超えている場合は削除
-			auto toErase = lineGroup.lines.begin();
-			std::advance(toErase, startPoints.size());
-			lineGroup.lines.erase(toErase, lineGroup.lines.end());
+			// lines の要素数が startPoints のサイズを上回る場合、余分な要素を削除
+			lineGroup.lines.resize(startPoints.size());
 		}
 		else {
-			// 足りない分を追加
+			// lines のサイズを startPoints のサイズに合わせて追加
 			while (lineGroup.lines.size() < startPoints.size()) {
-				Line newLine;
+				Line newLine; // Line クラスのインスタンスを生成
 				newLine.transform.Initialize();
-				newLine.transform.scale_ = { 0.5f, 0.5f, 0.5f };
-				newLine.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);  // デフォルトの色
+				newLine.color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // デフォルトの色を設定（必要に応じて変更）
 				lineGroup.lines.push_back(newLine);
 			}
 		}
 
 		// 各ラインの更新
-		lineIterator = lineGroup.lines.begin();  // イテレータをリセット
+		auto lineIterator = lineGroup.lines.begin();
 		for (size_t i = 0; i < startPoints.size(); ++i) {
+			if (lineIterator == lineGroup.lines.end()) {
+				// lines の要素が不足している場合、処理を終了
+				break;
+			}
+
 			const Vector3& startPoint = startPoints[i];
 			const Vector3& endPoint = endPoints[i];
 
-			// 中点を求めてtransform.translation_に設定
+			// 中点の計算（始点と終点の中間点を求める）
 			Vector3 midPoint = (startPoint + endPoint) * 0.5f;
 			lineIterator->transform.translation_ = midPoint;
 
-			// 始点から終点までのベクトルを求め、スケールと回転を設定
+			// スケールの計算（始点と終点の距離を求めてスケールに反映）
 			Vector3 lineVector = endPoint - startPoint;
-			float length = lineVector.Length();
+			float length = lineVector.Length(); // 2点間の距離
+			lineIterator->transform.scale_ = Vector3(length, 1.0f, 1.0f); // X方向に線の長さを反映、他の軸は0.2
 
-			// スケールをX方向に設定
-			lineIterator->transform.scale_ = { length, 1.0f, 1.0f };  // X方向に線の長さを設定
+			// クォータニオンで回転の計算（始点から終点への回転を計算）
+			Quaternion rotationQuat;
+			rotationQuat.SetFromTo(Vector3(1.0f, 0.0f, 0.0f), lineVector.Normalize()); // X軸方向から目的の方向への回転を計算
+			Vector3 eulerRotation = rotationQuat.ToEulerAngles(); // オイラー角に変換して設定
+			lineIterator->transform.rotation_ = eulerRotation;
 
-			// 方向ベクトルを正規化し、Z軸からlineVectorへの回転を計算
-			lineVector.Normalize();
-			float angle = atan2(lineVector.y, lineVector.x);  // XY平面での回転角度を計算
-
-			// Z軸を基準に回転を設定
-			lineIterator->transform.rotation_ = { 0.0f, 0.0f, angle };
-
-			// ワールド行列を作成
+			// アフィン行列（ワールド行列）を作成
 			Matrix4x4 worldMatrix = MakeAffineMatrix(
 				lineIterator->transform.scale_,
 				lineIterator->transform.rotation_,
@@ -84,34 +79,33 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 
 			// インスタンスデータに設定
 			if (numInstance < kNumMaxInstance) {
-				instancingData[numInstance].WVP = worldViewProjectionMatrix;
-				instancingData[numInstance].World = worldMatrix;
-				instancingData[numInstance].color = lineIterator->color;
+				lineGroup.instancingData[numInstance].WVP = worldViewProjectionMatrix;
+				lineGroup.instancingData[numInstance].World = worldMatrix;
+				lineGroup.instancingData[numInstance].color = lineIterator->color; // colorも更新
 				++numInstance;
 			}
 
-			// instanceCount の更新
+			// ライン処理が終わったら instanceCount を+1
 			lineGroup.instanceCount++;
 
-			// 次のラインに進む
+			// 次のライン要素に進む
 			++lineIterator;
-		}
-
-		// インスタンシングデータのコピー
-		if (lineGroup.instancingData) {
-			std::memcpy(lineGroup.instancingData, instancingData, sizeof(ParticleForGPU) * numInstance);
 		}
 	}
 }
 
 
+
 void LineManager::Draw()
 {
+
+	//Update(viewProjection,startPoints,endPoints);
 
 	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	for (auto& [groupName, lineGroup] : lineGroups) {
 		if (lineGroup.instanceCount > 0) {
+
 			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 			srvManager_->SetGraphicsRootDescriptorTable(1, lineGroup.instancingSRVIndex);
@@ -134,7 +128,6 @@ void LineManager::CreateParticleGroup(const std::string name, const std::string&
 	CreateVartexData(filename);
 	lineGroup.material.textureFilePath = modelData.material.textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	lineGroup.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 	lineGroup.instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
 	lineGroup.instancingSRVIndex = srvManager_->Allocate() + 1;
@@ -148,17 +141,6 @@ void LineManager::CreateParticleGroup(const std::string name, const std::string&
 
 void LineManager::CreateVartexData(const std::string& filename)
 {
-	// インスタンス用のTransformationMatrixリソースを作る
-	instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
-	// 書き込むためのアドレスを取得
-	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-		instancingData[index].WVP = MakeIdentity4x4();
-		instancingData[index].World = MakeIdentity4x4();
-		instancingData[index].color = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
 	modelData = LoadObjFile("resources/models/", filename);
 
 	// 頂点リソースを作る

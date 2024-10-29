@@ -136,6 +136,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\application">
+      <UniqueIdentifier>{fd578e8c-e593-4c09-8712-31ca1ba2f103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application">
+      <UniqueIdentifier>{96a5eb25-81e4-496a-8864-c5123af11ee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\char">
+      <UniqueIdentifier>{f3151dba-b7e5-44e4-83f3-969a4e55ef5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\char">
+      <UniqueIdentifier>{9aefe021-7523-4830-8d62-5cf998493625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\camera">
+      <UniqueIdentifier>{00122e29-bc5d-4490-9ebc-30adb16c7610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\camera">
+      <UniqueIdentifier>{b1786059-4ba1-4b1d-bf17-02557e273658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\map">
+      <UniqueIdentifier>{0d3fbd92-b0c1-4b73-9442-87e106b8712e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\application\map">
+      <UniqueIdentifier>{46e46238-743e-4224-9b83-34c025d507fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -282,11 +306,17 @@
     <ClCompile Include="myEngine\utility\debug\GlobalVariables.cpp">
       <Filter>ソース ファイル\myEngine\utility\debug</Filter>
     </ClCompile>
-    <ClCompile Include="application\RailCamera.cpp">
-      <Filter>ソース ファイル\application</Filter>
-    </ClCompile>
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp">
       <Filter>ソース ファイル\myEngine\3d\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\char\player.cpp">
+      <Filter>ソース ファイル\application\char</Filter>
+    </ClCompile>
+    <ClCompile Include="application\camera\RailCamera.cpp">
+      <Filter>ソース ファイル\application\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="application\map\rail.cpp">
+      <Filter>ソース ファイル\application\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -458,19 +488,23 @@
     <ClInclude Include="myEngine\3d\line\LineManager.h">
       <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="application\RailCamera.h">
-      <Filter>ヘッダー ファイル\application</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\myEngine\3d\camera</Filter>
-=======
+    </ClInclude>
     <ClInclude Include="math\Easing.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\debug\GlobalVariables.h">
       <Filter>ヘッダー ファイル\myEngine\utility\debug</Filter>
->>>>>>> master
+    </ClInclude>
+    <ClInclude Include="application\char\player.h">
+      <Filter>ヘッダー ファイル\application\char</Filter>
+    </ClInclude>
+    <ClInclude Include="application\camera\RailCamera.h">
+      <Filter>ヘッダー ファイル\application\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="application\map\rail.h">
+      <Filter>ヘッダー ファイル\application\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

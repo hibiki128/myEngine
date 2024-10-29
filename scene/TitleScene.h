@@ -5,12 +5,12 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
-#include"line/LineManager.h"
 #include"ViewProjection.h"
 #include"memory"
-#include"DebugCamera.h"
-#include"Sprite.h"
-#include"Object3d.h"
+#include"application/map/rail.h"
+#include"application/camera/RailCamera.h"
+#include"application/char/player.h"
+
 class TitleScene :public BaseScene
 {
 public: // メンバ関数
@@ -35,9 +35,6 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-
-	void LineDraw();
-
 private:
 	Audio* audio_;
 	Input* input_;
@@ -45,9 +42,15 @@ private:
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
 	ViewProjection vP_;
-	
-	std::unique_ptr<LineManager> line_;
 
-	// 制御点リスト
-	std::vector<Vector3> controlPoints = { Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 0.0f) };
+
+	std::unique_ptr<rail> rail_;
+	std::unique_ptr<RailCamera> railCamera_;
+	std::unique_ptr<Player> player_;
+
+
+	WorldTransform cameraT_;
+
+	bool isActive_ = false;
+
 };

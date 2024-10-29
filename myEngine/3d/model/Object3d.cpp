@@ -51,9 +51,9 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)
 {
 
-	//if (viewProjection.IsOutsideViewFrustum(worldTransform)) {
-	//	return;
-	//}
+	if (viewProjection.IsOutsideViewFrustum(worldTransform)) {
+		return;
+	}
 
 	if (color) {
 		materialData->color = color->GetColor();

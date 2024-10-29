@@ -1,0 +1,159 @@
+#include "Player.h"
+#include <algorithm>
+#include <cassert>
+#include <imgui.h>
+
+Player::~Player() {
+	//// bulletの解放
+	//for (PlayerBullet* bullet : bullets_) {
+	//	delete bullet;
+	//}
+}
+
+void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position) {
+	// 引数として受け取ったデータをメンバ変数に記録する
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize("suzannu.obj");
+
+
+	viewProjection_ = viewProjection;
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = position;
+	worldTransform_.scale_ = { 0.3f,0.3f,0.3f };
+
+	// シングルトンインスタンスを取得する
+	input_ = Input::GetInstance();
+}
+
+void Player::Update() {
+
+	// 弾の削除
+	Bulletdelete();
+
+	// 旋回処理
+	Rotate();
+
+	// 移動処理
+	Move();
+
+	// 攻撃処理
+	Attack();
+
+	//// 弾更新
+	//for (PlayerBullet* bullet : bullets_) {
+	//	bullet->Update();
+	//}
+
+	// キャラクターの座標を画面表示する処理
+	ImGui::Begin("Player");
+	ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);
+	ImGui::End();
+
+	// 行列更新
+	worldTransform_.UpdateMatrix();
+}
+
+void Player::Draw() {
+	obj_->Draw(worldTransform_, *viewProjection_);
+
+	//// 弾描画
+	//for (PlayerBullet* bullet : bullets_) {
+	//	bullet->Draw(*viewProjection_);
+	//}
+}
+
+void Player::Rotate() {
+	// 回転の速さ[ラジアン/flame]
+	const float kRotSpeed = 0.02f;
+
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	}
+	else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+}
+
+void Player::Move() {
+	// キャラクターの移動ベクトル
+	Vector3 move = { 0, 0, 0 };
+
+	// 　キャラクターの移動の速さ
+	const float kCharacterSpeed = 0.2f;
+
+	// 押した方向で移動ベクトルを変更(左右)
+	if (input_->PushKey(DIK_LEFT)) {
+		move.x -= kCharacterSpeed;
+	}
+	else if (input_->PushKey(DIK_RIGHT)) {
+		move.x += kCharacterSpeed;
+	}
+
+	// 押した方向で移動ベクトルを変更(上下)
+	if (input_->PushKey(DIK_UP)) {
+		move.y += kCharacterSpeed;
+	}
+	else if (input_->PushKey(DIK_DOWN)) {
+		move.y -= kCharacterSpeed;
+	}
+
+	// 移動ベクトルの加算
+	worldTransform_.translation_ += move;
+
+	// 移動限界座標
+	const float kMoveLimitX = 35.0f;
+	const float kMoveLimitY = 19.5f;
+
+	// 範囲を超えない処理
+	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kMoveLimitX, +kMoveLimitX);
+	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kMoveLimitY, +kMoveLimitY);
+}
+
+void Player::Attack() {
+	//if (input_->TriggerKey(DIK_SPACE)) {
+
+	//	// 弾の速度
+	//	const float kBulletSpeed = 1.0f;
+	//	Vector3 velocity(0, 0, kBulletSpeed);
+
+	//	// 速度ベクトルを自機の向きに合わせて回転させる
+	//	velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+	//	// 弾を生成し、初期化
+	//	PlayerBullet* newBullet = new PlayerBullet();
+	//	newBullet->Initialize(model_, GetWorldPosition(), velocity);
+
+	//	// 弾を登録する
+	//	bullets_.push_back(newBullet);
+	//}
+}
+
+void Player::Bulletdelete() {
+	//// デスフラグの立った弾を削除
+	//bullets_.remove_if([](PlayerBullet* bullet) {
+	//	if (bullet->IsDead()) {
+	//		delete bullet;
+	//		return true;
+	//	}
+	//	return false;
+	//	});
+}
+
+void Player::OnCollision() {}
+
+Vector3 Player::GetWorldPosition() {
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+void Player::SetParent(const WorldTransform* parent) {
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}
