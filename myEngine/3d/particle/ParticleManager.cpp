@@ -8,6 +8,9 @@ void ParticleManager::Initialize(SrvManager* srvManager)
 	particleCommon = ParticleCommon::GetInstance();
 	srvManager_ = srvManager;
 	randomEngine.seed(seedGenerator());
+	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
+	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
+	accelerationField.area.max = { 1.0f,1.0f,1.0f };
 }
 
 void ParticleManager::Update(const ViewProjection& viewProjection)
@@ -44,6 +47,13 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
 			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
 			(*particleIterator).velocity += (*particleIterator).Acce;
+
+			if (isArea) {
+				if (IsCollision(accelerationField.area, (*particleIterator).transform.translation_)) {
+					(*particleIterator).velocity += accelerationField.acceleration * kDeltaTime;
+				}
+			}
+
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;
@@ -67,7 +77,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 					(*particleIterator).transform.translation_);
 			}
 
-			
+
 			// パーティクルのワールド位置をチェック
 			WorldTransform particleWorldTransform;
 			particleWorldTransform.translation_ = (*particleIterator).transform.translation_;
@@ -145,6 +155,13 @@ void ParticleManager::CreateParticleGroup(const std::string name, const std::str
 	particleGroup.instanceCount = 0;
 }
 
+void ParticleManager::imgui()
+{
+	ImGui::Begin("Field");
+	ImGui::Checkbox("isArea", &isArea);
+	ImGui::End();
+}
+
 void ParticleManager::CreateVartexData(const std::string& filename)
 {
 	// インスタンス用のTransformationMatrixリソースを作る
@@ -178,7 +195,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& scale, // スケールを引数として受け取る
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値をVector3で受け取る
 {
@@ -349,8 +366,8 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& scale, // スケールを引数として追加
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲を引数として追加
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
-	const Vector3& startAcce, const Vector3& endAcce, 
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
+	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値を引数として追加
 {
 	// パーティクルグループが存在するか確認

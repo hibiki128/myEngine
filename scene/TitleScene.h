@@ -5,6 +5,8 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
+#include"ParticleEmitter.h"
+#include"ViewProjection.h"
 
 
 class TitleScene :public BaseScene
@@ -37,5 +39,7 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-
+	
+	std::unique_ptr<ParticleEmitter> emitter_;
+	ViewProjection vp_;
 };

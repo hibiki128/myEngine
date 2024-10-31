@@ -5,7 +5,6 @@
 #include <ModelManager.h>
 #include"SceneManager.h"
 #include"ModelManager.h"
-#include "application/CollisionManager.h"
 
 void GameScene::Initialize()
 {
@@ -18,7 +17,7 @@ void GameScene::Initialize()
 
 void GameScene::Finalize()
 {
-	audio_->StopWave(BGMSet_);
+
 }
 
 void GameScene::Update()

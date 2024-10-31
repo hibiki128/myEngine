@@ -20,7 +20,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	Manager_ = std::make_unique<ParticleManager>();
 	Manager_->Initialize(SrvManager::GetInstance());
 	Manager_->CreateParticleGroup(name_, fileName);
-	//	transform_.UpdateMatrix();
+	emitFrequency_ = 1.0f;
 
 	AddItem();
 
@@ -144,52 +144,58 @@ void ParticleEmitter::AddItem()
 // ImGuiで値を動かす関数
 void ParticleEmitter::RenderImGui() {
 #ifdef _DEBUG
-	ImGui::Begin(name_.c_str());
-	// transform_.translation_の表示と編集
-	ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
 
-	// transform_.rotation_の表示と編集
-	ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
+	if (ImGui::BeginTabBar(name_.c_str())) {
+		if (ImGui::BeginTabItem(name_.c_str())) {
+			Manager_->imgui();
+			// transform_.translation_の表示と編集
+			ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
 
-	// transform_.scale_の表示と編集
-	ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
+			// transform_.rotation_の表示と編集
+			ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
 
-	// emitFrequency_の表示と編集
-	ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
+			// transform_.scale_の表示と編集
+			ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
 
-	// countの表示と編集
-	ImGui::InputInt("Count", &count_, 1, 10000);
+			// emitFrequency_の表示と編集
+			ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
 
-	// 0から10000の範囲に制限する
-	count_ = std::clamp(count_, 0, 10000);
+			// countの表示と編集
+			ImGui::InputInt("Count", &count_, 1, 10000);
 
-	// 速度の最小値と最大値の表示と編集
-	ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
-	ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
+			// 0から10000の範囲に制限する
+			count_ = std::clamp(count_, 0, 10000);
 
-	// ライフタイムの最小値と最大値の表示と編集
-	ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
-	ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
+			// 速度の最小値と最大値の表示と編集
+			ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
+			ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
 
-	ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
-	ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
+			// ライフタイムの最小値と最大値の表示と編集
+			ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
+			ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
 
-	ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.1f);
-	ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.1f);
+			ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
+			ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
 
-	ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
-	ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
-	ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
-	ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
-	ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
-	ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
+			ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.1f);
+			ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.1f);
 
-	// isVisibleフラグの表示と編集
-	ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
+			ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
+			ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
+			ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
+			ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
+			ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
+			ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
 
-	ImGui::Checkbox("BillBoard", &isBillBoard);
-	Manager_->SetBillBorad(isBillBoard);
-	ImGui::End();
+			// isVisibleフラグの表示と編集
+			ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
+
+			ImGui::Checkbox("BillBoard", &isBillBoard);
+			Manager_->SetBillBorad(isBillBoard);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
 
 #endif // _DEBUG
 
