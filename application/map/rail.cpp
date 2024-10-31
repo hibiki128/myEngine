@@ -42,11 +42,6 @@ void rail::Initialize(ViewProjection* vp)
 
 void rail::Update()
 {
-
-	ImGui::Begin("Line");
-	ControlPointsSetting();
-	ImGui::End();
-
 	LineUpdate();
 
 	// 各ワールドトランスフォームの行列を更新
@@ -65,6 +60,18 @@ void rail::IcoDraw()
 	// 制御点を描画
 	for (size_t i = 0; i < segments_.size(); ++i) {
 		segments_[i]->Draw(wts_[i], *vp_); // オブジェクトを描画
+	}
+}
+
+void rail::imgui()
+{
+	if (ImGui::BeginTabBar("Line")) {
+
+		if (ImGui::BeginTabItem("Line")) {
+			ControlPointsSetting();
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
 }
 
@@ -118,6 +125,7 @@ void rail::ControlPointsSetting()
 
 		ImGui::DragFloat3("Control Point", &controlPoints_[i].x, 0.1f);
 		wts_[i].translation_ = controlPoints_[i];
+		wts_[i].scale_ = { 0.3f,0.3f,0.3f };
 		wts_[i].UpdateMatrix();
 
 		// JSONの値も更新
@@ -128,26 +136,26 @@ void rail::ControlPointsSetting()
 
 void rail::ApplyVariables()
 {
-    // JSONから制御点の数を取得
-    int controlPointCount = variables->GetIntValue(groupName, "ControlPointCount");
+	// JSONから制御点の数を取得
+	int controlPointCount = variables->GetIntValue(groupName, "ControlPointCount");
 
-    // 制御点リスト、セグメントリスト、ワールドトランスフォームリストを取得した数で再設定
-    controlPoints_.resize(controlPointCount);
-    segments_.resize(controlPointCount);
-    wts_.resize(controlPointCount);
+	// 制御点リスト、セグメントリスト、ワールドトランスフォームリストを取得した数で再設定
+	controlPoints_.resize(controlPointCount);
+	segments_.resize(controlPointCount);
+	wts_.resize(controlPointCount);
 
-    for (int i = 0; i < controlPointCount; ++i) {
-        // JSONから各制御点の座標を取得
-        controlPoints_[i] = variables->GetVector3Value(groupName, "controlPoint" + std::to_string(i));
+	for (int i = 0; i < controlPointCount; ++i) {
+		// JSONから各制御点の座標を取得
+		controlPoints_[i] = variables->GetVector3Value(groupName, "controlPoint" + std::to_string(i));
 
-        // 新しいセグメントを初期化
-        segments_[i] = std::make_unique<Object3d>();
-        segments_[i]->Initialize("ICO.obj");
+		// 新しいセグメントを初期化
+		segments_[i] = std::make_unique<Object3d>();
+		segments_[i]->Initialize("ICO.obj");
 
-        // ワールドトランスフォームの設定
-        wts_[i].translation_ = controlPoints_[i];
-        wts_[i].UpdateMatrix();
-    }
+		// ワールドトランスフォームの設定
+		wts_[i].translation_ = controlPoints_[i];
+		wts_[i].UpdateMatrix();
+	}
 }
 
 

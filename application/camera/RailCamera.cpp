@@ -1,70 +1,71 @@
 #include "RailCamera.h"
 #include <imgui.h>
 
-RailCamera::RailCamera() {}
+RailCamera::RailCamera() : velocity_(0.00025f) {} // 初期速度を設定
 
 RailCamera::~RailCamera() {}
 
 void RailCamera::Initialize(WorldTransform& worldTransform) {
-	// ワールドトランスフォーム
-	worldTransform_.translation_.x = worldTransform.matWorld_.m[3][0];
-	worldTransform_.translation_.y = worldTransform.matWorld_.m[3][1];
-	worldTransform_.translation_.z = worldTransform.matWorld_.m[3][2];
-	worldTransform_.rotation_ = worldTransform.rotation_;
-	worldTransform_.translation_.z = -50.0f;
-	// ビュープロジェクション
-	viewProjection_.farZ = 1100;
-	viewProjection_.Initialize();
+    // ワールドトランスフォームの初期化
+    worldTransform_.translation_.x = worldTransform.matWorld_.m[3][0];
+    worldTransform_.translation_.y = worldTransform.matWorld_.m[3][1];
+    worldTransform_.translation_.z = worldTransform.matWorld_.m[3][2];
+    worldTransform_.rotation_ = worldTransform.rotation_;
+    worldTransform_.translation_.z = -50.0f;
+
+    // ビュープロジェクションの初期化
+    viewProjection_.farZ = 1100;
+    viewProjection_.Initialize();
 }
 
 void RailCamera::Update() {
+    // tの更新。velocityに依存してカメラを前進させる
+    t_ += velocity_;
+    if (t_ > 1.0f) t_ = 1.0f; // tが1.0を超えないように制限
 
-	const float LimitTime = 1500.0f;
-	if (time_ < LimitTime) {
-		time_++;
-	}
+    // カーブパス上の位置を計算
+    Vector3 eye = CatmullRomPosition(controlPoints_, t_);
+    eye.y += 2.0f;
+    eye.z += 1.0f;
 
-	// カーブパス上の位置を計算するためのパラメータtを求める
-	float t = 1.0f / LimitTime * time_;
-	Vector3 eye = CatmullRomPosition(controlPoints_, t);
+    // プレイヤーの位置に依存した目標位置を計算する
+    float t2 = t_ + 0.01f; // tより少し先の位置を計算
+    if (t2 > 1.0f) t2 = 1.0f; // t2が1.0を超えないように制限
+    Vector3 target = CatmullRomPosition(controlPoints_, t2);
 
-	eye.y += 1.0f;
+    target.y += 2.0f;
+    target.z += 1.0f;
 
-	// プレイヤーの位置に依存した目標位置を計算するためのパラメータt2を求める
-	float t2 = 1.0f / LimitTime * (time_ + 10);
-	Vector3 target = CatmullRomPosition(controlPoints_, t2);
+    // カメラ位置と方向の設定
+    worldTransform_.translation_ = eye;
+    Vector3 forward = (target - eye).Normalize();
 
-	target.y += 1.0f;
+    // カメラのZ軸周りの回転角度を計算
+    Matrix4x4 rotateZMatrix = MakeRotateZMatrix(-worldTransform_.rotation_.z);
+    Vector3 forwardZ = TransformNormal(forward, rotateZMatrix);
 
-	// カメラの位置を設定する
-	worldTransform_.translation_ = eye;
+    // カメラのY軸周りの回転角度を計算
+    worldTransform_.rotation_.y = std::atan2(forwardZ.x, forwardZ.z);
+    Matrix4x4 rotateYMatrix = MakeRotateYMatrix(-worldTransform_.rotation_.y);
+    forwardZ = TransformNormal(forwardZ, rotateYMatrix);
 
-	// カメラの正面方向を計算する
-	Vector3 forward = (target - eye).Normalize();
+    // カメラのX軸周りの回転角度を計算
+    worldTransform_.rotation_.x = std::atan2(-forwardZ.y, forwardZ.z);
 
-	// カメラのZ軸周りの回転角度を計算する
-	//worldTransform_.rotation_.z = std::atan2(-forward.y, forward.x);
-	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(-worldTransform_.rotation_.z);
-	Vector3 forwardZ = TransformNormal(forward, rotateZMatrix);
+    // ワールド行列を更新
+    worldTransform_.UpdateWorld();
 
-	// カメラのY軸周りの回転角度を計算する
-	worldTransform_.rotation_.y = std::atan2(forwardZ.x, forwardZ.z);
-	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(-worldTransform_.rotation_.y);
-	forwardZ = TransformNormal(forwardZ, rotateYMatrix);
+    // ビュー行列の計算
+    viewProjection_.matView_ = Inverse(worldTransform_.matWorld_);
+}
 
-	// カメラのX軸周りの回転角度を計算する
-	worldTransform_.rotation_.x = std::atan2(-forwardZ.y, forwardZ.z);
-
-	// ワールド行列を更新する
-	worldTransform_.UpdateWorld();
-
-	// ビュー行列を計算するために、ワールド行列の逆行列を求める
-	viewProjection_.matView_ = Inverse(worldTransform_.matWorld_);
-
+void RailCamera::imgui() {
 #ifdef _DEBUG
-	ImGui::Begin("Camera");
-	ImGui::SliderFloat3("Translation", &worldTransform_.translation_.x, -50.0f, 1000.0f);
-	ImGui::SliderFloat3("Rotate", &worldTransform_.rotation_.x, 0, 10.0f);
-	ImGui::End();
+    if (ImGui::BeginTabItem("railCamera")) {
+        ImGui::SliderFloat3("Translation", &worldTransform_.translation_.x, -50.0f, 1000.0f);
+        ImGui::SliderFloat3("Rotate", &worldTransform_.rotation_.x, 0, 10.0f);
+        ImGui::SliderFloat("Velocity", &velocity_, 0.01f, 1.0f); // 速度を調整するためのスライダー
+        ImGui::EndTabItem();
+    }
 #endif
 }

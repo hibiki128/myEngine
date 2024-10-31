@@ -16,6 +16,8 @@ public:
 
 	void IcoDraw();
 
+	void imgui();
+
 	std::vector<Vector3> GetControlPoints() { return controlPoints_; }
 private:
 	void LineUpdate();

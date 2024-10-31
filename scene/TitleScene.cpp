@@ -22,7 +22,7 @@ void TitleScene::Initialize()
 	railCamera_->Initialize(cameraT_);
 
 	player_ = std::make_unique<Player>();
-	Vector3 playerPos_ = { 0.0f,-0.1f,1.0f };
+	Vector3 playerPos_ = { 0.0f,-0.37f,0.2f };
 	player_->Initilaize(&vP_, playerPos_);
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
@@ -35,10 +35,23 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-	ImGui::Begin("camera");
-	ImGui::DragFloat3("translate", &vP_.translation_.x, 0.1f);
-	ImGui::DragFloat3("rotate", &vP_.rotation_.x, 0.1f);
+
+	ImGui::Begin("gameScene");
+	if (ImGui::BeginTabBar("camera")) {
+		if (ImGui::BeginTabItem("camera")) {
+			ImGui::DragFloat3("translate", &vP_.translation_.x, 0.1f);
+			ImGui::DragFloat3("rotate", &vP_.rotation_.x, 0.1f);
+			ImGui::EndTabItem();
+		}
+		railCamera_->imgui();
+	ImGui::EndTabBar();
+	}
+	player_->imgui();
+
+	rail_->imgui();
+
 	ImGui::End();
+
 
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
@@ -76,7 +89,7 @@ void TitleScene::Draw()
 	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
-
+	player_->DrawUI();
 	//------------------------
 
 	objCommon_->DrawCommonSetting();

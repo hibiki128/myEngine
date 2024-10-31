@@ -16,6 +16,10 @@ private:
 
 	float playerPosZ_ = 0;
 
+	float velocity_ = 0;
+
+	float t_ = 0;
+
 public:
 
 	RailCamera();
@@ -30,6 +34,8 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
+
+	void imgui();
 
 	/// <summary>
 	/// ゲッター
