@@ -9,8 +9,11 @@ uint32_t TextureManager::kSRVIndexTop = 1;
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
+    // ファイル名を取り出して、resources/images/を付ける
+    std::string newFilePath = "resources/images/" + filePath.substr(filePath.find_last_of("/\\") + 1);
+
     // 読み込み済みテクスチャを検索
-    if (textureDatas.contains(filePath)) {
+    if (textureDatas.contains(newFilePath)) {
         return;
     }
 
@@ -19,7 +22,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
     // テクスチャファイルを読んでプログラムで扱えるようにする
     DirectX::ScratchImage image{};
-    std::wstring filePathW = StringUtility::ConvertString(filePath);
+    std::wstring filePathW = StringUtility::ConvertString(newFilePath);
     HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
     assert(SUCCEEDED(hr));
 
@@ -33,7 +36,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
     }
 
     // テクスチャデータを追加して書き込む
-    TextureData& textureData = textureDatas[filePath];
+    TextureData& textureData = textureDatas[newFilePath];
 
     textureData.metadata = imageToUse->GetMetadata();
     textureData.resource = dxCommon_->CreateTextureResource(textureData.metadata);
@@ -77,8 +80,11 @@ void TextureManager::Finalize()
 
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath)
 {
+    // ファイル名を取り出して、resources/images/を付ける
+    std::string newFilePath = "resources/images/" + filePath.substr(filePath.find_last_of("/\\") + 1);
+
     // unordered_mapを使って直接インデックスを取得
-    auto it = textureDatas.find(filePath);
+    auto it = textureDatas.find(newFilePath);
     if (it != textureDatas.end()) {
         return it->second.srvIndex;
     }

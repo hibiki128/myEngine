@@ -418,3 +418,8 @@ bool GlobalVariables::GetBoolValue(const std::string& groupName, const std::stri
 	// 指定グループから指定のキーの値を取得
 	return std::get<bool>(item.value);
 }
+
+// 指定されたグループが存在するかを確認するメソッド
+bool GlobalVariables::GroupExists(const std::string& groupName) const {
+	return datas_.find(groupName) != datas_.end();
+}

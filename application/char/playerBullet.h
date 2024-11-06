@@ -2,7 +2,8 @@
 #include"object3d.h"
 #include"WorldTransform.h"
 #include"math/Vector3.h"
-class playerBullet {
+#include"Collider.h"
+class playerBullet :public Collider{
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -21,6 +22,12 @@ private:
 	bool isDead_ = false;
 
 	static inline const float kRadius_ = 1.0f;
+
+	void OnCollisionEnter([[maybe_unused]] Collider* other) override;
+
+	Vector3 GetCenterPosition()const override;
+
+	AABB GetAABB()const override;
 
 public:
 	/// <summary>

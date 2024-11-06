@@ -1,0 +1,7 @@
+{
+    "Collider": {
+        "aabbCollision": true,
+        "sphereCollision": false,
+        "visible": true
+    }
+}

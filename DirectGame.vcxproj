@@ -65,7 +65,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)myEngine\utility\imgui;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)myEngine\utility\imgui;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -89,7 +89,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,6 +104,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\camera\RailCamera.cpp" />
+    <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
+    <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp" />
     <ClCompile Include="math\Easing.cpp" />
@@ -173,6 +175,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\camera\RailCamera.h" />
+    <ClInclude Include="myEngine\utility\collider\Collider.h" />
+    <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
     <ClInclude Include="math\Easing.h" />
     <ClInclude Include="myEngine\3d\particle\ParticleCommon.h" />

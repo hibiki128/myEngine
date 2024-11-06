@@ -14,7 +14,7 @@ void rail::Initialize(ViewProjection* vp)
 	controlPoints_.emplace_back(Vector3(5.0f, 0.0f, 0.0f));  // 制御点4
 
 	line_ = std::make_unique<LineManager>();
-	line_->Initialize("plane.obj");
+	line_->Initialize("debug/plane.obj");
 
 	// 制御点の数に応じてセグメントを初期化
 	segments_.resize(controlPoints_.size());
@@ -22,7 +22,7 @@ void rail::Initialize(ViewProjection* vp)
 
 	for (size_t i = 0; i < controlPoints_.size(); ++i) {
 		segments_[i] = std::make_unique<Object3d>(); // オブジェクトを生成
-		segments_[i]->Initialize("ICO.obj"); // ICOモデルを初期化
+		segments_[i]->Initialize("debug/ICO.obj"); // ICOモデルを初期化
 		wts_[i].translation_ = controlPoints_[i]; // ワールドトランスフォームに制御点の座標を設定
 		wts_[i].UpdateMatrix(); // 行列を更新
 	}
@@ -150,7 +150,7 @@ void rail::ApplyVariables()
 
 		// 新しいセグメントを初期化
 		segments_[i] = std::make_unique<Object3d>();
-		segments_[i]->Initialize("ICO.obj");
+		segments_[i]->Initialize("debug/ICO.obj");
 
 		// ワールドトランスフォームの設定
 		wts_[i].translation_ = controlPoints_[i];

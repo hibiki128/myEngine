@@ -14,8 +14,6 @@ private:
 
 	std::vector<Vector3> controlPoints_;
 
-	float playerPosZ_ = 0;
-
 	float velocity_ = 0;
 
 	float t_ = 0;
@@ -46,6 +44,4 @@ public:
 	const WorldTransform& GetWorldTransform() const { return worldTransform_; };
 
 	void SetControlPoints(std::vector<Vector3> controlPoints) { controlPoints_ = controlPoints; }
-
-	void SetPlayerPositionZ(float z) { playerPosZ_ = z; }
 };

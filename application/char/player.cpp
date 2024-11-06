@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <imgui.h>
+#include"application/camera/RailCamera.h"
 
 Player::~Player() {
 	// bulletの解放
@@ -13,13 +14,13 @@ Player::~Player() {
 void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position) {
 	// 引数として受け取ったデータをメンバ変数に記録する
 	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("suzannu.obj");
+	obj_->Initialize("debug/suzannu.obj");
 
 	reticle_ = std::make_unique<Sprite>();
 	reticle_->Initialize("Reticle.png", { 640.0f,360.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f });
 
 	reticleObj_ = std::make_unique<Object3d>();
-	reticleObj_->Initialize("ICO.obj");
+	reticleObj_->Initialize("debug/ICO.obj");
 
 	spritePos = reticle_->GetPosition();
 
@@ -40,16 +41,8 @@ void Player::Update() {
 	// 弾の削除
 	Bulletdelete();
 
-	// 旋回処理
-	//Rotate();
-
-	// 移動処理
-	//Move();
-
 	// 攻撃処理
 	Attack();
-
-	SetReticle();
 
 	TramsformReticle();
 
@@ -93,56 +86,13 @@ void Player::imgui()
 			reticle_->SetPosition(spritePos);
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("view")) {
+			ImGui::DragFloat3("position", &viewProjection_->translation_.x, 0.1f);
+			ImGui::DragFloat3("rotation", &viewProjection_->rotation_.x, 0.1f);
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
-}
-
-void Player::Rotate() {
-	// 回転の速さ[ラジアン/flame]
-	const float kRotSpeed = 0.02f;
-
-	// 押した方向で移動ベクトルを変更
-	if (input_->PushKey(DIK_A)) {
-		worldTransform_.rotation_.y -= kRotSpeed;
-	}
-	else if (input_->PushKey(DIK_D)) {
-		worldTransform_.rotation_.y += kRotSpeed;
-	}
-}
-
-void Player::Move() {
-	// キャラクターの移動ベクトル
-	Vector3 move = { 0, 0, 0 };
-
-	// 　キャラクターの移動の速さ
-	const float kCharacterSpeed = 0.2f;
-
-	// 押した方向で移動ベクトルを変更(左右)
-	if (input_->PushKey(DIK_LEFT)) {
-		move.x -= kCharacterSpeed;
-	}
-	else if (input_->PushKey(DIK_RIGHT)) {
-		move.x += kCharacterSpeed;
-	}
-
-	// 押した方向で移動ベクトルを変更(上下)
-	if (input_->PushKey(DIK_UP)) {
-		move.y += kCharacterSpeed;
-	}
-	else if (input_->PushKey(DIK_DOWN)) {
-		move.y -= kCharacterSpeed;
-	}
-
-	// 移動ベクトルの加算
-	worldTransform_.translation_ += move;
-
-	// 移動限界座標
-	const float kMoveLimitX = 35.0f;
-	const float kMoveLimitY = 19.5f;
-
-	// 範囲を超えない処理
-	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kMoveLimitX, +kMoveLimitX);
-	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kMoveLimitY, +kMoveLimitY);
 }
 
 void Player::Attack() {
@@ -189,21 +139,6 @@ Vector3 Player::GetWorldReticlePosition() {
 
 void Player::OnCollision() {}
 
-void Player::SetReticle()
-{
-	// 自機から3Dレティクルへの距離
-	const float kDistancePlayerTo3DReticle = 50.0f;
-	// 自機から3Dレティクルへのオフセット(Z+向き)
-	Vector3 offset = { 0, 0, 1.0f };
-	// 自機のワールド行列の回転を反映
-	offset = TransformNormal(offset, worldTransform_.matWorld_);
-	// ベクトルの長さを整える
-	offset = offset.Normalize() * kDistancePlayerTo3DReticle;
-	// 3Dレティクルの座標を設定
-	Reticle3Dwt_.translation_ = GetWorldPosition() + offset;
-	Reticle3Dwt_.UpdateMatrix();
-}
-
 void Player::TramsformReticle()
 {
 	Vector3 positionReticle = GetWorldReticlePosition();
@@ -223,37 +158,31 @@ void Player::TramsformReticle()
 
 void Player::MoveAim()
 {
-	// マウスでの操作
+	// マウス座標を取得
 	POINT mousePosition;
-	// マウス座標（スクリーン座標）を取得する
 	GetCursorPos(&mousePosition);
 
-	// クライアントエリア座標に変換する
+	// クライアントエリア座標に変換
 	HWND hwnd = WinApp::GetInstance()->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
-	// スプライトのレティクル座標に設定
-	reticle_->SetPosition(Vector2(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)));
+	// マウス位置に基づく2Dレティクルの位置設定
+	Vector2 mousePos2D(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y));
+	reticle_->SetPosition(mousePos2D);
 
-	// ビュープロジェクションビューポート合成行列
-	Matrix4x4 matViewport = MakeViewPortMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1);
-	Matrix4x4 matVPV = viewProjection_->matView_ * viewProjection_->matProjection_ * matViewport;
-	Matrix4x4 matInverseVPV = Inverse(matVPV);
+	// マウスの2D位置を3D空間でのレティクル位置に変換
+	Vector3 reticle3DPos = Vector3(mousePos2D.x, mousePos2D.y, 1.0f); // 1.0fは遠近効果調整用のZ値
 
-	// スクリーン座標
-	Vector3 posNear = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
-	Vector3 posFar = Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
+	// ビューポート行列逆変換でスクリーン座標からワールド座標に戻す
+	Matrix4x4 invMatViewport = Inverse(MakeViewPortMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1));
+	reticle3DPos = Transformation(reticle3DPos, invMatViewport);
 
-	// スクリーン座標系からワールド座標系へ
-	posNear = Transformation(posNear, matInverseVPV);
-	posFar = Transformation(posFar, matInverseVPV);
+	// カメラの位置を考慮し、ビュー・プロジェクション逆変換で3Dレティクル位置取得
+	Matrix4x4 invViewProjection = Inverse(viewProjection_->matView_ * viewProjection_->matProjection_);
+	reticle3DPos = Transformation(reticle3DPos, invViewProjection);
 
-	// マウスレイの方向
-	Vector3 mouseDirection = posFar - posNear; // posNearからposFarへのベクトルを計算
-	mouseDirection = mouseDirection.Normalize();
-	// カメラから照準オブジェクトの距離
-	const float kDistanceTestObject = 100.0f;
-	Reticle3Dwt_.translation_ = posNear + mouseDirection * kDistanceTestObject; // posNearからmouseDirectionの方向にkDistanceTestObject進んだ距離
+	// 3Dレティクルのワールド座標を更新
+	Reticle3Dwt_.translation_ = reticle3DPos;
 	Reticle3Dwt_.UpdateMatrix();
 }
 
