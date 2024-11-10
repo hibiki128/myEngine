@@ -257,6 +257,37 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
 	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
 }
 
+Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles)
+{
+	float pitch = eulerAngles.x;  // X軸周りの回転
+	float yaw = eulerAngles.y;    // Y軸周りの回転
+	float roll = eulerAngles.z;   // Z軸周りの回転
+
+	// 各軸周りの回転行列
+	Matrix4x4 rotationX = Matrix4x4{
+		1, 0, 0, 0,
+		0, cosf(pitch), -sinf(pitch), 0,
+		0, sinf(pitch), cosf(pitch), 0,
+		0, 0, 0, 1
+	};
+
+	Matrix4x4 rotationY = Matrix4x4{
+		cosf(yaw), 0, sinf(yaw), 0,
+		0, 1, 0, 0,
+		-sinf(yaw), 0, cosf(yaw), 0,
+		0, 0, 0, 1
+	};
+
+	Matrix4x4 rotationZ = Matrix4x4{
+		cosf(roll), -sinf(roll), 0, 0,
+		sinf(roll), cosf(roll), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+
+	// 回転行列を合成 (Z * Y * X の順に掛け合わせる)
+	return rotationZ * rotationY * rotationX;
+}
 
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {

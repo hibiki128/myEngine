@@ -1,0 +1,19 @@
+{
+    "class  Collider0": {
+        "AABB Max": [
+            0.0,
+            0.0,
+            20.0
+        ],
+        "AABB Min": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Cube Translation": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

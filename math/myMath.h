@@ -65,6 +65,8 @@ Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vect
 
 Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
+Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles);
+
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 //void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
