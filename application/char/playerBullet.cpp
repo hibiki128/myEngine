@@ -1,5 +1,6 @@
 #include "PlayerBullet.h"
 #include <TextureManager.h>
+#include"enemy.h"
 
 void playerBullet::OnCollisionEnter(Collider* other)
 {
@@ -20,7 +21,7 @@ AABB playerBullet::GetAABB() const
 	// 中心位置を取得
 	Vector3 center = GetCenterPosition();
 	// スケール値を半分にしてAABBの範囲とする
-	Vector3 halfScale = worldTransform_.scale_ * 0.7f;
+	Vector3 halfScale = worldTransform_.scale_ * 1.1f;
 
 	// min と max の計算
 	AABB aabb;
@@ -30,35 +31,35 @@ AABB playerBullet::GetAABB() const
 	return aabb;
 }
 
-void playerBullet::Initialize( const Vector3& position, const Vector3& velocity) {
+void playerBullet::Initialize(const Vector3& position) {
 
 	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("debug/ICO.obj");
-
-	velocity_ = velocity;
+	obj_->Initialize("debug/Cube.obj");
 
 	worldTransform_.Initialize();
 	// 引数で受け取った座標をセット
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = { 0.3f,0.3f,0.3f };
+	worldTransform_.scale_ = { 0.3f,0.3f,5.0f };
 }
 
 void playerBullet::Update() {
 	// 座標を移動させる(1フレーム文の移動量を足しこむ)
-	worldTransform_.translation_ += velocity_;
+	//worldTransform_.translation_ += velocity_;
 
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
+	if (isFire_) {
+		Collider::SetCollisionEnabled(true);
 	}
-
+	else {
+		Collider::SetCollisionEnabled(false);
+	}
 	worldTransform_.UpdateMatrix();
 }
 
 void playerBullet::Draw(const ViewProjection& viewProjection) {
-	obj_->Draw(worldTransform_, viewProjection);
+	if (isFire_) {
+		obj_->Draw(worldTransform_, viewProjection);
+	}
 }
-
-void playerBullet::OnCollision() { isDead_ = true; }
 
 Vector3 playerBullet::GetWorldPosition() {
 	Vector3 worldPos;

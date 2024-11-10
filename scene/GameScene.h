@@ -10,6 +10,7 @@
 #include"application/map/rail.h"
 #include"application/camera/RailCamera.h"
 #include"application/char/player.h"
+#include"application/char/enemy.h"
 
 
 class GameScene : public BaseScene
@@ -36,7 +37,10 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-	ViewProjection* GetViewProjection()override { return &vP_; }
+	ViewProjection* GetViewProjection()override { return &vp_; }
+
+	// ImGuiのボタンで敵を追加
+	void AddEnemyByButton();
 
 private:
 	Audio* audio_;
@@ -44,11 +48,12 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-	ViewProjection vP_;
+	ViewProjection vp_;
 
 	std::unique_ptr<rail> rail_;
 	std::unique_ptr<RailCamera> railCamera_;
 	std::unique_ptr<Player> player_;
+	std::list<std::unique_ptr<enemy>> enemies_;
 
 	WorldTransform cameraT_;
 };

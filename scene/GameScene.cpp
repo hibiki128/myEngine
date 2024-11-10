@@ -14,20 +14,26 @@ void GameScene::Initialize()
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 
-	vP_.Initialize();
+	vp_.Initialize();
 
+	//----------レール-----------
 	rail_ = std::make_unique<rail>();
-	rail_->Initialize(&vP_);
+	rail_->Initialize(&vp_);
+	//--------------------------
 
 	cameraT_.Initialize();
 
+	//----------レールカメラ-----------
 	railCamera_ = std::make_unique<RailCamera>();
 	railCamera_->Initialize(cameraT_);
+	//-------------------------------
 
+	//----------プレイヤー------------
 	player_ = std::make_unique<Player>();
 	Vector3 playerPos_ = { 0.0f,-0.37f,0.2f };
-	player_->Initilaize(&vP_, playerPos_);
+	player_->Initilaize(&vp_, playerPos_);
 	player_->SetParent(&railCamera_->GetWorldTransform());
+	//-------------------------------
 }
 
 void GameScene::Finalize()
@@ -37,22 +43,22 @@ void GameScene::Finalize()
 
 void GameScene::Update()
 {
-
+#ifdef _DEBUG
 	ImGui::Begin("gameScene");
 	if (ImGui::BeginTabBar("camera")) {
 		if (ImGui::BeginTabItem("camera")) {
-			ImGui::DragFloat3("translate", &vP_.translation_.x, 0.1f);
-			ImGui::DragFloat3("rotate", &vP_.rotation_.x, 0.1f);
+			ImGui::DragFloat3("translate", &vp_.translation_.x, 0.1f);
+			ImGui::DragFloat3("rotate", &vp_.rotation_.x, 0.1f);
 			ImGui::EndTabItem();
 		}
 		railCamera_->imgui();
 		ImGui::EndTabBar();
 	}
+	AddEnemyByButton();
 	player_->imgui();
-
 	rail_->imgui();
-
 	ImGui::End();
+#endif // _DEBUG
 
 
 	//-----シーン切り替え-----
@@ -64,13 +70,17 @@ void GameScene::Update()
 	rail_->Update();
 
 
-	vP_.UpdateMatrix();
+	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
-	railCamera_->Update();
-	vP_.matView_ = railCamera_->GetViewProjection().matView_;
+	//railCamera_->Update();
+	vp_.matView_ = railCamera_->GetViewProjection().matView_;
 	player_->SetRailCamera(railCamera_.get());
-	vP_.TransferMatrix();
+	vp_.TransferMatrix();
 	player_->Update();
+	for (auto& enemy : enemies_) {
+		enemy->Update();
+	}
+
 }
 
 void GameScene::Draw()
@@ -87,6 +97,9 @@ void GameScene::Draw()
 	//-----3DObjectの描画開始-----
 	rail_->IcoDraw();
 	player_->Draw();
+	for (auto& enemy : enemies_) {
+		enemy->Draw(&vp_);
+	}
 	//--------------------------
 
 	/// Particleの描画準備
@@ -101,4 +114,54 @@ void GameScene::Draw()
 	ImGuiManager::GetInstance()->Draw();
 #endif // _DEBUG
 	/// -------描画処理終了-------
+}
+
+void GameScene::AddEnemyByButton()
+{
+	// TabBar "enemy" を開始
+	if (ImGui::BeginTabBar("enemy")) {
+		// "enemy" 内にある TabItem を追加
+		if (ImGui::BeginTabItem("Enemies")) {
+			// "Enemies" 内で Add Enemy ボタンを表示し、新しいエネミーを追加
+			if (ImGui::Button("Add Enemy")) {
+				// 新しいenemyを作成
+				auto newEnemy = std::make_unique<enemy>();
+
+				// リスト内の敵数を基に初期化
+				int enemyNum = static_cast<int>(enemies_.size());
+				newEnemy->Init();  // Init関数を呼び出して初期化
+
+				// 初期化後、リストに追加
+				enemies_.push_back(std::move(newEnemy));
+
+				// AddItem関数を呼び出してアイテムを追加
+				enemies_.back()->AddItem(enemyNum);
+			}
+
+			// 次に各 enemy のタブを生成
+			if (ImGui::BeginTabBar("EnemyTabBar")) {
+				int index = 0;
+				for (auto& enemy : enemies_) {
+					// "enemy0", "enemy1" のようなタブ名を動的に生成
+					std::string tabName = "enemy" + std::to_string(index);
+
+					// タブアイテムの開始
+					if (ImGui::BeginTabItem(tabName.c_str())) {
+						// タブ内で表示する内容を記述 (ここに必要な情報を表示)
+						ImGui::Text("This is %s", tabName.c_str());
+
+						// タブアイテムの終了
+						ImGui::EndTabItem();
+					}
+					++index;
+				}
+				ImGui::EndTabBar();
+			}
+
+			// "Enemies" タブアイテムの終了
+			ImGui::EndTabItem();
+		}
+		// "enemy" タブバーの終了
+		ImGui::EndTabBar();
+	}
 }

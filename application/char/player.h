@@ -6,6 +6,7 @@
 #include"list"
 #include <ViewProjection.h>
 #include"Sprite.h"
+#include <Quaternion.h>
 
 class RailCamera;
 class Player {
@@ -25,7 +26,7 @@ private:
 	Input* input_ = nullptr;
 
 	// 弾
-	std::list<playerBullet*> bullets_;
+	std::unique_ptr<playerBullet> bullet_;
 
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 	Vector2 spritePos;
@@ -59,6 +60,14 @@ public:
 
 	void imgui();
 
+	void AimBulletAtReticle();
+
+	Quaternion CalculateRotationFromDirection(const Vector3& direction) {
+		Quaternion rotation;
+		rotation.SetFromTo({ 0.0f, 0.0f, 1.0f }, direction); // Z軸からdirectionに向ける回転
+		return rotation;
+	}
+
 	/// <summary>
 	/// ゲッター
 	/// </summary>
@@ -72,9 +81,6 @@ public:
 	/// <param name="parent"></param>
 	void SetParent(const WorldTransform* parent);
 
-	// 弾リストを取得
-	const std::list<playerBullet*>& GetBullets() const { return bullets_; }
-
 	float GetRadius() { return kRadius_; };
 
 	void SetRailCamera(RailCamera* railCamera) { railCamera_ = railCamera; }
@@ -84,11 +90,6 @@ private:
 	/// 攻撃
 	/// </summary>
 	void Attack();
-
-	/// <summary>
-	/// 弾の削除
-	/// </summary>
-	void Bulletdelete();
 
 	/// <summary>
 	/// 衝突判定

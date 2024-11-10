@@ -3,6 +3,7 @@
 #include"WorldTransform.h"
 #include"math/Vector3.h"
 #include"Collider.h"
+#include"Quaternion.h"
 class playerBullet :public Collider{
 private:
 	// ワールド変換データ
@@ -11,15 +12,12 @@ private:
 	// モデル
 	std::unique_ptr<Object3d> obj_ = nullptr;
 
-	// 速度
-	Vector3 velocity_;
-
 	// 寿命<frm>
 	static const int32_t kLifeTime = 10 * 10;
 	// デスタイマー
 	int32_t deathTimer_ = kLifeTime;
 	// デスフラグ
-	bool isDead_ = false;
+	bool isFire_ = false;
 
 	static inline const float kRadius_ = 1.0f;
 
@@ -35,7 +33,7 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="position"></param>
-	void Initialize(const Vector3& position, const Vector3& velocity);
+	void Initialize(const Vector3& position);
 
 	/// <summary>
 	/// 更新
@@ -49,15 +47,26 @@ public:
 	void Draw(const ViewProjection& viewProejection);
 
 	/// <summary>
-	/// 衝突判定
-	/// </summary>
-	void OnCollision();
-
-	/// <summary>
 	/// ゲッター
 	/// </summary>
 	/// <returns></returns>
-	bool IsDead() const { return isDead_; }
+	bool IsFire() const { return isFire_; }
 	float GetRadius() { return kRadius_; }
 	Vector3 GetWorldPosition();
+
+	/// <summary>
+	/// setter
+	/// </summary>
+	/// <param name="isFire"></param>
+	void SetFire(bool isFire) { isFire_ = isFire; }
+	void SetPosition(const Vector3& position) {
+		worldTransform_.translation_ = position;
+	}
+
+	void SetRotation(const Quaternion& rotation) {
+		// クォータニオンをオイラー角に変換して rotation_ に代入
+		worldTransform_.rotation_ = rotation.ToEulerAngles();
+		// 行列を更新して、新しい回転を反映させる
+		worldTransform_.UpdateMatrix();
+	}
 };

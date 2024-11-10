@@ -51,6 +51,9 @@ void CollisionManager::Draw(const ViewProjection& viewProjection) {
 	}
 	// 全てのコライダーについて
 	for (Collider* collider : colliders_) {
+		if (!collider->IsCollisionEnabled()) {
+			continue;
+		}
 		if (sphereCollision) {
 			// 描画
 			collider->DrawSphere(viewProjection);
@@ -68,6 +71,11 @@ void CollisionManager::Update()
 }
 
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	// コリジョンが無効化されている場合はチェックをスキップ
+	if (!colliderA->IsCollisionEnabled() || !colliderB->IsCollisionEnabled()) {
+		return;
+	}
+
 	bool isCollidingNow = false;
 
 	// 球の衝突チェック
@@ -75,8 +83,6 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		Vector3 posA = colliderA->GetCenterPos();
 		Vector3 posB = colliderB->GetCenterPos();
 		float distance = (posA - posB).Length();
-
-		// 衝突判定
 		isCollidingNow = (distance <= colliderA->GetRadius() + colliderB->GetRadius());
 	}
 
@@ -88,25 +94,21 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	// 衝突状態の変化に応じたコールバックの呼び出し
 	if (isCollidingNow) {
 		if (!colliderA->WasColliding() && !colliderB->WasColliding()) {
-			// 新しい衝突（Enter）
 			colliderA->OnCollisionEnter(colliderB);
 			colliderB->OnCollisionEnter(colliderA);
 		}
 		else {
-			// 継続中の衝突
 			colliderA->OnCollision(colliderB);
 			colliderB->OnCollision(colliderA);
 		}
 	}
 	else {
 		if (colliderA->WasColliding() || colliderB->WasColliding()) {
-			// 衝突の終了（Out）
 			colliderA->OnCollisionOut(colliderB);
 			colliderB->OnCollisionOut(colliderA);
 		}
-
 	}
-	// 現フレームの衝突状態を記録
+
 	colliderA->SetIsColliding(isCollidingNow);
 	colliderB->SetIsColliding(isCollidingNow);
 }

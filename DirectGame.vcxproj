@@ -104,6 +104,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\camera\RailCamera.cpp" />
+    <ClCompile Include="application\char\enemy.cpp" />
     <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -175,6 +176,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\camera\RailCamera.h" />
+    <ClInclude Include="application\char\enemy.h" />
     <ClInclude Include="myEngine\utility\collider\Collider.h" />
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />

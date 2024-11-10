@@ -97,8 +97,10 @@ public:
 	/// </summary>
 	/// <param name="radius"></param>
 	void SetRadius(float radius) { radius_ = radius; }
-
 	void SetIsColliding(bool colliding) { wasColliding = isColliding; isColliding = colliding; }
+	void SetCollisionEnabled(bool enabled) { isCollisionEnabled_ = enabled; }
+
+	bool IsCollisionEnabled() const { return isCollisionEnabled_; }
 	bool IsColliding() const { return isColliding; }
 	bool WasColliding() const { return wasColliding; }
 
@@ -130,6 +132,7 @@ private:
 
 	ObjColor color_;
 
+	bool isCollisionEnabled_ = true;  // デフォルトではコリジョンを有効化
 	bool isColliding = false;   // 現在のフレームの衝突状態
 	bool wasColliding = false;  // 前フレームの衝突状態
 };

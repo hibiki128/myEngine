@@ -5,10 +5,7 @@
 #include"application/camera/RailCamera.h"
 
 Player::~Player() {
-	// bulletの解放
-	for (playerBullet* bullet : bullets_) {
-		delete bullet;
-	}
+
 }
 
 void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position) {
@@ -32,14 +29,14 @@ void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position)
 	Reticle3Dwt_.Initialize();
 	Reticle3Dwt_.scale_ = { 3.0f,3.0f,3.0f };
 
+	bullet_ = std::make_unique<playerBullet>();
+	bullet_->Initialize(worldTransform_.translation_);
+
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
 }
 
 void Player::Update() {
-
-	// 弾の削除
-	Bulletdelete();
 
 	// 攻撃処理
 	Attack();
@@ -48,10 +45,10 @@ void Player::Update() {
 
 	MoveAim();
 
-	// 弾更新
-	for (playerBullet* bullet : bullets_) {
-		bullet->Update();
-	}
+	// 3Dレティクルの方向にbullet_を向ける
+	AimBulletAtReticle();
+
+	bullet_->Update();
 
 	// 行列更新
 	worldTransform_.UpdateMatrix();
@@ -60,10 +57,7 @@ void Player::Update() {
 void Player::Draw() {
 	obj_->Draw(worldTransform_, *viewProjection_);
 	reticleObj_->Draw(Reticle3Dwt_, *viewProjection_);
-	// 弾描画
-	for (playerBullet* bullet : bullets_) {
-		bullet->Draw(*viewProjection_);
-	}
+	bullet_->Draw(*viewProjection_);
 }
 
 void Player::DrawUI()
@@ -76,7 +70,7 @@ void Player::imgui()
 	// キャラクターの座標を画面表示する処理
 	if (ImGui::BeginTabBar("player")) {
 		if (ImGui::BeginTabItem("Player")) {
-			ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);
+			ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);	
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Reticle")) {
@@ -91,39 +85,28 @@ void Player::imgui()
 			ImGui::DragFloat3("rotation", &viewProjection_->rotation_.x, 0.1f);
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Bullet Status")) {
+			// bullet_が存在する場合、IsFire()の結果を表示
+			if (bullet_) {
+				bool isFire = bullet_->IsFire();
+				ImGui::Text("IsFire: %s", isFire ? "true" : "false");
+			}
+			else {
+				ImGui::Text("IsFire: false (No bullet)");
+			}
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 }
 
 void Player::Attack() {
-	if (input_->TriggerMouseButton(0)) {
-
-		// 弾の速度
-		const float kBulletSpeed = 0.5f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-
-		// 自機から照準オブジェクトへのベクトル
-		velocity = GetWorldReticlePosition() - GetWorldPosition();
-		velocity = velocity.Normalize() * kBulletSpeed;
-
-		// 弾を生成し、初期化
-		playerBullet* newBullet = new playerBullet();
-		newBullet->Initialize(GetWorldPosition(), velocity);
-
-		// 弾を登録する
-		bullets_.push_back(newBullet);
+	if (input_->PushKey(DIK_SPACE)) {
+		bullet_->SetFire(true);
 	}
-}
-
-void Player::Bulletdelete() {
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](playerBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-		});
+	else {
+		bullet_->SetFire(false);
+	}
 }
 
 Vector3 Player::GetWorldReticlePosition() {
@@ -200,4 +183,15 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+}
+
+void Player::AimBulletAtReticle() {
+	// bullet_ の始点を Player の位置に設定
+	bullet_->SetPosition(GetWorldPosition());
+
+	// Player の位置から 3D レティクルの位置への方向ベクトルを計算
+	Vector3 targetDirection = (GetWorldReticlePosition() - GetWorldPosition()).Normalize();
+
+	// 向きベクトルを基に回転を計算し、 bullet_ に設定
+	bullet_->SetRotation(CalculateRotationFromDirection(targetDirection));
 }
