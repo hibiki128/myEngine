@@ -14,17 +14,18 @@ ParticleEmitter::ParticleEmitter()
 void ParticleEmitter::Initialize(const std::string& name, const std::string& fileName)
 {
 	emitterObj = std::make_unique<Object3d>();
-	emitterObj->Initialize("OBB.obj");
+	emitterObj->Initialize("debug/OBB.obj");
 	name_ = name;
 	transform_.Initialize();
 	Manager_ = std::make_unique<ParticleManager>();
 	Manager_->Initialize(SrvManager::GetInstance());
 	Manager_->CreateParticleGroup(name_, fileName);
-	//	transform_.UpdateMatrix();
+	emitFrequency_ = 0.1f;
+	//transform_.UpdateMatrix();
 
 	AddItem();
 
-
+	isActive_ = false;
 	ApplyGlobalVariables();
 }
 
@@ -38,6 +39,17 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 	while (elapsedTime_ >= emitFrequency_) {
 		Emit();  // パーティクルを発生させる
 		elapsedTime_ -= emitFrequency_;  // 過剰に進んだ時間を考慮
+	}
+	Manager_->Update(vp_);
+	transform_.UpdateMatrix();
+}
+
+void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
+{
+	SetValue();
+	if (!isActive_) {
+		Emit();  // パーティクルを発生させる
+		isActive_ = true;
 	}
 	Manager_->Update(vp_);
 	transform_.UpdateMatrix();

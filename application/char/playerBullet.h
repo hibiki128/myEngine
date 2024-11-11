@@ -4,7 +4,8 @@
 #include"math/Vector3.h"
 #include"Collider.h"
 #include"Quaternion.h"
-class playerBullet :public Collider{
+class Player;
+class playerBullet :public Collider {
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -28,13 +29,15 @@ private:
 
 	AABB GetAABB()const override;
 
+	Player* player_ = nullptr;
+
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="position"></param>
-	void Initialize(const Vector3& position);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -63,6 +66,9 @@ public:
 	void SetPosition(const Vector3& position) {
 		worldTransform_.translation_ = position;
 	}
+	void SetRotation(const Vector3& rotation) {
+		worldTransform_.rotation_ = rotation;
+	}
 	void SetParent(const WorldTransform* parent);
 	void SetRotation(const Quaternion& rotation) {
 		// クォータニオンをオイラー角に変換して rotation_ に代入
@@ -70,4 +76,6 @@ public:
 		// 行列を更新して、新しい回転を反映させる
 		worldTransform_.UpdateMatrix();
 	}
+
+	void SetPlayer(Player* _player) { player_ = _player; }
 };

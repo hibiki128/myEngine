@@ -36,10 +36,20 @@ void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position)
 
 	LeftBullet_ = std::make_unique<playerBullet>();
 	LeftBulletOffset = { -5.0f, -2.5f, -4.5f };
-	LeftBullet_->Initialize(worldTransform_.translation_);
+	LeftBullet_->Initialize();
 	RightBullet_ = std::make_unique<playerBullet>();
 	RightBulletOffset = { 5.0f, -2.5f, -4.5f };
-	RightBullet_->Initialize(worldTransform_.translation_);
+	RightBullet_->Initialize();
+	CenterBullet_ = std::make_unique<playerBullet>();
+	CenterBulletOffset = { 0.0f, -2.5f, -4.5f };
+	CenterBullet_->Initialize();
+	LeftRotateOffset = { 0.0f,0.0f,0.0f };
+	RightRotateOffset = { 0.0f,0.0f,0.0f };
+	CenterRotateOffset = { 0.0f,0.0f,0.0f };
+
+	LeftBullet_->SetPlayer(this);
+	RightBullet_->SetPlayer(this);
+	CenterBullet_->SetPlayer(this);
 
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -56,13 +66,20 @@ void Player::Update() {
 
 	// 3Dレティクルの方向にbullet_を向ける
 	AimBulletAtReticle();
-	LeftBullet_->SetPosition(worldTransform_.translation_ + LeftBulletOffset);
-	LeftBullet_->Update();
-	RightBullet_->SetPosition(worldTransform_.translation_ + RightBulletOffset);
-	RightBullet_->Update();
 
 	// 行列更新
 	worldTransform_.UpdateMatrix();
+
+	LeftBullet_->SetPosition(LeftBulletOffset);
+	//LeftBullet_->SetRotation(LeftRotateOffset);
+	LeftBullet_->Update();
+	RightBullet_->SetPosition(RightBulletOffset);
+	//RightBullet_->SetRotation(RightRotateOffset);
+	RightBullet_->Update();
+	CenterBullet_->SetPosition(CenterBulletOffset);
+	//CenterBullet_->SetRotation(CenterRotateOffset);
+	CenterBullet_->Update();
+
 }
 
 void Player::Draw() {
@@ -103,6 +120,9 @@ void Player::imgui() {
 				bool isFire = LeftBullet_->IsFire();
 				ImGui::Text("Left IsFire: %s", isFire ? "true" : "false");
 				ImGui::DragFloat3("Left bulletPos", &LeftBulletOffset.x, 0.1f);
+				ImGui::SliderAngle("Left rotateX", &LeftRotateOffset.x);
+				ImGui::SliderAngle("Left rotateY", &LeftRotateOffset.y);
+				ImGui::SliderAngle("Left rotateZ", &LeftRotateOffset.z);
 			}
 			else {
 				ImGui::Text("Left IsFire: false (No bullet)");
@@ -113,11 +133,26 @@ void Player::imgui() {
 				bool isFire = RightBullet_->IsFire();
 				ImGui::Text("Right IsFire: %s", isFire ? "true" : "false");
 				ImGui::DragFloat3("Right bulletPos", &RightBulletOffset.x, 0.1f);
+				ImGui::SliderAngle("Right rotateX", &RightRotateOffset.x);
+				ImGui::SliderAngle("Right rotateY", &RightRotateOffset.y);
+				ImGui::SliderAngle("Right rotateZ", &RightRotateOffset.z);
 			}
 			else {
 				ImGui::Text("Right IsFire: false (No bullet)");
 			}
 
+			// RightBullet_ が存在する場合、IsFire() の結果を表示
+			if (CenterBullet_) {
+				bool isFire = CenterBullet_->IsFire();
+				ImGui::Text("Center IsFire: %s", isFire ? "true" : "false");
+				ImGui::DragFloat3("Center bulletPos", &CenterBulletOffset.x, 0.1f);
+				ImGui::SliderAngle("Center rotateX", &CenterRotateOffset.x);
+				ImGui::SliderAngle("Center rotateY", &CenterRotateOffset.y);
+				ImGui::SliderAngle("Center rotateZ", &CenterRotateOffset.z);
+			}
+			else {
+				ImGui::Text("Center IsFire: false (No bullet)");
+			}
 
 			ImGui::EndTabItem();  // "Bullet Status" のタブを閉じる
 		}
@@ -129,10 +164,12 @@ void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
 		LeftBullet_->SetFire(true);
 		RightBullet_->SetFire(true);
+		CenterBullet_->SetFire(true);
 	}
 	else {
 		LeftBullet_->SetFire(false);
 		RightBullet_->SetFire(false);
+		CenterBullet_->SetFire(false);
 	}
 }
 
@@ -220,24 +257,45 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+	LeftBullet_->SetParent(parent);
+	RightBullet_->SetParent(parent);
+	CenterBullet_->SetParent(parent);
 }
 
 void Player::AimBulletAtReticle() {
-	// bullet_ の始点を Player の位置に設定
-	LeftBullet_->SetPosition(GetWorldPosition() + LeftBulletOffset);
+	// 3Dレティクルの位置を取得
+	Vector3 reticlePosition = GetWorldReticlePosition();
 
-	// Player の位置から 3D レティクルの位置への方向ベクトルを計算
-	Vector3 LeftTargetDirection = (GetWorldReticlePosition() - LeftBullet_->GetWorldPosition()).Normalize();
+	// カメラの回転（親の回転）を取得し、ワールド空間における調整を行う
+	Vector3 parentRotation = CameraRotate;
 
-	// 向きベクトルを基に回転を計算し、 bullet_ に設定
-	LeftBullet_->SetRotation(CalculateRotationFromDirection(LeftTargetDirection));
+	// 左の弾の処理
+	Vector3 leftDirection = (reticlePosition - LeftBullet_->GetWorldPosition()).Normalize();
+	Vector3 leftRotation = CalculateEulerRotationFromDirection(leftDirection);
+	leftRotation -= parentRotation; // カメラの回転を補正として引く
+	LeftBullet_->SetRotation(leftRotation);
 
-	// bullet_ の始点を Player の位置に設定
-	RightBullet_->SetPosition(GetWorldPosition() + RightBulletOffset);
+	// 右の弾の処理
+	Vector3 rightDirection = (reticlePosition - RightBullet_->GetWorldPosition()).Normalize();
+	Vector3 rightRotation = CalculateEulerRotationFromDirection(rightDirection);
+	rightRotation -= parentRotation; // カメラの回転を補正として引く
+	RightBullet_->SetRotation(rightRotation);
 
-	// Player の位置から 3D レティクルの位置への方向ベクトルを計算
-	Vector3 RightTargetDirection = (GetWorldReticlePosition() - RightBullet_->GetWorldPosition()).Normalize();
+	// 中央の弾の処理
+	Vector3 centerDirection = (reticlePosition - CenterBullet_->GetWorldPosition()).Normalize();
+	Vector3 centerRotation = CalculateEulerRotationFromDirection(centerDirection);
+	centerRotation -= parentRotation; // カメラの回転を補正として引く
+	CenterBullet_->SetRotation(centerRotation);
+}
 
-	// 向きベクトルを基に回転を計算し、 bullet_ に設定
-	RightBullet_->SetRotation(CalculateRotationFromDirection(RightTargetDirection));
+// 方向ベクトルからオイラー角を計算する関数
+Vector3 Player::CalculateEulerRotationFromDirection(const Vector3& direction) {
+	// Z軸方向への回転角度（yaw）を計算
+	float yaw = atan2f(direction.x, direction.z);
+
+	// Y軸方向への回転角度（pitch）を計算
+	float pitch = -atan2f(direction.y, sqrtf(direction.x * direction.x + direction.z * direction.z));
+
+	// オイラー角を返す
+	return Vector3(pitch, yaw, 0.0f); // rollはゼロ
 }

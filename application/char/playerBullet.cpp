@@ -1,6 +1,7 @@
 #include "PlayerBullet.h"
 #include <TextureManager.h>
 #include"enemy.h"
+#include"player.h"
 
 void playerBullet::OnCollisionEnter(Collider* other)
 {
@@ -18,7 +19,7 @@ Vector3 playerBullet::GetCenterPosition() const
 
 Vector3 playerBullet::GetCenterRotation() const
 {
-	return worldTransform_.rotation_;
+	return worldTransform_.rotation_ + player_->GetCameraRotation();
 }
 
 AABB playerBullet::GetAABB() const
@@ -36,7 +37,7 @@ AABB playerBullet::GetAABB() const
 	return aabb;
 }
 
-void playerBullet::Initialize(const Vector3& position) {
+void playerBullet::Initialize() {
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("player/beam.obj");

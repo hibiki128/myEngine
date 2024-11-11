@@ -4,6 +4,7 @@
 #include"Collider.h"
 #include"ViewProjection.h"
 #include"GlobalVariables.h"
+#include"ParticleEmitter.h"
 class enemy :public Collider
 {
 public:
@@ -13,6 +14,7 @@ public:
 	void Update();
 
 	void Draw(ViewProjection* vp_);
+	void DrawParticle(const ViewProjection& _vp);
 
 	Vector3 GetCenterPosition() const override;
 	Vector3 GetCenterRotation() const override;
@@ -28,7 +30,7 @@ public:
 
 	void ApplyVariables();
 private:
-
+	std::unique_ptr<ParticleEmitter> emitter_ = nullptr;
 	std::unique_ptr<Object3d>obj3d_;
 	WorldTransform wt_;
 	GlobalVariables* variables_;

@@ -28,12 +28,18 @@ private:
 	// 弾
 	std::unique_ptr<playerBullet> LeftBullet_;
 	std::unique_ptr<playerBullet> RightBullet_;
+	std::unique_ptr<playerBullet> CenterBullet_;
 
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 	Vector2 spritePos;
 	Vector3 LeftBulletOffset;
 	Vector3 RightBulletOffset;
+	Vector3 CenterBulletOffset;
+	Vector3 LeftRotateOffset;
+	Vector3 RightRotateOffset;
+	Vector3 CenterRotateOffset;
 
+	Vector3 CameraRotate;
 	static inline const float kRadius_ = 1.0f;
 
 	RailCamera* railCamera_;
@@ -85,8 +91,10 @@ public:
 	void SetParent(const WorldTransform* parent);
 
 	float GetRadius() { return kRadius_; };
+	Vector3 GetCameraRotation() { return CameraRotate; }
 
 	void SetRailCamera(RailCamera* railCamera) { railCamera_ = railCamera; }
+	void SetRailCameraRotation(const Vector3& rotate) { CameraRotate = rotate; }
 private:
 	/// <summary>
 	/// 攻撃
@@ -108,4 +116,7 @@ private:
 	/// 照準操作
 	/// </summary>
 	void MoveAim();
+
+	// 方向ベクトルからオイラー角を計算する関数
+	Vector3 CalculateEulerRotationFromDirection(const Vector3& direction);
 };

@@ -10,6 +10,9 @@ void enemy::Init()
 	HP_ = 5;
 	variables_ = GlobalVariables::GetInstance();
 	groupName_ = "enemy";
+
+	emitter_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize("Death", "debug/line.obj");
 }
 
 void enemy::Update()
@@ -26,9 +29,11 @@ void enemy::Update()
 	}
 	if (isAlive_) {
 		Collider::SetCollisionEnabled(true);
+		emitter_->SetActive(false);
 	}
 	else {
 		Collider::SetCollisionEnabled(false);
+		emitter_->SetPosition(wt_.translation_);
 	}
 	wt_.UpdateMatrix();
 }
@@ -37,6 +42,15 @@ void enemy::Draw(ViewProjection* vp_)
 {
 	if (isAlive_) {
 		obj3d_->Draw(wt_, *vp_);
+	}
+	//emitter_->DrawEmitter(*vp_);
+}
+
+void enemy::DrawParticle(const ViewProjection& _vp)
+{
+	if (!isAlive_) {
+		emitter_->UpdateOnce(_vp);
+		emitter_->Draw();
 	}
 }
 
@@ -80,19 +94,22 @@ void enemy::imgui()
 {
 	ImGui::DragFloat3("pos", &wt_.translation_.x, 0.1f);
 	ImGui::SliderInt("HP", &HP_, 0, 50);
+	emitter_->RenderImGui();
 }
 
 void enemy::AddItem(int enemyNum)
 {
 	// "enemy" + 数字 + " pos" のように動的に名前を作成する
-	itemName = "enemy" + std::to_string(enemyNum) + " pos";
+	itemName = "enemy" + std::to_string(enemyNum);
+	std::string itemNamePos = itemName + " pos";
 
 	// 作成した名前と位置情報を追加する
-	variables_->AddItem(groupName_, itemName, wt_.translation_);
+	variables_->AddItem(groupName_, itemNamePos, wt_.translation_);
 }
 
 void enemy::ApplyVariables()
 {
-	wt_.translation_ = variables_->GetVector3Value(groupName_, itemName);
+	std::string itemNamePos = itemName + " pos";
+	wt_.translation_ = variables_->GetVector3Value(groupName_, itemNamePos);
 }
 

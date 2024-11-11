@@ -73,9 +73,10 @@ void GameScene::Update()
 
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
-	//railCamera_->Update();
+	railCamera_->Update();
 	vp_.matView_ = railCamera_->GetViewProjection().matView_;
 	vp_.TransferMatrix();
+	player_->SetRailCameraRotation(railCamera_->GetWorldTransform().rotation_);
 	player_->Update();
 	for (auto& enemy : enemies_) {
 		enemy->Update();
@@ -105,6 +106,9 @@ void GameScene::Draw()
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
 	rail_->railDraw();
+	for (auto& enemy : enemies_) {
+		enemy->DrawParticle(vp_);
+	}
 	//-----------------------------
 
 

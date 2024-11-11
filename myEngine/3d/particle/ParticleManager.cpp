@@ -241,17 +241,24 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 {
 	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
-	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行目を格納するもの
 
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
-	assert(file.is_open()); // とりあえず開けなかったら止める
+	// ファイル名からフォルダ部分を取得
+	std::string folderPath;
+	size_t lastSlashPos = filename.find_last_of("/\\");
+	if (lastSlashPos != std::string::npos) {
+		// ファイル名の前にフォルダがある場合は、そのフォルダ部分を使用する
+		folderPath = filename.substr(0, lastSlashPos);
+	}
+
+	std::ifstream file(directoryPath + filename); // ファイルを開く
+	assert(file.is_open()); // ファイルが開けなかったら停止
 
 	while (std::getline(file, line)) {
 		std::string identifier;
 		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読む
+		s >> identifier; // 先頭の識別子を読み込む
 
 		// identifierに応じた処理
 		if (identifier == "v") {
@@ -267,12 +274,6 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 			texcoord.x = 1.0f - texcoord.x;
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1.0f;
-			normals.push_back(normal);
 		}
 		else if (identifier == "f") {
 			VertexData triangle[3];
@@ -291,22 +292,24 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+				VertexData vertex = { position, texcoord };
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
+				triangle[faceVertex] = { position, texcoord };
 			}
-			// 頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			// materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
-			// 基本的にobjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+
+			if (!folderPath.empty()) {
+				// ファイル名の前にフォルダがあればそれを追加する
+				modelData.material = LoadMaterialTemplateFile(directoryPath + folderPath, materialFilename);
+			}
+			else {
+				// ファイル名の前にフォルダがあればそれを追加する
+				modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			}
 		}
 	}
 	return modelData;
