@@ -36,7 +36,7 @@ AABB playerBullet::GetAABB() const
 	return aabb;
 }
 
-void playerBullet::Initialize() {
+void playerBullet::Initialize(const Vector3& position) {
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("player/beam.obj");

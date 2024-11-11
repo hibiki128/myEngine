@@ -36,10 +36,10 @@ void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position)
 
 	LeftBullet_ = std::make_unique<playerBullet>();
 	LeftBulletOffset = { -5.0f, -2.5f, -4.5f };
-	LeftBullet_->Initialize();
+	LeftBullet_->Initialize(worldTransform_.translation_);
 	RightBullet_ = std::make_unique<playerBullet>();
 	RightBulletOffset = { 5.0f, -2.5f, -4.5f };
-	RightBullet_->Initialize();
+	RightBullet_->Initialize(worldTransform_.translation_);
 
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -56,9 +56,9 @@ void Player::Update() {
 
 	// 3Dレティクルの方向にbullet_を向ける
 	AimBulletAtReticle();
-	LeftBullet_->SetPosition(LeftBulletOffset);
+	LeftBullet_->SetPosition(worldTransform_.translation_ + LeftBulletOffset);
 	LeftBullet_->Update();
-	RightBullet_->SetPosition(RightBulletOffset);
+	RightBullet_->SetPosition(worldTransform_.translation_ + RightBulletOffset);
 	RightBullet_->Update();
 
 	// 行列更新
@@ -220,8 +220,6 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
-	LeftBullet_->SetParent(parent);
-	RightBullet_->SetParent(parent);
 }
 
 void Player::AimBulletAtReticle() {

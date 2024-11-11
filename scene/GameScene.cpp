@@ -73,14 +73,13 @@ void GameScene::Update()
 
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
-	railCamera_->Update();
+	//railCamera_->Update();
 	vp_.matView_ = railCamera_->GetViewProjection().matView_;
 	vp_.TransferMatrix();
 	player_->Update();
 	for (auto& enemy : enemies_) {
 		enemy->Update();
 	}
-
 }
 
 void GameScene::Draw()

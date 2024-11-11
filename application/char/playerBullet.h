@@ -34,7 +34,7 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="position"></param>
-	void Initialize();
+	void Initialize(const Vector3& position);
 
 	/// <summary>
 	/// 更新
