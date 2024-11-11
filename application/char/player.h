@@ -8,6 +8,7 @@
 #include"Sprite.h"
 #include <Quaternion.h>
 
+class RailCamera;
 class Player {
 private:
 	// ワールド変換データ
@@ -27,15 +28,15 @@ private:
 	// 弾
 	std::unique_ptr<playerBullet> LeftBullet_;
 	std::unique_ptr<playerBullet> RightBullet_;
-	std::unique_ptr<playerBullet> CenterBullet_;
 
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 	Vector2 spritePos;
 	Vector3 LeftBulletOffset;
 	Vector3 RightBulletOffset;
-	Vector3 CenterBulletOffset;
 
 	static inline const float kRadius_ = 1.0f;
+
+	RailCamera* railCamera_;
 public:
 
 	/// <summary>
@@ -84,17 +85,9 @@ public:
 	void SetParent(const WorldTransform* parent);
 
 	float GetRadius() { return kRadius_; };
+
+	void SetRailCamera(RailCamera* railCamera) { railCamera_ = railCamera; }
 private:
-	/// <summary>
-	/// 回転
-	/// </summary>
-	void Rotate();
-
-	/// <summary>
-	/// 移動
-	/// </summary>
-	void Move();
-
 	/// <summary>
 	/// 攻撃
 	/// </summary>
@@ -106,11 +99,6 @@ private:
 	void OnCollision();
 
 	/// <summary>
-	/// レティクルの設定
-	/// </summary>
-	void SetReticle();
-
-	/// <summary>
 	/// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
 	/// </summary>
 	/// <returns></returns>
@@ -120,5 +108,4 @@ private:
 	/// 照準操作
 	/// </summary>
 	void MoveAim();
-
 };

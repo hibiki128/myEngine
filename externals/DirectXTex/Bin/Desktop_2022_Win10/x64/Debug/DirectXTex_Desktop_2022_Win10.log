@@ -1,8 +1,1 @@
-﻿  BC.cpp
-  BC4BC5.cpp
-  BC6HBC7.cpp
-  BCDirectCompute.cpp
-C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\BC.cpp(12,10): error C1853: 'Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.pch' プリコンパイル済みヘッダー ファイルは別のバージョンのコンパイラからのものです。または、C++ のプリコンパイル済みヘッダーを C で使用しています (その逆も考えられます)
-C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\BC4BC5.cpp(12,10): error C1853: 'Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.pch' プリコンパイル済みヘッダー ファイルは別のバージョンのコンパイラからのものです。または、C++ のプリコンパイル済みヘッダーを C で使用しています (その逆も考えられます)
-C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\BCDirectCompute.cpp(10,10): error C1853: 'Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.pch' プリコンパイル済みヘッダー ファイルは別のバージョンのコンパイラからのものです。または、C++ のプリコンパイル済みヘッダーを C で使用しています (その逆も考えられます)
-C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\BC6HBC7.cpp(12,10): error C1853: 'Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.pch' プリコンパイル済みヘッダー ファイルは別のバージョンのコンパイラからのものです。または、C++ のプリコンパイル済みヘッダーを C で使用しています (その逆も考えられます)
+﻿  DirectXTex_Desktop_2022_Win10.vcxproj -> C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
