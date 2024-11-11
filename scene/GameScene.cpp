@@ -33,6 +33,7 @@ void GameScene::Initialize()
 	Vector3 playerPos_ = { 0.0f,-0.37f,0.2f };
 	player_->Initilaize(&vp_, playerPos_);
 	player_->SetParent(&railCamera_->GetWorldTransform());
+	player_->SetRailCamera(railCamera_.get());
 	//-------------------------------
 }
 
@@ -72,9 +73,8 @@ void GameScene::Update()
 
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
-	//railCamera_->Update();
+	railCamera_->Update();
 	vp_.matView_ = railCamera_->GetViewProjection().matView_;
-	player_->SetRailCamera(railCamera_.get());
 	vp_.TransferMatrix();
 	player_->Update();
 	for (auto& enemy : enemies_) {
@@ -148,7 +148,7 @@ void GameScene::AddEnemyByButton()
 					// タブアイテムの開始
 					if (ImGui::BeginTabItem(tabName.c_str())) {
 						// タブ内で表示する内容を記述 (ここに必要な情報を表示)
-						ImGui::Text("This is %s", tabName.c_str());
+						enemy->imgui();
 
 						// タブアイテムの終了
 						ImGui::EndTabItem();

@@ -21,6 +21,9 @@ void enemy::Update()
 	if (HP_ <= 0) {
 		isAlive_ = false;
 	}
+	else {
+		isAlive_ = true;
+	}
 	if (isAlive_) {
 		Collider::SetCollisionEnabled(true);
 	}
@@ -46,6 +49,11 @@ Vector3 enemy::GetCenterPosition() const
 	return worldPos;
 }
 
+Vector3 enemy::GetCenterRotation() const
+{
+	return wt_.rotation_;
+}
+
 AABB enemy::GetAABB() const
 {
 	// 中心位置を取得
@@ -61,7 +69,7 @@ AABB enemy::GetAABB() const
 	return aabb;
 }
 
-void enemy::OnCollisionEnter(Collider* other)
+void enemy::OnCollision(Collider* other)
 {
 	if (dynamic_cast<playerBullet*>(other)) {
 		--HP_;
@@ -70,16 +78,8 @@ void enemy::OnCollisionEnter(Collider* other)
 
 void enemy::imgui()
 {
-	if (ImGui::BeginTabBar("enemy")) {
-		if (ImGui::BeginTabItem("enemy")) {
-
-			ImGui::DragFloat3("pos", &wt_.translation_.x, 0.1f);
-			ImGui::Text("HP : %d", HP_);
-
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
-	}
+	ImGui::DragFloat3("pos", &wt_.translation_.x, 0.1f);
+	ImGui::SliderInt("HP", &HP_, 0, 50);
 }
 
 void enemy::AddItem(int enemyNum)

@@ -1,4 +1,5 @@
 #pragma once
+
 #include"SceneManager.h"
 #include"list"
 #include"Collider.h"
@@ -13,6 +14,8 @@ private:
 	bool sphereCollision = true;
 
 	bool aabbCollision = true;
+
+	bool obbCollision = true;
 
 public:
 	/// <summary>
@@ -57,9 +60,14 @@ public:
 	/// コライダーの登録
 	/// </summary>
 	static void AddCollider(Collider* collider);
-
+private:
 	// 調整項目の適用
 	void ApplyGlobalVariables();
 
 	bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+	bool IsCollision(const OBB& obb1, const OBB& obb2);
+	// 軸に対するOBBの投影範囲を計算する関数
+	void projectOBB(const OBB& obb, const Vector3& axis, float& min, float& max);
+	// 軸に投影するための関数
+	bool testAxis(const Vector3& axis, const OBB& obb1, const OBB& obb2);
 };

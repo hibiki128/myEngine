@@ -6,11 +6,14 @@ int Collider::counter = -1;  // 初期値を-1に変更
 Collider::Collider() {
 	Cubewt_.Initialize();
 	AABBwt_.Initialize();
+	OBBwt_.Initialize();
 	CollisionManager::AddCollider(this);
 	sphere_ = std::make_unique<Object3d>();
 	sphere_->Initialize("debug/Collider.obj");
 	AABB_ = std::make_unique<Object3d>();
 	AABB_->Initialize("debug/AABB.obj");
+	OBB_ = std::make_unique<Object3d>();
+	OBB_->Initialize("debug/OBB.obj");
 	variables_ = GlobalVariables::GetInstance();
 
 	// 派生クラス名を取得して整形
@@ -25,15 +28,19 @@ Collider::Collider() {
 
 	// 初期化
 	SphereOffset = { 0.0f, 0.0f, 0.0f };
-	MinOffset = { 0.0f, 0.0f, 0.0f };
-	MaxOffset = { 0.0f, 0.0f, 0.0f };
+	AABBOffset.min = { 0.0f, 0.0f, 0.0f };
+	AABBOffset.max = { 0.0f, 0.0f, 0.0f };
+	OBBOffset.center = { 0.0f,0.0f,0.0f };
+	OBBOffset.size = { 0.0f,0.0f,0.0f };
 
 	// グループがまだ存在しない場合のみ作成
 	if (!variables_->GroupExists(groupName)) {
 		variables_->CreateGroup(groupName);
 		variables_->AddItem(groupName, "Cube Translation", SphereOffset);
-		variables_->AddItem(groupName, "AABB Min", MinOffset);
-		variables_->AddItem(groupName, "AABB Max", MaxOffset);
+		variables_->AddItem(groupName, "AABB Min", AABBOffset.min);
+		variables_->AddItem(groupName, "AABB Max", AABBOffset.max);
+		variables_->AddItem(groupName, "OBB center", OBBOffset.center);
+		variables_->AddItem(groupName, "OBB size", OBBOffset.size);
 	}
 	color_.SetColor({ 0.0f,0.0f,0.0f,1.0f });
 }
@@ -57,8 +64,8 @@ void Collider::UpdateWorldTransform() {
 
 	// AABBの現在の最小点と最大点を取得
 	aabb = GetAABB();
-	aabb.min = aabb.min + MinOffset;
-	aabb.max = aabb.max + MaxOffset;
+	aabb.min = aabb.min + AABBOffset.min;
+	aabb.max = aabb.max + AABBOffset.max;
 
 	// AABBの最小点と最大点からスケールと中心位置を計算
 	aabbCenter = (aabb.min + aabb.max) * 0.5f;
@@ -68,6 +75,17 @@ void Collider::UpdateWorldTransform() {
 	AABBwt_.translation_ = aabbCenter;
 	AABBwt_.scale_ = aabbScale;
 	AABBwt_.UpdateMatrix();
+
+	obb.center = GetCenterPos();
+	obb.center = obb.center + OBBOffset.center;
+	MakeOBBOrientations(obb, GetCenterRotation());
+	obb.size = { 1.0f,1.0f,1.0f };
+	obb.size = obb.size + OBBOffset.size;
+
+	OBBwt_.translation_ = obb.center;
+	OBBwt_.rotation_ = GetCenterRotation();
+	OBBwt_.scale_ = obb.size;
+	OBBwt_.UpdateMatrix();
 }
 
 void Collider::DrawSphere(const ViewProjection& viewProjection) {
@@ -79,9 +97,31 @@ void Collider::DrawAABB(const ViewProjection& viewProjection)
 	AABB_->Draw(AABBwt_, viewProjection, &color_, false);
 }
 
+void Collider::DrawOBB(const ViewProjection& viewProjection) {
+	// OBBの描画処理（AABBと似た形で描画）
+	OBB_->Draw(OBBwt_, viewProjection, &color_, false);
+}
+
 void Collider::ApplyVariables()
 {
 	SphereOffset = variables_->GetVector3Value(groupName, "Cube Translation");
-	MinOffset = variables_->GetVector3Value(groupName, "AABB Min");
-	MaxOffset = variables_->GetVector3Value(groupName, "AABB Max");
+	AABBOffset.min = variables_->GetVector3Value(groupName, "AABB Min");
+	AABBOffset.max = variables_->GetVector3Value(groupName, "AABB Max");
+	OBBOffset.center = variables_->GetVector3Value(groupName, "OBB center");
+	OBBOffset.size = variables_->GetVector3Value(groupName, "OBB size");
+}
+
+void Collider::MakeOBBOrientations(OBB& obb, const Vector3& rotate) {
+	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * (MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z));
+	obb.orientations[0].x = rotateMatrix.m[0][0];
+	obb.orientations[0].y = rotateMatrix.m[0][1];
+	obb.orientations[0].z = rotateMatrix.m[0][2];
+
+	obb.orientations[1].x = rotateMatrix.m[1][0];
+	obb.orientations[1].y = rotateMatrix.m[1][1];
+	obb.orientations[1].z = rotateMatrix.m[1][2];
+
+	obb.orientations[2].x = rotateMatrix.m[2][0];
+	obb.orientations[2].y = rotateMatrix.m[2][1];
+	obb.orientations[2].z = rotateMatrix.m[2][2];
 }

@@ -8,6 +8,11 @@ struct AABB {
 	Vector3 min; //!< 最小点
 	Vector3 max; //!< 最大点
 };
+struct OBB {
+	Vector3 center;          //!< 中心点
+	Vector3 orientations[3]; //!< 座標軸。正規化・直行必須
+	Vector3 size;            //!< 座標軸方向の長さの半分。中心から面までの距離
+};
 class Collider {
 public:
 
@@ -41,6 +46,8 @@ public:
 	/// <param name="model"></param>
 	/// <param name="viewProjection"></param>
 	void DrawAABB(const ViewProjection& viewProjection);
+
+	void DrawOBB(const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 当たってる間
@@ -82,6 +89,7 @@ public:
 	float GetRadius() { return radius_; }
 	// 中心座標を取得
 	virtual Vector3 GetCenterPosition() const = 0;
+	virtual Vector3 GetCenterRotation() const = 0;
 
 	virtual AABB GetAABB()const = 0;
 	// 種別IDを取得
@@ -91,6 +99,7 @@ public:
 
 	Vector3 GetCenterPos() { return Cubewt_.translation_; }
 	AABB GetAABBPos() { return aabb; }
+	OBB GetOBBPos() { return obb; }
 
 	/// <summary>
 	/// setter
@@ -106,6 +115,7 @@ public:
 
 private:
 	void ApplyVariables();
+	void MakeOBBOrientations(OBB& obb, const Vector3& rotate);
 
 private:
 
@@ -114,21 +124,24 @@ private:
 	// ワールドトランスフォーム
 	WorldTransform Cubewt_;
 	WorldTransform AABBwt_;
+	WorldTransform OBBwt_;
 	// 種別ID
 	uint32_t typeID_ = 0u;
 	std::unique_ptr<Object3d>sphere_;
 	std::unique_ptr<Object3d>AABB_;
+	std::unique_ptr<Object3d>OBB_;
 
 	GlobalVariables* variables_;
 	std::string groupName;
 	AABB aabb;
+	OBB obb;
 	Vector3 aabbCenter;
 	Vector3 aabbScale;
 
 	static int counter; // 静的カウンタ
 	Vector3 SphereOffset = { 0.0f,0.0f,0.0f };
-	Vector3 MinOffset = { 0.0f,0.0f,0.0f };
-	Vector3 MaxOffset = { 0.0f,0.0f,0.0f };
+	AABB AABBOffset;
+	OBB OBBOffset;
 
 	ObjColor color_;
 

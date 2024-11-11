@@ -10,10 +10,15 @@ void playerBullet::OnCollisionEnter(Collider* other)
 Vector3 playerBullet::GetCenterPosition() const
 {
 	// ローカル座標でのオフセット
-	const Vector3 offset = { 0.0f, 0.0f, 0.0f };
+	const Vector3 offset = { 0.0f, 0.0f, 40.0f };
 	// ワールド座標に変更
 	Vector3 worldPos = Transformation(offset, worldTransform_.matWorld_);
 	return worldPos;
+}
+
+Vector3 playerBullet::GetCenterRotation() const
+{
+	return worldTransform_.rotation_;
 }
 
 AABB playerBullet::GetAABB() const
@@ -21,7 +26,7 @@ AABB playerBullet::GetAABB() const
 	// 中心位置を取得
 	Vector3 center = GetCenterPosition();
 	// スケール値を半分にしてAABBの範囲とする
-	Vector3 halfScale = worldTransform_.scale_ * 0.6f;
+	Vector3 halfScale = worldTransform_.scale_ * 0.7f;
 
 	// min と max の計算
 	AABB aabb;
@@ -31,28 +36,24 @@ AABB playerBullet::GetAABB() const
 	return aabb;
 }
 
-void playerBullet::Initialize(const Vector3& position) {
+void playerBullet::Initialize() {
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("player/beam.obj");
 
 	worldTransform_.Initialize();
 	// 引数で受け取った座標をセット
-	worldTransform_.translation_ = position;
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 }
 
 void playerBullet::Update() {
-	// 座標を移動させる(1フレーム文の移動量を足しこむ)
-	//worldTransform_.translation_ += velocity_;
-
+	if (isFire_) {
 		Collider::SetCollisionEnabled(true);
-	/*if (isFire_) {
 	}
 	else {
 		Collider::SetCollisionEnabled(false);
 	}
-	worldTransform_.UpdateMatrix();*/
+	worldTransform_.UpdateMatrix();
 }
 
 void playerBullet::Draw(const ViewProjection& viewProjection) {
@@ -68,4 +69,10 @@ Vector3 playerBullet::GetWorldPosition() {
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+void playerBullet::SetParent(const WorldTransform* parent)
+{
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
 }

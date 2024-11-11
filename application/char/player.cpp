@@ -20,17 +20,26 @@ void Player::Initilaize(ViewProjection* viewProjection, const Vector3& position)
 	reticleObj_->Initialize("debug/ICO.obj");
 
 	spritePos = reticle_->GetPosition();
-
+	// 正投影のプロジェクション行列を設定
+	viewProjection->matProjection_ = MakeOrthographicMatrix(
+		-WinApp::kClientWidth / 2.0f, WinApp::kClientWidth / 2.0f,   // 左右
+		-WinApp::kClientHeight / 2.0f, WinApp::kClientHeight / 2.0f, // 上下
+		0.1f, 1000.0f                                                // 近クリップ面と遠クリップ面のZ値
+	);
 	viewProjection_ = viewProjection;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 	worldTransform_.scale_ = { 0.3f,0.3f,0.3f };
-	
-	Reticle3Dwt_.Initialize();
-	Reticle3Dwt_.scale_ = { 3.0f,3.0f,3.0f };
 
-	bullet_ = std::make_unique<playerBullet>();
-	bullet_->Initialize(worldTransform_.translation_);
+	Reticle3Dwt_.Initialize();
+	Reticle3Dwt_.scale_ = { 1.0f,1.0f,1.0f };
+
+	LeftBullet_ = std::make_unique<playerBullet>();
+	LeftBulletOffset = { -5.0f, -2.5f, -4.5f };
+	LeftBullet_->Initialize();
+	RightBullet_ = std::make_unique<playerBullet>();
+	RightBulletOffset = { 5.0f, -2.5f, -4.5f };
+	RightBullet_->Initialize();
 
 	// シングルトンインスタンスを取得する
 	input_ = Input::GetInstance();
@@ -47,8 +56,10 @@ void Player::Update() {
 
 	// 3Dレティクルの方向にbullet_を向ける
 	AimBulletAtReticle();
-
-	bullet_->Update();
+	LeftBullet_->SetPosition(LeftBulletOffset);
+	LeftBullet_->Update();
+	RightBullet_->SetPosition(RightBulletOffset);
+	RightBullet_->Update();
 
 	// 行列更新
 	worldTransform_.UpdateMatrix();
@@ -57,7 +68,8 @@ void Player::Update() {
 void Player::Draw() {
 	obj_->Draw(worldTransform_, *viewProjection_);
 	reticleObj_->Draw(Reticle3Dwt_, *viewProjection_);
-	bullet_->Draw(*viewProjection_);
+	LeftBullet_->Draw(*viewProjection_);
+	RightBullet_->Draw(*viewProjection_);
 }
 
 void Player::DrawUI()
@@ -65,12 +77,11 @@ void Player::DrawUI()
 	reticle_->Draw();
 }
 
-void Player::imgui()
-{
+void Player::imgui() {
 	// キャラクターの座標を画面表示する処理
 	if (ImGui::BeginTabBar("player")) {
 		if (ImGui::BeginTabItem("Player")) {
-			ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);	
+			ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Reticle")) {
@@ -86,26 +97,42 @@ void Player::imgui()
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Bullet Status")) {
-			// bullet_が存在する場合、IsFire()の結果を表示
-			if (bullet_) {
-				bool isFire = bullet_->IsFire();
-				ImGui::Text("IsFire: %s", isFire ? "true" : "false");
+
+			// LeftBullet_ が存在する場合、IsFire() の結果を表示
+			if (LeftBullet_) {
+				bool isFire = LeftBullet_->IsFire();
+				ImGui::Text("Left IsFire: %s", isFire ? "true" : "false");
+				ImGui::DragFloat3("Left bulletPos", &LeftBulletOffset.x, 0.1f);
 			}
 			else {
-				ImGui::Text("IsFire: false (No bullet)");
+				ImGui::Text("Left IsFire: false (No bullet)");
 			}
-			ImGui::EndTabItem();
+
+			// RightBullet_ が存在する場合、IsFire() の結果を表示
+			if (RightBullet_) {
+				bool isFire = RightBullet_->IsFire();
+				ImGui::Text("Right IsFire: %s", isFire ? "true" : "false");
+				ImGui::DragFloat3("Right bulletPos", &RightBulletOffset.x, 0.1f);
+			}
+			else {
+				ImGui::Text("Right IsFire: false (No bullet)");
+			}
+
+
+			ImGui::EndTabItem();  // "Bullet Status" のタブを閉じる
 		}
-		ImGui::EndTabBar();
+		ImGui::EndTabBar();  // "player" のタブバーを閉じる
 	}
 }
 
 void Player::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
-		bullet_->SetFire(true);
+		LeftBullet_->SetFire(true);
+		RightBullet_->SetFire(true);
 	}
 	else {
-		bullet_->SetFire(false);
+		LeftBullet_->SetFire(false);
+		RightBullet_->SetFire(false);
 	}
 }
 
@@ -149,20 +176,30 @@ void Player::MoveAim()
 	HWND hwnd = WinApp::GetInstance()->GetHwnd();
 	ScreenToClient(hwnd, &mousePosition);
 
-	// マウス位置に基づく2Dレティクルの位置設定
+	// 2Dレティクルの位置を設定
 	Vector2 mousePos2D(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y));
 	reticle_->SetPosition(mousePos2D);
 
-	// マウスの2D位置を3D空間でのレティクル位置に変換
-	Vector3 reticle3DPos = Vector3(mousePos2D.x, mousePos2D.y, 1.0f); // 1.0fは遠近効果調整用のZ値
+	// 2Dレティクル位置を使ってレイを生成する
+	Vector3 nearPoint = Vector3(mousePos2D.x, mousePos2D.y, 0.0f); // ニアクリップ面
+	Vector3 farPoint = Vector3(mousePos2D.x, mousePos2D.y, 1.0f);  // ファークリップ面
 
-	// ビューポート行列逆変換でスクリーン座標からワールド座標に戻す
+	// ビューポート行列逆変換を適用してスクリーン座標からNDCに戻す
 	Matrix4x4 invMatViewport = Inverse(MakeViewPortMatrix(0, 0, WinApp::kClientWidth, WinApp::kClientHeight, 0, 1));
-	reticle3DPos = Transformation(reticle3DPos, invMatViewport);
+	nearPoint = Transformation(nearPoint, invMatViewport);
+	farPoint = Transformation(farPoint, invMatViewport);
 
-	// カメラの位置を考慮し、ビュー・プロジェクション逆変換で3Dレティクル位置取得
+	// ビュー・プロジェクション行列の逆行列を使用してワールド座標に変換
 	Matrix4x4 invViewProjection = Inverse(viewProjection_->matView_ * viewProjection_->matProjection_);
-	reticle3DPos = Transformation(reticle3DPos, invViewProjection);
+	nearPoint = Transformation(nearPoint, invViewProjection);
+	farPoint = Transformation(farPoint, invViewProjection);
+
+	// nearPointとfarPointからレイを計算
+	Vector3 rayDirection = (farPoint - nearPoint).Normalize();
+
+	// カメラからの距離を調整して3Dレティクル位置を決定
+	float distance = 80.0f; // 適切な距離を設定
+	Vector3 reticle3DPos = nearPoint + rayDirection * distance;
 
 	// 3Dレティクルのワールド座標を更新
 	Reticle3Dwt_.translation_ = reticle3DPos;
@@ -183,15 +220,26 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) {
 	// 親子関係を結ぶ
 	worldTransform_.parent_ = parent;
+	LeftBullet_->SetParent(parent);
+	RightBullet_->SetParent(parent);
 }
 
 void Player::AimBulletAtReticle() {
 	// bullet_ の始点を Player の位置に設定
-	bullet_->SetPosition(GetWorldPosition());
+	LeftBullet_->SetPosition(GetWorldPosition() + LeftBulletOffset);
 
 	// Player の位置から 3D レティクルの位置への方向ベクトルを計算
-	Vector3 targetDirection = (GetWorldReticlePosition() - GetWorldPosition()).Normalize();
+	Vector3 LeftTargetDirection = (GetWorldReticlePosition() - LeftBullet_->GetWorldPosition()).Normalize();
 
 	// 向きベクトルを基に回転を計算し、 bullet_ に設定
-	bullet_->SetRotation(CalculateRotationFromDirection(targetDirection));
+	LeftBullet_->SetRotation(CalculateRotationFromDirection(LeftTargetDirection));
+
+	// bullet_ の始点を Player の位置に設定
+	RightBullet_->SetPosition(GetWorldPosition() + RightBulletOffset);
+
+	// Player の位置から 3D レティクルの位置への方向ベクトルを計算
+	Vector3 RightTargetDirection = (GetWorldReticlePosition() - RightBullet_->GetWorldPosition()).Normalize();
+
+	// 向きベクトルを基に回転を計算し、 bullet_ に設定
+	RightBullet_->SetRotation(CalculateRotationFromDirection(RightTargetDirection));
 }

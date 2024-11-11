@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "CollisionManager.h"
 #include "myMath.h"
 #include "GlobalVariables.h"
@@ -28,6 +29,7 @@ void CollisionManager::Initialize() {
 	globalVariables->AddItem(groupName, "visible", visible);
 	globalVariables->AddItem(groupName, "sphereCollision", sphereCollision);
 	globalVariables->AddItem(groupName, "aabbCollision", aabbCollision);
+	globalVariables->AddItem(groupName, "obbCollision", obbCollision);
 }
 
 
@@ -61,6 +63,9 @@ void CollisionManager::Draw(const ViewProjection& viewProjection) {
 		if (aabbCollision) {
 			collider->DrawAABB(viewProjection);
 		}
+		if (obbCollision) {
+			collider->DrawOBB(viewProjection);
+		}
 	}
 }
 
@@ -89,6 +94,13 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 	// AABBの衝突チェック
 	if (aabbCollision && !isCollidingNow) {
 		isCollidingNow = IsCollision(colliderA->GetAABBPos(), colliderB->GetAABBPos());
+	}
+
+	// OBB同士の衝突チェック
+	if (obbCollision && !isCollidingNow) {
+		OBB obbA = colliderA->GetOBBPos();
+		OBB obbB = colliderB->GetOBBPos();
+		isCollidingNow = IsCollision(obbA, obbB);
 	}
 
 	// 衝突状態の変化に応じたコールバックの呼び出し
@@ -145,6 +157,7 @@ void CollisionManager::ApplyGlobalVariables() {
 	visible = globalVariables->GetBoolValue(groupName, "visible");
 	sphereCollision = globalVariables->GetBoolValue(groupName, "sphereCollision");
 	aabbCollision = globalVariables->GetBoolValue(groupName, "aabbCollision");
+	obbCollision = globalVariables->GetBoolValue(groupName, "obbCollision");
 }
 
 bool CollisionManager::IsCollision(const AABB& aabb1, const AABB& aabb2) {
@@ -157,3 +170,57 @@ bool CollisionManager::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	return false;
 }
 
+bool CollisionManager::IsCollision(const OBB& obb1, const OBB& obb2) {
+	// 15個の軸を準備
+	Vector3 axes[15] = {
+		obb1.orientations[0],
+		obb1.orientations[1],
+		obb1.orientations[2],
+		obb2.orientations[0],
+		obb2.orientations[1],
+		obb2.orientations[2],
+		obb1.orientations[0].Cross(obb2.orientations[0]),
+		obb1.orientations[0].Cross(obb2.orientations[1]),
+		obb1.orientations[0].Cross(obb2.orientations[2]),
+		obb1.orientations[1].Cross(obb2.orientations[0]),
+		obb1.orientations[1].Cross(obb2.orientations[1]),
+		obb1.orientations[1].Cross(obb2.orientations[2]),
+		obb1.orientations[2].Cross(obb2.orientations[0]),
+		obb1.orientations[2].Cross(obb2.orientations[1]),
+		obb1.orientations[2].Cross(obb2.orientations[2]),
+	};
+
+	// 各軸に対してSATを使って衝突判定を行う
+	for (const Vector3& axis : axes) {
+		// 軸の長さがほぼ0でないか確認
+		if (axis.Length() > 0.0001f) {
+			Vector3 normalizedAxis = axis.Normalize();  // 正規化された軸
+			if (!testAxis(normalizedAxis, obb1, obb2)) {
+				return false;  // 衝突しない場合は即座にfalse
+			}
+		}
+	}
+
+	return true;  // 全ての軸で衝突している場合はtrue
+}
+
+// 軸に対するOBBの投影範囲を計算する関数
+void CollisionManager::projectOBB(const OBB& obb, const Vector3& axis, float& min, float& max) {
+	float centerProjection = obb.center.Dot(axis);
+	float radius = std::abs(obb.orientations[0].Dot(axis)) * obb.size.x + std::abs(obb.orientations[1].Dot(axis)) * obb.size.y + std::abs(obb.orientations[2].Dot(axis)) * obb.size.z;
+
+	min = centerProjection - radius;
+	max = centerProjection + radius;
+}
+
+// 軸に投影するための関数
+bool CollisionManager::testAxis(const Vector3& axis, const OBB& obb1, const OBB& obb2) {
+	float min1, max1, min2, max2;
+	projectOBB(obb1, axis, min1, max1);
+	projectOBB(obb2, axis, min2, max2);
+
+	float sumSpan = (max1 - min1) + (max2 - min2);
+	float longSpan = std::max(max1, max2) - std::min(min1, min2);
+
+	return sumSpan >= longSpan;
+}

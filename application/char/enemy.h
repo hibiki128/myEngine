@@ -15,9 +15,10 @@ public:
 	void Draw(ViewProjection* vp_);
 
 	Vector3 GetCenterPosition() const override;
+	Vector3 GetCenterRotation() const override;
 	AABB GetAABB() const override;
 
-	void OnCollisionEnter([[maybe_unused]] Collider* other) override;
+	void OnCollision([[maybe_unused]] Collider* other) override;
 
 	void imgui();
 

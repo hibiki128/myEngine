@@ -24,6 +24,7 @@ private:
 	void OnCollisionEnter([[maybe_unused]] Collider* other) override;
 
 	Vector3 GetCenterPosition()const override;
+	Vector3 GetCenterRotation()const override;
 
 	AABB GetAABB()const override;
 
@@ -33,7 +34,7 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="position"></param>
-	void Initialize(const Vector3& position);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -62,7 +63,7 @@ public:
 	void SetPosition(const Vector3& position) {
 		worldTransform_.translation_ = position;
 	}
-
+	void SetParent(const WorldTransform* parent);
 	void SetRotation(const Quaternion& rotation) {
 		// クォータニオンをオイラー角に変換して rotation_ に代入
 		worldTransform_.rotation_ = rotation.ToEulerAngles();

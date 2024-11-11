@@ -26,10 +26,13 @@ private:
 	Input* input_ = nullptr;
 
 	// 弾
-	std::unique_ptr<playerBullet> bullet_;
+	std::unique_ptr<playerBullet> LeftBullet_;
+	std::unique_ptr<playerBullet> RightBullet_;
 
 	std::unique_ptr<Sprite> reticle_ = nullptr;
 	Vector2 spritePos;
+	Vector3 LeftBulletOffset;
+	Vector3 RightBulletOffset;
 
 	static inline const float kRadius_ = 1.0f;
 
@@ -84,7 +87,6 @@ public:
 	float GetRadius() { return kRadius_; };
 
 	void SetRailCamera(RailCamera* railCamera) { railCamera_ = railCamera; }
-
 private:
 	/// <summary>
 	/// 攻撃
