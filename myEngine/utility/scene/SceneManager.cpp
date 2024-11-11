@@ -41,8 +41,22 @@ void SceneManager::Update()
 		// 次のシーンを初期化する
 		scene_->Initialize();
 	}
+
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->Begin();
+	GlobalVariables::GetInstance()->Update();
+#endif // _DEBUG
+
+	
 	// 実行中シーンを更新する
 	scene_->Update();
+
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->End();
+#endif // _DEBUG
 }
 
 void SceneManager::Draw()

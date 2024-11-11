@@ -35,14 +35,22 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-	ViewProjection* GetViewProjection()override { return &vP_; }
-
 private:
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-
 	ViewProjection vP_;
+
+
+	std::unique_ptr<rail> rail_;
+	std::unique_ptr<RailCamera> railCamera_;
+	std::unique_ptr<Player> player_;
+
+
+	WorldTransform cameraT_;
+
+	bool isActive_ = false;
+
 };

@@ -86,12 +86,11 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 
 	// テクスチャが張られていない場合の処理
 	if (materialData.textureFilePath.empty()) {
-		materialData.textureFilePath = directoryPath + "/" + "white1x1.png";
+		materialData.textureFilePath = directoryPath + "/../images/white1x1.png";
 	}
 
 	return materialData;
 }
-
 
 Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename)
 {
@@ -101,21 +100,13 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行目を格納するもの
 
-	// ファイル名からフォルダ部分を取得
-	std::string folderPath;
-	size_t lastSlashPos = filename.find_last_of("/\\");
-	if (lastSlashPos != std::string::npos) {
-		// ファイル名の前にフォルダがある場合は、そのフォルダ部分を使用する
-		folderPath = filename.substr(0, lastSlashPos);
-	}
-
-	std::ifstream file(directoryPath + filename); // ファイルを開く
-	assert(file.is_open()); // ファイルが開けなかったら停止
+	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
+	assert(file.is_open()); // とりあえず開けなかったら止める
 
 	while (std::getline(file, line)) {
 		std::string identifier;
 		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読み込む
+		s >> identifier; // 先頭の識別子を読む
 
 		// identifierに応じた処理
 		if (identifier == "v") {
@@ -128,7 +119,7 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
-			texcoord.x = 1.0f - texcoord.x;
+			/*texcoord.x = 1.0f - texcoord.x;*/
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
@@ -156,24 +147,21 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position, texcoord, normal };
+				VertexData vertex = { position,texcoord,normal };
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position, texcoord, normal };
+				triangle[faceVertex] = { position,texcoord,normal };
 			}
+			//// 頂点を逆順で登録することで、周り順を逆にする
+			//modelData.vertices.push_back(triangle[2]);
+			//modelData.vertices.push_back(triangle[1]);
+			//modelData.vertices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			// materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
-
-			if (!folderPath.empty()) {
-				// ファイル名の前にフォルダがあればそれを追加する
-				modelData.material = LoadMaterialTemplateFile(directoryPath + folderPath, materialFilename);
-			}
-			else {
-				// ファイル名の前にフォルダがあればそれを追加する
-				modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
-			}
+			// 基本的にobjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
+			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 		}
 	}
 	return modelData;

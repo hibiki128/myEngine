@@ -19,7 +19,7 @@
 #include"SceneManager.h"
 #include"AbstractSceneFactory.h"
 #include"ParticleCommon.h"
-#include"CollisionManager.h"
+
 class Framework
 {
 public:// メンバ関数
@@ -71,6 +71,5 @@ protected:
 	bool endRequest_;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
-	std::unique_ptr<CollisionManager> collisionManager_;
 };
 

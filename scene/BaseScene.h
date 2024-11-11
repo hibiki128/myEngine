@@ -1,5 +1,4 @@
 #pragma once
-#include"ViewProjection.h"
 class SceneManager;
 class BaseScene
 {
@@ -28,8 +27,6 @@ public:
 	virtual void Draw();
 
 	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
-
-	virtual ViewProjection* GetViewProjection() = 0;
 
 protected:
 	// シーンマネージャ

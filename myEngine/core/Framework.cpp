@@ -84,12 +84,6 @@ void Framework::Initialize()
 	///---------Audio-------------
 	audio = Audio::GetInstance();
 	audio->Initialize();
-	///---------------------------
-
-	///-------CollisionManager--------------
-	collisionManager_ = std::make_unique<CollisionManager>();
-	collisionManager_->Initialize();
-	///-------------------------------------
 
 	sceneManager_ = SceneManager::GetInstance();
 
@@ -127,19 +121,9 @@ void Framework::Finalize()
 
 void Framework::Update()
 {
-#ifdef _DEBUG
-
-	ImGuiManager::GetInstance()->Begin();
-	GlobalVariables::GetInstance()->Update();
-#endif // _DEBUG
 	sceneManager_->Update();
-	collisionManager_->Update();
-#ifdef _DEBUG
-	ImGuiManager::GetInstance()->End();
-#endif // _DEBUG
-
 	/// -------更新処理開始----------
-
+	
 	// -------Input-------
 	// 入力の更新
 	input->Update();
