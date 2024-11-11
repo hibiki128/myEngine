@@ -31,13 +31,13 @@ public:
     void SetScale(Vector3& scale) { transform_.scale_ = scale; }
     void SetCount(int& count) { count_ = count; }
     void SetActive(bool isActive) { isActive_ = isActive; }
+    void SetValue();
 
 private:
     // パーティクルを発生させるEmit関数
     void Emit();
 
     void ApplyGlobalVariables();
-    void SetValue();
     void AddItem();
 
     std::string name_;          // パーティクルの名前

@@ -35,6 +35,7 @@ void enemy::Update()
 		Collider::SetCollisionEnabled(false);
 		emitter_->SetPosition(wt_.translation_);
 	}
+	emitter_->SetValue();
 	wt_.UpdateMatrix();
 }
 

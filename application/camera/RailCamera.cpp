@@ -1,7 +1,7 @@
 #include "RailCamera.h"
 #include <imgui.h>
 
-RailCamera::RailCamera() : velocity_(0.00025f) {} // 初期速度を設定
+RailCamera::RailCamera() : velocity_(0.000f) {} // 初期速度を設定
 
 RailCamera::~RailCamera() {}
 

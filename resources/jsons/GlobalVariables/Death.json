@@ -6,24 +6,24 @@
             1.0
         ],
         "Particle EndAcce": [
-            0.0,
-            0.0,
-            0.0
+            0.5,
+            0.5,
+            0.5
         ],
         "Particle EndRote": [
-            0.0,
-            0.0,
-            0.0
+            6.2831854820251465,
+            6.2831854820251465,
+            6.2831854820251465
         ],
         "Particle EndScale": [
-            0.10000000149011612,
-            0.10000000149011612,
-            0.10000000149011612
-        ],
-        "Particle StartAcce": [
             0.0,
             0.0,
             0.0
+        ],
+        "Particle StartAcce": [
+            1.149999976158142,
+            1.149999976158142,
+            1.149999976158142
         ],
         "Particle StartRote": [
             0.0,
@@ -31,15 +31,15 @@
             0.0
         ],
         "Particle StartScale": [
-            1.0,
-            1.0,
-            1.0
+            0.5,
+            0.5,
+            0.5
         ],
         "count": 10,
         "emitFrequency": 0.10000000149011612,
-        "isBillBoard": true,
-        "isVisible": true,
-        "lifeTimeMax": 3.0,
+        "isBillBoard": false,
+        "isVisible": false,
+        "lifeTimeMax": 2.0,
         "lifeTimeMin": 1.0,
         "maxVelocity": [
             1.0,

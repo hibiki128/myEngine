@@ -43,7 +43,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
 			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
-			(*particleIterator).velocity += (*particleIterator).Acce;
+			(*particleIterator).velocity *= (*particleIterator).Acce;
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;

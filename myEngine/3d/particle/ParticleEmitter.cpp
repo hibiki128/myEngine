@@ -22,7 +22,8 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	Manager_->CreateParticleGroup(name_, fileName);
 	emitFrequency_ = 0.1f;
 	//transform_.UpdateMatrix();
-
+	startAcce_ = { 1.0f,1.0f,1.0f };
+	endAcce_ = { 1.0f,1.0f,1.0f };
 	AddItem();
 
 	isActive_ = false;
@@ -186,8 +187,8 @@ void ParticleEmitter::RenderImGui() {
 	ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
 	ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
 
-	ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.1f);
-	ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.1f);
+	ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.01f);
+	ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.01f);
 
 	ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
 	ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
