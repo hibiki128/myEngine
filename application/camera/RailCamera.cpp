@@ -1,5 +1,7 @@
 #include "RailCamera.h"
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
 
 RailCamera::RailCamera() : velocity_(1.7f) {} // 初期速度を設定
 
@@ -20,7 +22,7 @@ void RailCamera::Initialize(WorldTransform& worldTransform) {
 
 void RailCamera::Update() {
 	// tの更新。velocityに依存してカメラを前進させる
-	t_ += velocity_*0.0001f;
+	t_ += velocity_ * 0.0001f;
 	if (t_ > 1.0f) t_ = 1.0f; // tが1.0を超えないように制限
 
 	// カーブパス上の位置を計算

@@ -1,7 +1,9 @@
 #include "Player.h"
 #include <algorithm>
 #include <cassert>
+#ifdef _DEBUG
 #include <imgui.h>
+#endif // _DEBUG
 #include"application/camera/RailCamera.h"
 
 Player::~Player() {
