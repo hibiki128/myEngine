@@ -99,6 +99,7 @@ void Player::imgui() {
 	if (ImGui::BeginTabBar("player")) {
 		if (ImGui::BeginTabItem("Player")) {
 			ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.1f);
+			ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x, 0.1f);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Reticle")) {

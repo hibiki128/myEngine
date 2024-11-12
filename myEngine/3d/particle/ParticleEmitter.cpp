@@ -25,7 +25,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	startAcce_ = { 1.0f,1.0f,1.0f };
 	endAcce_ = { 1.0f,1.0f,1.0f };
 	AddItem();
-
+	isBillBoard = false;
 	isActive_ = false;
 	ApplyGlobalVariables();
 }

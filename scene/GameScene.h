@@ -11,7 +11,7 @@
 #include"application/camera/RailCamera.h"
 #include"application/char/player.h"
 #include"application/char/enemy.h"
-
+#include"application/map/skyDome.h"
 
 class GameScene : public BaseScene
 {
@@ -53,6 +53,8 @@ private:
 	std::unique_ptr<rail> rail_;
 	std::unique_ptr<RailCamera> railCamera_;
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<skyDome> skydome_;
+
 	std::list<std::unique_ptr<enemy>> enemies_;
 
 	WorldTransform cameraT_;

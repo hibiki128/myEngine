@@ -35,6 +35,11 @@ void GameScene::Initialize()
 	player_->SetParent(&railCamera_->GetWorldTransform());
 	player_->SetRailCamera(railCamera_.get());
 	//-------------------------------
+
+	//----------天球------------
+	skydome_ = std::make_unique<skyDome>();
+	skydome_->Initialize();
+	//-------------------------
 }
 
 void GameScene::Finalize()
@@ -74,13 +79,14 @@ void GameScene::Update()
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
 	railCamera_->Update();
-	vp_.matView_ = railCamera_->GetViewProjection().matView_;
+	//vp_.matView_ = railCamera_->GetViewProjection().matView_;
 	vp_.TransferMatrix();
 	player_->SetRailCameraRotation(railCamera_->GetWorldTransform().rotation_);
 	player_->Update();
 	for (auto& enemy : enemies_) {
 		enemy->Update();
 	}
+	skydome_->Update();
 }
 
 void GameScene::Draw()
@@ -95,6 +101,7 @@ void GameScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
+	skydome_->Draw(vp_);
 	rail_->IcoDraw();
 	player_->Draw();
 	for (auto& enemy : enemies_) {

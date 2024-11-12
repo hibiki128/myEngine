@@ -336,6 +336,9 @@
     <ClCompile Include="application\char\playerBullet.cpp">
       <Filter>ソース ファイル\application\char</Filter>
     </ClCompile>
+    <ClCompile Include="application\map\skyDome.cpp">
+      <Filter>ソース ファイル\application\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -535,6 +538,9 @@
     </ClInclude>
     <ClInclude Include="application\char\playerBullet.h">
       <Filter>ヘッダー ファイル\application\char</Filter>
+    </ClInclude>
+    <ClInclude Include="application\map\skyDome.h">
+      <Filter>ヘッダー ファイル\application\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
