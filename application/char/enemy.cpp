@@ -4,7 +4,7 @@
 void enemy::Init()
 {
 	obj3d_ = std::make_unique<Object3d>();
-	obj3d_->Initialize("debug/suzannu.obj");
+	obj3d_->Initialize("field/balloon.obj");
 	wt_.Initialize();
 	isAlive_ = true;
 	HP_ = 5;

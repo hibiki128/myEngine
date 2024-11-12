@@ -162,7 +162,7 @@ void Player::imgui() {
 }
 
 void Player::Attack() {
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->PushMouseButton(0)) {
 		LeftBullet_->SetFire(true);
 		RightBullet_->SetFire(true);
 		CenterBullet_->SetFire(true);

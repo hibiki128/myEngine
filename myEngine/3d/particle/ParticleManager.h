@@ -131,7 +131,7 @@ private:
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
 
-	bool isBillboard = true;
+	bool isBillboard = false;
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数

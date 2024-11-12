@@ -40,6 +40,22 @@ void GameScene::Initialize()
 	skydome_ = std::make_unique<skyDome>();
 	skydome_->Initialize();
 	//-------------------------
+
+	// ボタンを削除し、自動で33回分の敵を追加
+	for (int i = 0; i < 33; ++i) {
+		// 新しいenemyを作成
+		auto newEnemy = std::make_unique<enemy>();
+
+		// 初期化処理
+		newEnemy->Init();
+
+		// 敵のリストに追加
+		enemies_.push_back(std::move(newEnemy));
+
+		// リスト内の敵数を基にAddItemを呼び出し
+		enemies_.back()->AddItem(i);
+	}
+
 }
 
 void GameScene::Finalize()
@@ -132,22 +148,7 @@ void GameScene::AddEnemyByButton()
 	if (ImGui::BeginTabBar("enemy")) {
 		// "enemy" 内にある TabItem を追加
 		if (ImGui::BeginTabItem("Enemies")) {
-			// "Enemies" 内で Add Enemy ボタンを表示し、新しいエネミーを追加
-			if (ImGui::Button("Add Enemy")) {
-				// 新しいenemyを作成
-				auto newEnemy = std::make_unique<enemy>();
-
-				// リスト内の敵数を基に初期化
-				int enemyNum = static_cast<int>(enemies_.size());
-				newEnemy->Init();  // Init関数を呼び出して初期化
-
-				// 初期化後、リストに追加
-				enemies_.push_back(std::move(newEnemy));
-
-				// AddItem関数を呼び出してアイテムを追加
-				enemies_.back()->AddItem(enemyNum);
-			}
-
+			
 			// 次に各 enemy のタブを生成
 			if (ImGui::BeginTabBar("EnemyTabBar")) {
 				int index = 0;
