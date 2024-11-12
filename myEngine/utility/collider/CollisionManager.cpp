@@ -35,10 +35,6 @@ void CollisionManager::Initialize() {
 
 void CollisionManager::UpdateWorldTransform() {
 	ApplyGlobalVariables();
-	// 非表示なら抜ける
-	if (!visible) {
-		return;
-	}
 	// 全てのコライダーについて
 	for (Collider* collider : colliders_) {
 		// 更新

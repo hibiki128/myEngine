@@ -79,7 +79,7 @@ void GameScene::Update()
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
 	railCamera_->Update();
-	//vp_.matView_ = railCamera_->GetViewProjection().matView_;
+	vp_.matView_ = railCamera_->GetViewProjection().matView_;
 	vp_.TransferMatrix();
 	player_->SetRailCameraRotation(railCamera_->GetWorldTransform().rotation_);
 	player_->Update();

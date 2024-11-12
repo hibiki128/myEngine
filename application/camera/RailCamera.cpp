@@ -1,7 +1,7 @@
 #include "RailCamera.h"
 #include <imgui.h>
 
-RailCamera::RailCamera() : velocity_(0.000f) {} // 初期速度を設定
+RailCamera::RailCamera() : velocity_(2.0f) {} // 初期速度を設定
 
 RailCamera::~RailCamera() {}
 
@@ -20,7 +20,7 @@ void RailCamera::Initialize(WorldTransform& worldTransform) {
 
 void RailCamera::Update() {
 	// tの更新。velocityに依存してカメラを前進させる
-	t_ += velocity_;
+	t_ += velocity_*0.0001f;
 	if (t_ > 1.0f) t_ = 1.0f; // tが1.0を超えないように制限
 
 	// カーブパス上の位置を計算
@@ -64,7 +64,7 @@ void RailCamera::imgui() {
 	if (ImGui::BeginTabItem("WorldTransform")) {
 		ImGui::SliderFloat3("Translation", &worldTransform_.translation_.x, -50.0f, 1000.0f);
 		ImGui::SliderFloat3("Rotate", &worldTransform_.rotation_.x, 0, 10.0f);
-		ImGui::SliderFloat("Velocity", &velocity_, 0.01f, 1.0f); // 速度を調整するためのスライダー
+		ImGui::DragFloat3("Velocity", &velocity_, 0.1f); // 速度を調整するためのスライダー
 		ImGui::EndTabItem();
 	}
 	if (ImGui::BeginTabItem("ViewProjection")) {

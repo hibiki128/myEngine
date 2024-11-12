@@ -109,7 +109,7 @@ void rail::ControlPointsSetting()
 
 		// 新しいセグメントを初期化
 		segments_.emplace_back(std::make_unique<Object3d>());
-		segments_.back()->Initialize("ICO.obj");
+		segments_.back()->Initialize("debug/ICO.obj");
 		wts_.emplace_back(WorldTransform());
 
 		// 新しい制御点をJSONに保存
