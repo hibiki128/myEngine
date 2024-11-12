@@ -6,10 +6,9 @@
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
 #include"ViewProjection.h"
-#include"memory"
-#include"application/map/rail.h"
-#include"application/camera/RailCamera.h"
-#include"application/char/player.h"
+#include"Object3d.h"
+#include"WorldTransform.h"
+#include"Sprite.h"
 
 class TitleScene :public BaseScene
 {
@@ -45,4 +44,6 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
+
+	std::unique_ptr<Sprite> sprite_;
 };

@@ -18,13 +18,17 @@ void RailCamera::Initialize(WorldTransform& worldTransform) {
 	// ビュープロジェクションの初期化
 	viewProjection_.farZ = 1100;
 	viewProjection_.Initialize();
+	t_ = 0;
 }
 
 void RailCamera::Update() {
 	// tの更新。velocityに依存してカメラを前進させる
 	t_ += velocity_ * 0.0001f;
 	if (t_ > 1.0f) t_ = 1.0f; // tが1.0を超えないように制限
-
+	if (t_ >= 1.0f) {
+		t_ = 1.0f;
+		isFinish = true; // 最終地点に到達したことを示す
+	}
 	// カーブパス上の位置を計算
 	Vector3 eye = CatmullRomPosition(controlPoints_, t_);
 	eye.y += 2.0f;

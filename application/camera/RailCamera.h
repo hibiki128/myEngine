@@ -18,6 +18,8 @@ private:
 
 	float t_ = 0;
 
+	bool isFinish = false;
+
 public:
 
 	RailCamera();
@@ -44,4 +46,5 @@ public:
 	const WorldTransform& GetWorldTransform() const { return worldTransform_; };
 
 	void SetControlPoints(std::vector<Vector3> controlPoints) { controlPoints_ = controlPoints; }
+	bool IsFinish() { return isFinish; }
 };

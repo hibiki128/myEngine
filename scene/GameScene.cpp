@@ -82,11 +82,11 @@ void GameScene::Update()
 	ImGui::End();
 #endif // _DEBUG
 
-
 	//-----シーン切り替え-----
-	if (input_->TriggerKey(DIK_RETURN)) {
+	if (railCamera_->IsFinish()) {
 		sceneManager_->ChangeScene("TITLE");
 	}
+
 	//----------------------
 
 	rail_->Update();
@@ -118,7 +118,7 @@ void GameScene::Draw()
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	skydome_->Draw(vp_);
-	rail_->IcoDraw();
+	//rail_->IcoDraw();
 	player_->Draw();
 	for (auto& enemy : enemies_) {
 		enemy->Draw(&vp_);
@@ -148,7 +148,7 @@ void GameScene::AddEnemyByButton()
 	if (ImGui::BeginTabBar("enemy")) {
 		// "enemy" 内にある TabItem を追加
 		if (ImGui::BeginTabItem("Enemies")) {
-			
+
 			// 次に各 enemy のタブを生成
 			if (ImGui::BeginTabBar("EnemyTabBar")) {
 				int index = 0;
