@@ -142,23 +142,14 @@
     <Filter Include="ヘッダー ファイル\application">
       <UniqueIdentifier>{96a5eb25-81e4-496a-8864-c5123af11ee0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\application\char">
-      <UniqueIdentifier>{f3151dba-b7e5-44e4-83f3-969a4e55ef5f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ヘッダー ファイル\application\char">
       <UniqueIdentifier>{9aefe021-7523-4830-8d62-5cf998493625}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\application\camera">
-      <UniqueIdentifier>{00122e29-bc5d-4490-9ebc-30adb16c7610}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\application\camera">
       <UniqueIdentifier>{b1786059-4ba1-4b1d-bf17-02557e273658}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\application\map">
       <UniqueIdentifier>{0d3fbd92-b0c1-4b73-9442-87e106b8712e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\application\map">
-      <UniqueIdentifier>{46e46238-743e-4224-9b83-34c025d507fe}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\myEngine\utility\collider">
       <UniqueIdentifier>{4febe39a-b17a-49b2-97da-67aad45542ef}</UniqueIdentifier>
@@ -315,29 +306,11 @@
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp">
       <Filter>ソース ファイル\myEngine\3d\camera</Filter>
     </ClCompile>
-    <ClCompile Include="application\char\player.cpp">
-      <Filter>ソース ファイル\application\char</Filter>
-    </ClCompile>
-    <ClCompile Include="application\camera\RailCamera.cpp">
-      <Filter>ソース ファイル\application\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="application\map\rail.cpp">
-      <Filter>ソース ファイル\application\map</Filter>
-    </ClCompile>
     <ClCompile Include="myEngine\utility\collider\Collider.cpp">
       <Filter>ソース ファイル\myEngine\utility\collider</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp">
       <Filter>ソース ファイル\myEngine\utility\collider</Filter>
-    </ClCompile>
-    <ClCompile Include="application\char\enemy.cpp">
-      <Filter>ソース ファイル\application\char</Filter>
-    </ClCompile>
-    <ClCompile Include="application\char\playerBullet.cpp">
-      <Filter>ソース ファイル\application\char</Filter>
-    </ClCompile>
-    <ClCompile Include="application\map\skyDome.cpp">
-      <Filter>ソース ファイル\application\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,29 +491,11 @@
     <ClInclude Include="myEngine\utility\debug\GlobalVariables.h">
       <Filter>ヘッダー ファイル\myEngine\utility\debug</Filter>
     </ClInclude>
-    <ClInclude Include="application\char\player.h">
-      <Filter>ヘッダー ファイル\application\char</Filter>
-    </ClInclude>
-    <ClInclude Include="application\camera\RailCamera.h">
-      <Filter>ヘッダー ファイル\application\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="application\map\rail.h">
-      <Filter>ヘッダー ファイル\application\map</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\utility\collider\Collider.h">
       <Filter>ヘッダー ファイル\myEngine\utility\collider</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h">
       <Filter>ヘッダー ファイル\myEngine\utility\collider</Filter>
-    </ClInclude>
-    <ClInclude Include="application\char\enemy.h">
-      <Filter>ヘッダー ファイル\application\char</Filter>
-    </ClInclude>
-    <ClInclude Include="application\char\playerBullet.h">
-      <Filter>ヘッダー ファイル\application\char</Filter>
-    </ClInclude>
-    <ClInclude Include="application\map\skyDome.h">
-      <Filter>ヘッダー ファイル\application\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

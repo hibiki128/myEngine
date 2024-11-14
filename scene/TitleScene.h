@@ -44,6 +44,4 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
-
-	std::unique_ptr<Sprite> sprite_;
 };

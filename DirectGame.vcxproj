@@ -103,9 +103,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\camera\RailCamera.cpp" />
-    <ClCompile Include="application\char\enemy.cpp" />
-    <ClCompile Include="application\map\skyDome.cpp" />
     <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -153,9 +150,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\base\WinApp.cpp" />
     <ClCompile Include="myEngine\core\MyGame.cpp" />
     <ClCompile Include="myEngine\3d\line\LineManager.cpp" />
-    <ClCompile Include="application\char\player.cpp" />
-    <ClCompile Include="application\map\rail.cpp" />
-    <ClCompile Include="application\char\playerBullet.cpp" />
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
@@ -176,9 +170,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\camera\RailCamera.h" />
-    <ClInclude Include="application\char\enemy.h" />
-    <ClInclude Include="application\map\skyDome.h" />
     <ClInclude Include="myEngine\utility\collider\Collider.h" />
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
@@ -232,9 +223,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\base\WinApp.h" />
     <ClInclude Include="myEngine\core\MyGame.h" />
     <ClInclude Include="myEngine\3d\line\LineManager.h" />
-    <ClInclude Include="application\char\player.h" />
-    <ClInclude Include="application\map\rail.h" />
-    <ClInclude Include="application\char\playerBullet.h" />
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />

@@ -46,7 +46,9 @@ void MyGame::Draw()
 	object3dCommon->DrawCommonSetting();
 	collisionManager_->Draw(*sceneManager_->GetBaseScene()->GetViewProjection());
 	sceneManager_->Draw();
-
+#ifdef _DEBUG
+	ImGuiManager::GetInstance()->Draw();
+#endif // _DEBUG
 	// ------------------------
 
 
