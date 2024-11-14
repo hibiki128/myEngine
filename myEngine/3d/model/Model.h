@@ -72,7 +72,6 @@ public:
 	void Draw();
 
 	ModelData GetModelData() { return modelData; }
-	bool IsGltf() { return isGltf; }
 	void SetSrv(SrvManager* srvManager) { srvManager_ = srvManager; }
 
 private:

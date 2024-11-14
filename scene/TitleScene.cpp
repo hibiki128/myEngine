@@ -14,7 +14,7 @@ void TitleScene::Initialize()
 	vp_.Initialize();
 
 	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("plane.gltf");
+	obj_->Initialize("plane.obj");
 	wt_.Initialize();
 }
 
