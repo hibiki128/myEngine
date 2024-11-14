@@ -19,7 +19,7 @@
 #include"SceneManager.h"
 #include"AbstractSceneFactory.h"
 #include"ParticleCommon.h"
-
+#include"CollisionManager.h"
 class Framework
 {
 public:// メンバ関数
@@ -66,10 +66,11 @@ protected:
 	Object3dCommon* object3dCommon = nullptr;
 	ParticleCommon* particleCommon = nullptr;
 	DirectXCommon* dxCommon = nullptr;
-	std::unique_ptr<WinApp> winApp;
+	WinApp* winApp;
 	SrvManager* srvManager=nullptr;
 	bool endRequest_;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<CollisionManager> collisionManager_;
 };
 

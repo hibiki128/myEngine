@@ -6,10 +6,24 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 // WindowsAPI
 class WinApp
 {
+private:
+	static WinApp* instance;
+	WinApp() = default;
+	~WinApp() = default;
+	WinApp(const WinApp&) = delete;
+	const WinApp& operator=(const WinApp&) = delete;
+
 public: // 静的メンバ関数
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 public: // メンバ関数
+
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static WinApp* GetInstance();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>

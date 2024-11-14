@@ -95,15 +95,13 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	// マテリアルデータ
 	struct Material {
 		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
 		Matrix4x4 uvTransform;
+		float padding[3];
 	};
 
 	// 座標変換行列データ

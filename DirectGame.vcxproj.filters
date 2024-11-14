@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{3d13508f-1cee-436e-904f-558850330397}</UniqueIdentifier>
     </Filter>
@@ -135,6 +131,31 @@
     </Filter>
     <Filter Include="ヘッダー ファイル\myEngine\3d\line">
       <UniqueIdentifier>{ceb32e7b-adad-4a27-a144-d00997a86b49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="シェーダー ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\application">
+      <UniqueIdentifier>{fd578e8c-e593-4c09-8712-31ca1ba2f103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application">
+      <UniqueIdentifier>{96a5eb25-81e4-496a-8864-c5123af11ee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\char">
+      <UniqueIdentifier>{9aefe021-7523-4830-8d62-5cf998493625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\camera">
+      <UniqueIdentifier>{b1786059-4ba1-4b1d-bf17-02557e273658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\application\map">
+      <UniqueIdentifier>{0d3fbd92-b0c1-4b73-9442-87e106b8712e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\myEngine\utility\collider">
+      <UniqueIdentifier>{4febe39a-b17a-49b2-97da-67aad45542ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\utility\collider">
+      <UniqueIdentifier>{f93114d0-d1a7-404e-b2a2-92179ba0bed1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -282,14 +303,26 @@
     <ClCompile Include="myEngine\utility\debug\GlobalVariables.cpp">
       <Filter>ソース ファイル\myEngine\utility\debug</Filter>
     </ClCompile>
+    <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp">
+      <Filter>ソース ファイル\myEngine\3d\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\collider\Collider.cpp">
+      <Filter>ソース ファイル\myEngine\utility\collider</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp">
+      <Filter>ソース ファイル\myEngine\utility\collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="Resources\shaders\Object3d.hlsli">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="resources\shaders\Particle.hlsli">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Sprite.hlsli">
+      <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -449,25 +482,40 @@
     <ClInclude Include="myEngine\3d\line\LineManager.h">
       <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
     </ClInclude>
+    <ClInclude Include="myEngine\3d\camera\DebugCamera.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\camera</Filter>
+    </ClInclude>
     <ClInclude Include="math\Easing.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\debug\GlobalVariables.h">
       <Filter>ヘッダー ファイル\myEngine\utility\debug</Filter>
     </ClInclude>
+    <ClInclude Include="myEngine\utility\collider\Collider.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\collider\CollisionManager.h">
+      <Filter>ヘッダー ファイル\myEngine\utility\collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
     </FxCompile>
     <FxCompile Include="Resources\shaders\Object3d.VS.hlsl">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Particle.PS.hlsl">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Particle.VS.hlsl">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -477,7 +525,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="myEngine.rc">
-      <Filter>リソース ファイル</Filter>
+      <Filter>シェーダー ファイル</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>

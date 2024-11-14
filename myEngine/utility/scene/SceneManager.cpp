@@ -23,6 +23,15 @@ void SceneManager::Finalize()
 
 void SceneManager::Update()
 {
+	ImGui::Begin("scene");
+	if (ImGui::Button("TitleScene")) {
+		nextScene_ = sceneFactory_->CreateScene("TITLE");
+	}
+	if (ImGui::Button("GameScene")) {
+		nextScene_ = sceneFactory_->CreateScene("GAME");
+	}
+	ImGui::End();
+
 	// 次のシーンの予約があるなら
 	if (nextScene_) {
 		// 旧シーンの終了
@@ -41,22 +50,8 @@ void SceneManager::Update()
 		// 次のシーンを初期化する
 		scene_->Initialize();
 	}
-
-
-#ifdef _DEBUG
-
-	ImGuiManager::GetInstance()->Begin();
-	GlobalVariables::GetInstance()->Update();
-#endif // _DEBUG
-
-	
 	// 実行中シーンを更新する
 	scene_->Update();
-
-#ifdef _DEBUG
-
-	ImGuiManager::GetInstance()->End();
-#endif // _DEBUG
 }
 
 void SceneManager::Draw()

@@ -14,7 +14,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(SrvManager* srvManager);
+	void Initialize(const std::string& filename);
 
 	/// <summary>
 	/// 更新
@@ -26,6 +26,7 @@ public:
 	/// </summary>
 	void Draw();
 
+private:
 	/// <summary>
 	/// パーティクルグループの生成
 	/// </summary>
@@ -33,7 +34,6 @@ public:
 	/// <param name="textureFilePath"></param>
 	void CreateParticleGroup(const std::string name, const std::string& filename);
 
-private:
 	/// <summary>
 	/// 頂点データ作成
 	/// </summary>
@@ -51,13 +51,11 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	struct MaterialData
 	{
 		std::string textureFilePath;
-		uint32_t textureIndex = 0;
 	};
 
 	struct ModelData
@@ -109,9 +107,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
 	// バッファリソース内のデータを指すポインタ
 	Material* materialData = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;
-	ParticleForGPU* instancingData = nullptr;
 
 	SrvManager* srvManager_;
 

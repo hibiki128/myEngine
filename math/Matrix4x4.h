@@ -1,6 +1,6 @@
 #pragma once
 #include <cstring>
-
+#include"Vector3.h"
 struct Matrix4x4 {
 public:
 	float m[4][4];
@@ -89,5 +89,10 @@ public:
 			}
 		}
 		return *this;
+	}
+	// GetColumnメソッドを追加
+	Vector3 GetColumn(int col) const {
+		// 指定した列を取り出してVector3で返す
+		return Vector3(m[0][col], m[1][col], m[2][col]);
 	}
 };
