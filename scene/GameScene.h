@@ -1,10 +1,17 @@
 #pragma once
 #include "Audio.h"
-#include "BaseScene.h"
+#include"BaseScene.h"
 #include "Input.h"
-#include "Object3dCommon.h"
+#include"Object3dCommon.h"
 #include "SpriteCommon.h"
-#include "ParticleCommon.h"
+#include"ParticleCommon.h"
+#include"ViewProjection.h"
+#include"memory"
+#include"application/map/rail.h"
+#include"application/camera/RailCamera.h"
+#include"application/char/player.h"
+#include"application/char/enemy.h"
+#include"application/map/skyDome.h"
 
 class GameScene : public BaseScene
 {
@@ -30,11 +37,25 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	ViewProjection* GetViewProjection()override { return &vp_; }
+
+	// ImGuiのボタンで敵を追加
+	void AddEnemyByButton();
+
 private:
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+	ViewProjection vp_;
 
+	std::unique_ptr<rail> rail_;
+	std::unique_ptr<RailCamera> railCamera_;
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<skyDome> skydome_;
+
+	std::list<std::unique_ptr<enemy>> enemies_;
+
+	WorldTransform cameraT_;
 };

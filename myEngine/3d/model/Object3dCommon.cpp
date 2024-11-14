@@ -24,7 +24,7 @@ void Object3dCommon::Initialize()
 	psoManager_ = std::make_unique<PipeLineManager>();
 	psoManager_->Initialize(dxCommon_);
 	rootSignature = psoManager_->CreateRootSignature(rootSignature);
-	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature);
+	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature, blendMode_);
 }
 
 void Object3dCommon::DrawCommonSetting()
@@ -32,8 +32,7 @@ void Object3dCommon::DrawCommonSetting()
 	psoManager_->DrawCommonSetting(graphicsPipelineState,rootSignature);
 }
 
-void Object3dCommon::ChangeBlendMode(BlendMode blendMode)
+void Object3dCommon::SetBlendMode(BlendMode blendMode)
 {
-	PipeLineManager::SetBlendMode(blendMode);
-	Initialize();
+	psoManager_->CreateGraphicsPipeLine(graphicsPipelineState, rootSignature, blendMode);
 }

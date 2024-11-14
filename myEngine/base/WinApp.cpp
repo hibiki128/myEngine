@@ -6,6 +6,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg
 
 #pragma comment(lib,"winmm.lib")
 
+WinApp* WinApp::instance = nullptr;
+
 // ウィンドウプロシージャ
 LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 #ifdef _DEBUG
@@ -24,6 +26,14 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 	}
 	//標準のメッセージ処理を行う
 	return DefWindowProc(hwnd, msg, wparam, lparam);
+}
+
+WinApp* WinApp::GetInstance()
+{
+	if (instance == nullptr) {
+		instance = new WinApp();
+	}
+	return instance;
 }
 
 void WinApp::Initialize()
@@ -54,7 +64,7 @@ void WinApp::Initialize()
 	//ウィンドウの生成
 	hwnd = CreateWindow(
 		wc.lpszClassName,      	 // 利用するクラス名
-		L"2106_スクループ",					 // タイトルバーの文字
+		L"AL4",					 // タイトルバーの文字
 		WS_OVERLAPPEDWINDOW,	 // よく見るウィンドウスタイル
 		CW_USEDEFAULT,			 // 表示X座標
 		CW_USEDEFAULT,			 // 表示Y座標
@@ -79,6 +89,8 @@ void WinApp::Finalize()
 {
 	CoUninitialize();
 	CloseWindow(hwnd);
+	delete instance;
+	instance = nullptr;
 }
 
 bool WinApp::ProcessMessage()

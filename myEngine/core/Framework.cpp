@@ -28,19 +28,19 @@ void Framework::Initialize()
 
 	///---------WinApp--------
 	// WindowsAPIの初期化
-	winApp = std::make_unique<WinApp>();
+	winApp = WinApp::GetInstance();
 	winApp->Initialize();
 	///-----------------------
 
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
 	dxCommon = DirectXCommon::GetInstance();
-	dxCommon->Initialize(winApp.get());
+	dxCommon->Initialize(winApp);
 	///--------------------------------
 
 	/// ---------ImGui---------
 #ifdef _DEBUG
-	ImGuiManager::GetInstance()->Initialize(winApp.get());
+	ImGuiManager::GetInstance()->Initialize(winApp);
 #endif // _DEBUG
 	/// -----------------------
 
@@ -53,7 +53,7 @@ void Framework::Initialize()
 	///----------Input-----------
 	// 入力の初期化
 	input = Input::GetInstance();
-	input->Initialize(winApp.get());
+	input->Initialize(winApp);
 	///--------------------------
 
 	///-----------TextureManager----------
@@ -84,6 +84,12 @@ void Framework::Initialize()
 	///---------Audio-------------
 	audio = Audio::GetInstance();
 	audio->Initialize();
+	///---------------------------
+
+	///-------CollisionManager--------------
+	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_->Initialize();
+	///-------------------------------------
 
 	sceneManager_ = SceneManager::GetInstance();
 
@@ -121,9 +127,19 @@ void Framework::Finalize()
 
 void Framework::Update()
 {
+#ifdef _DEBUG
+
+	ImGuiManager::GetInstance()->Begin();
+	GlobalVariables::GetInstance()->Update();
+#endif // _DEBUG
 	sceneManager_->Update();
+	collisionManager_->Update();
+#ifdef _DEBUG
+	ImGuiManager::GetInstance()->End();
+#endif // _DEBUG
+
 	/// -------更新処理開始----------
-	
+
 	// -------Input-------
 	// 入力の更新
 	input->Update();

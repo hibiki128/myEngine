@@ -47,6 +47,8 @@ public: // setter
 	/// <param name="nextScene"></param>
 	void ChangeScene(const std::string& sceneName);
 
+	BaseScene* GetBaseScene() { return scene_; }
+
 private:
 	// 今のシーン(実行中のシーン)
 	BaseScene* scene_ = nullptr;

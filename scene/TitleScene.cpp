@@ -10,6 +10,12 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
+
+	vP_.Initialize();
+
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize("spaceStart.png", { 640.0f, 360.0f
+		}, { 1,1,1,1 }, { 0.5f,0.5f });
 }
 
 void TitleScene::Finalize()
@@ -19,9 +25,13 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-	if (input_->TriggerKey(DIK_RETURN)) {
+	//-----シーン切り替え-----
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->ChangeScene("GAME");
 	}
+	//----------------------
+
+	vP_.UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -31,7 +41,7 @@ void TitleScene::Draw()
 	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
-
+	sprite_->Draw();
 	//------------------------
 
 	objCommon_->DrawCommonSetting();

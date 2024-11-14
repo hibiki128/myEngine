@@ -5,7 +5,10 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
-
+#include"ViewProjection.h"
+#include"Object3d.h"
+#include"WorldTransform.h"
+#include"Sprite.h"
 
 class TitleScene :public BaseScene
 {
@@ -31,6 +34,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	ViewProjection* GetViewProjection()override { return &vP_; }
+
 private:
 	Audio* audio_;
 	Input* input_;
@@ -38,4 +43,7 @@ private:
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
 
+	ViewProjection vP_;
+
+	std::unique_ptr<Sprite> sprite_;
 };
