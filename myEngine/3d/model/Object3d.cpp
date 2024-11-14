@@ -36,16 +36,22 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 
 	if (worldTransform.parent_) {
 		worldMatrix *= worldTransform.parent_->matWorld_;
-	}	
+	}
 	Matrix4x4 worldViewProjectionMatrix;
 	const Matrix4x4& viewProjectionMatrix = viewProjection.matView_ * viewProjection.matProjection_;
 	worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
-
-	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->World = worldTransform.matWorld_;
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
-	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
 
+	if (model->IsGltf()) {
+		transformationMatrixData->WVP = model->GetModelData().rootNode.localMatrix * worldViewProjectionMatrix;
+		transformationMatrixData->World = model->GetModelData().rootNode.localMatrix * worldMatrix;
+		transformationMatrixData->WorldInverseTranspose = model->GetModelData().rootNode.localMatrix * Transpose(worldInverseMatrix);
+	}
+	else {
+		transformationMatrixData->WVP = worldViewProjectionMatrix;
+		transformationMatrixData->World = worldMatrix;
+		transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+	}
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)

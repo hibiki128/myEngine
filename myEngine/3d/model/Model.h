@@ -5,6 +5,10 @@
 #include "Vector3.h"
 #include "Vector2.h"
 #include"SrvManager.h"
+#include"assimp/Importer.hpp"
+#include"assimp/scene.h"
+#include"assimp/postprocess.h"
+
 class Model
 {
 private:
@@ -22,10 +26,17 @@ private:
 		uint32_t textureIndex = 0;
 	};
 
+	struct Node {
+		Matrix4x4 localMatrix;
+		std::string name;
+		std::vector<Node>children;
+	};
+
 	struct ModelData
 	{
 		std::vector<VertexData> vertices;
 		MaterialData material;
+		Node rootNode;
 	};
 
 	ModelCommon* modelCommon_;
@@ -41,6 +52,7 @@ private:
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	
+	bool isGltf = false;
 
 public:
 	/// <summary>
@@ -60,6 +72,7 @@ public:
 	void Draw();
 
 	ModelData GetModelData() { return modelData; }
+	bool IsGltf() { return isGltf; }
 	void SetSrv(SrvManager* srvManager) { srvManager_ = srvManager; }
 
 private:
@@ -83,7 +96,13 @@ private:
 	/// <param name="directoryPath"></param>
 	/// <param name="filename"></param>
 	/// <returns></returns>
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+    ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
 
+	/// <summary>
+	/// ノード読み取り
+	/// </summary>
+	/// <param name="node"></param>
+	/// <returns></returns>
+	Node ReadNode(aiNode* node);
 };
 

@@ -35,7 +35,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-	ViewProjection* GetViewProjection()override { return &vP_; }
+	ViewProjection* GetViewProjection()override { return &vp_; }
 
 private:
 	Audio* audio_;
@@ -44,7 +44,7 @@ private:
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
 
-	ViewProjection vP_;
+	ViewProjection vp_;
 
 	std::unique_ptr<Object3d> obj_;
 	WorldTransform wt_;
