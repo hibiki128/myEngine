@@ -9,6 +9,7 @@
 #include"Object3d.h"
 #include"WorldTransform.h"
 #include"Sprite.h"
+#include"Object3d.h"
 
 class TitleScene :public BaseScene
 {
@@ -44,4 +45,7 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
+
+	std::unique_ptr<Object3d> obj_;
+	WorldTransform wt_;
 };
