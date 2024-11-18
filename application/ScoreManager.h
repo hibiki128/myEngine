@@ -1,6 +1,5 @@
 #pragma once
 #include "Sprite.h"
-#include <imgui.h>  // ImGui用のヘッダ
 #include "externals/nlohmann/json.hpp"
 #include <string>
 #include <vector>
