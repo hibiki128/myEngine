@@ -13,6 +13,11 @@ void ImGuiManager::Initialize(WinApp* winApp)
 
 	// ImGuiのコンテキストを生成
 	ImGui::CreateContext();
+
+	// Docking機能を有効化
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Docking機能を有効化
+
 	// ImGuiのスタイルを設定
 	ImGui::StyleColorsDark();
 
