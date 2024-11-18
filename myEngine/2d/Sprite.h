@@ -46,6 +46,8 @@ public: // メンバ関数
 	const bool GetFilpY()const { return isFlipY_; }
 	const Vector2& GetTexLeftTop()const { return textureLeftTop; }
 	const Vector2& GetTexSize()const { return textureSize; }
+	const uint32_t GetTextureHandle();
+	const std::string GetFilePath() { return texturePath_; }
 
 	/// <summary>
 	/// setter
@@ -140,6 +142,7 @@ private:
 
 	std::string directoryPath_ = "resources/images";
 	std::string fullpath;
+	std::string texturePath_;
 	Vector2 anchorPoint_ = { 0.0f,0.0f };
 
 	// 左右フリップ

@@ -339,6 +339,9 @@
     <ClCompile Include="application\map\skyDome.cpp">
       <Filter>ソース ファイル\application\map</Filter>
     </ClCompile>
+    <ClCompile Include="application\ScoreManager.cpp">
+      <Filter>ソース ファイル\application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -541,6 +544,9 @@
     </ClInclude>
     <ClInclude Include="application\map\skyDome.h">
       <Filter>ヘッダー ファイル\application\map</Filter>
+    </ClInclude>
+    <ClInclude Include="application\ScoreManager.h">
+      <Filter>ヘッダー ファイル\application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

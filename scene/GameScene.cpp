@@ -44,7 +44,7 @@ void GameScene::Initialize()
 	// ボタンを削除し、自動で33回分の敵を追加
 	for (int i = 0; i < 33; ++i) {
 		// 新しいenemyを作成
-		auto newEnemy = std::make_unique<enemy>();
+		auto newEnemy = std::make_unique<Enemy>();
 
 		// 初期化処理
 		newEnemy->Init();
@@ -55,6 +55,13 @@ void GameScene::Initialize()
 		// リスト内の敵数を基にAddItemを呼び出し
 		enemies_.back()->AddItem(i);
 	}
+
+
+	scoreManager_ = std::make_unique<ScoreManager>();
+	scoreManager_->Initialize();
+	scoreManager_->Setpos(Vector2(1200.0f, 645.0f));
+
+	currentScore_ = 0;
 
 }
 
@@ -82,15 +89,34 @@ void GameScene::Update()
 	ImGui::End();
 #endif // _DEBUG
 
+	// 前回の生存状態を記録し、スコア加算を一度だけにするロジック
+	for (auto& enemy : enemies_) {
+		static std::unordered_map<Enemy*, bool> prevStates; // 各敵の前回状態を記録
+
+		// 現在の生存状態を取得
+		bool isCurrentlyAlive = enemy->IsAlive();
+
+		// 前回状態が記録されていない場合は初期化
+		if (prevStates.find(enemy.get()) == prevStates.end()) {
+			prevStates[enemy.get()] = true; // 初期状態は「生存中」と仮定
+		}
+
+		// 前回は生存中で、現在は死亡している場合にスコアを加算
+		if (prevStates[enemy.get()] && !isCurrentlyAlive) {
+			currentScore_ += 50;
+		}
+
+		// 前回の状態を更新
+		prevStates[enemy.get()] = isCurrentlyAlive;
+	}
+
 	//-----シーン切り替え-----
 	if (railCamera_->IsFinish()) {
 		sceneManager_->ChangeScene("TITLE");
 	}
-
 	//----------------------
 
 	rail_->Update();
-
 
 	vp_.UpdateMatrix();
 	railCamera_->SetControlPoints(rail_->GetControlPoints());
@@ -134,6 +160,10 @@ void GameScene::Draw()
 	}
 	//-----------------------------
 
+	spCommon_->DrawCommonSetting();
+	//-----Spriteの描画開始-----
+	scoreManager_->DrawScore(currentScore_, Vector2(45.0f, 112.5f), Vector2(1200.0f, 570.0f));
+	//------------------------
 
 	/// ----------------------------------
 #ifdef _DEBUG

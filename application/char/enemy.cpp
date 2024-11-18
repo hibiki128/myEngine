@@ -1,7 +1,7 @@
 #include "enemy.h"
 #include"playerBullet.h"
 
-void enemy::Init()
+void Enemy::Init()
 {
 	obj3d_ = std::make_unique<Object3d>();
 	obj3d_->Initialize("field/balloon.obj");
@@ -15,7 +15,7 @@ void enemy::Init()
 	emitter_->Initialize("Death", "debug/line.obj");
 }
 
-void enemy::Update()
+void Enemy::Update()
 {
 	if (!itemName.empty()) {
 		ApplyVariables();
@@ -39,7 +39,7 @@ void enemy::Update()
 	wt_.UpdateMatrix();
 }
 
-void enemy::Draw(ViewProjection* vp_)
+void Enemy::Draw(ViewProjection* vp_)
 {
 	if (isAlive_) {
 		obj3d_->Draw(wt_, *vp_);
@@ -47,7 +47,7 @@ void enemy::Draw(ViewProjection* vp_)
 	//emitter_->DrawEmitter(*vp_);
 }
 
-void enemy::DrawParticle(const ViewProjection& _vp)
+void Enemy::DrawParticle(const ViewProjection& _vp)
 {
 	if (!isAlive_) {
 		emitter_->UpdateOnce(_vp);
@@ -55,7 +55,7 @@ void enemy::DrawParticle(const ViewProjection& _vp)
 	}
 }
 
-Vector3 enemy::GetCenterPosition() const
+Vector3 Enemy::GetCenterPosition() const
 {
 	// ローカル座標でのオフセット
 	const Vector3 offset = { 0.0f, 0.0f, 0.0f };
@@ -64,12 +64,12 @@ Vector3 enemy::GetCenterPosition() const
 	return worldPos;
 }
 
-Vector3 enemy::GetCenterRotation() const
+Vector3 Enemy::GetCenterRotation() const
 {
 	return wt_.rotation_;
 }
 
-AABB enemy::GetAABB() const
+AABB Enemy::GetAABB() const
 {
 	// 中心位置を取得
 	Vector3 center = GetCenterPosition();
@@ -84,21 +84,21 @@ AABB enemy::GetAABB() const
 	return aabb;
 }
 
-void enemy::OnCollision(Collider* other)
+void Enemy::OnCollision(Collider* other)
 {
 	if (dynamic_cast<playerBullet*>(other)) {
 		--HP_;
 	}
 }
 
-void enemy::imgui()
+void Enemy::imgui()
 {
 	ImGui::DragFloat3("pos", &wt_.translation_.x, 0.1f);
 	ImGui::SliderInt("HP", &HP_, 0, 50);
 	emitter_->RenderImGui();
 }
 
-void enemy::AddItem(int enemyNum)
+void Enemy::AddItem(int enemyNum)
 {
 	// "enemy" + 数字 + " pos" のように動的に名前を作成する
 	itemName = "enemy" + std::to_string(enemyNum);
@@ -108,7 +108,7 @@ void enemy::AddItem(int enemyNum)
 	variables_->AddItem(groupName_, itemNamePos, wt_.translation_);
 }
 
-void enemy::ApplyVariables()
+void Enemy::ApplyVariables()
 {
 	std::string itemNamePos = itemName + " pos";
 	wt_.translation_ = variables_->GetVector3Value(groupName_, itemNamePos);

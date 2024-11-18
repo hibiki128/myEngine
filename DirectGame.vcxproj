@@ -159,6 +159,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
+    <ClCompile Include="application\ScoreManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -238,6 +239,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
+    <ClInclude Include="application\ScoreManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

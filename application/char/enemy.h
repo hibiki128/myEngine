@@ -5,7 +5,7 @@
 #include"ViewProjection.h"
 #include"GlobalVariables.h"
 #include"ParticleEmitter.h"
-class enemy :public Collider
+class Enemy :public Collider
 {
 public:
 

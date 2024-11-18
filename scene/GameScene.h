@@ -13,6 +13,8 @@
 #include"application/char/enemy.h"
 #include"application/map/skyDome.h"
 
+#include"application/ScoreManager.h"
+
 class GameScene : public BaseScene
 {
 public: // メンバ関数
@@ -54,8 +56,10 @@ private:
 	std::unique_ptr<RailCamera> railCamera_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<skyDome> skydome_;
+	std::unique_ptr<ScoreManager>scoreManager_;
 
-	std::list<std::unique_ptr<enemy>> enemies_;
+    std::list<std::unique_ptr<Enemy>> enemies_;
+	int currentScore_ = 0;
 
 	WorldTransform cameraT_;
 };
