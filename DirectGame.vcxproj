@@ -282,9 +282,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <Project>{be1b472e-0bdb-4498-9428-4aae04bd3b14}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="myEngine.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

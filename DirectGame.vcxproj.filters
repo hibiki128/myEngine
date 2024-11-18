@@ -574,9 +574,4 @@
       <Filter>imgui</Filter>
     </Text>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="myEngine.rc">
-      <Filter>シェーダー ファイル</Filter>
-    </ResourceCompile>
-  </ItemGroup>
 </Project>
