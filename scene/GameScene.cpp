@@ -41,7 +41,7 @@ void GameScene::Initialize()
 	skydome_->Initialize();
 	//-------------------------
 
-	// ボタンを削除し、自動で33回分の敵を追加
+	//---------敵----------
 	for (int i = 0; i < 33; ++i) {
 		// 新しいenemyを作成
 		auto newEnemy = std::make_unique<Enemy>();
@@ -55,14 +55,19 @@ void GameScene::Initialize()
 		// リスト内の敵数を基にAddItemを呼び出し
 		enemies_.back()->AddItem(i);
 	}
+	//--------------------
 
-
+	//-------スコア--------
 	scoreManager_ = std::make_unique<ScoreManager>();
 	scoreManager_->Initialize();
 	scoreManager_->Setpos(Vector2(1200.0f, 645.0f));
 
 	currentScore_ = 0;
 
+	score_ = std::make_unique<Sprite>();
+	score_->Initialize("score.png",Vector2(1120.0f,570.0f),{1,1,1,1},{0.5f,0.5f});
+	score_->SetSize(score_->GetSize() * 0.5f);
+	//--------------------
 }
 
 void GameScene::Finalize()
@@ -162,7 +167,8 @@ void GameScene::Draw()
 
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
-	scoreManager_->DrawScore(currentScore_, Vector2(45.0f, 112.5f), Vector2(1200.0f, 570.0f));
+	score_->Draw();
+	scoreManager_->DrawScore(currentScore_, Vector2(45.0f,112.5f), Vector2(1200.0f, 570.0f));
 	//------------------------
 
 	/// ----------------------------------

@@ -12,8 +12,8 @@
 #include"application/char/player.h"
 #include"application/char/enemy.h"
 #include"application/map/skyDome.h"
-
 #include"application/ScoreManager.h"
+#include"Sprite.h"
 
 class GameScene : public BaseScene
 {
@@ -57,8 +57,9 @@ private:
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<skyDome> skydome_;
 	std::unique_ptr<ScoreManager>scoreManager_;
+	std::unique_ptr<Sprite>score_;
 
-    std::list<std::unique_ptr<Enemy>> enemies_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 	int currentScore_ = 0;
 
 	WorldTransform cameraT_;

@@ -3,7 +3,7 @@
 void rail::Initialize(ViewProjection* vp)
 {
 	vp_ = vp;
-	segmentCount =250;
+	segmentCount =1000;
 	startPoints_.resize(segmentCount);
 	endPoints_.resize(segmentCount);
 
