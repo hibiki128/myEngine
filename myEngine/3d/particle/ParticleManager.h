@@ -53,7 +53,6 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	struct MaterialData
@@ -121,7 +120,7 @@ private:
 	Material* materialData = nullptr;
 
 	SrvManager* srvManager_;
-	
+
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
 	// Δtを定義
@@ -135,7 +134,10 @@ private:
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
-	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale, const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale, const Vector3& particleEndScale,const Vector3& startAcce,const Vector3& endAcce,const Vector3& startRote,const Vector3& endRote);
+	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,
+		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
+		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
+		const Vector3& startRote, const Vector3& endRote, bool isRamdomColor);
 
 
 private:
@@ -164,8 +166,9 @@ private:
 	Particle MakeNewParticle(std::mt19937& randomEngine,
 		const Vector3& translate,
 		const Vector3& scale,
-		const Vector3& velocityMin, const Vector3& velocityMax, 
-		float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale,const Vector3& particleEndScale,
-		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote);
+		const Vector3& velocityMin, const Vector3& velocityMax,
+		float lifeTimeMin, float lifeTimeMax, const Vector3& particleStartScale, const Vector3& particleEndScale,
+		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote
+		, bool isRamdomColor);
 };
 

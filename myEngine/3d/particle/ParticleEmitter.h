@@ -57,6 +57,7 @@ private:
     Vector3 endAcce_;
     Vector3 startRote_ = {};
     Vector3 endRote_ = {};
+    bool isRandomColor = true;
 
     float deltaTime = 1.0f / 60.0f;
 

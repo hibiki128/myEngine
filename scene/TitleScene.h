@@ -43,5 +43,6 @@ private:
 
 	ViewProjection vP_;
 
-	std::unique_ptr<ParticleEmitter> emitter_;
+	std::unique_ptr<ParticleEmitter> fall_;
+	std::unique_ptr<ParticleEmitter> Break_;
 };

@@ -28,7 +28,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	endScale_ = { 1.0f,1.0f,1.0f };
 	AddItem();
 	isBillBoard = false;
-	isActive_ = false;
+	isActive_ = true;
 	ApplyGlobalVariables();
 }
 
@@ -88,7 +88,8 @@ void ParticleEmitter::Emit() {
 		startAcce_,
 		endAcce_,
 		startRote_,
-		endRote_
+		endRote_,
+		isRandomColor
 	);
 }
 
@@ -110,6 +111,7 @@ void ParticleEmitter::ApplyGlobalVariables()
 	lifeTimeMin_ = globalVariables->GetFloatValue(groupName, "lifeTimeMin");
 	isVisible = globalVariables->GetBoolValue(groupName, "isVisible");
 	isBillBoard = globalVariables->GetBoolValue(groupName, "isBillBoard");
+	isRandomColor = globalVariables->GetBoolValue(groupName, "isRamdomColor");
 }
 
 void ParticleEmitter::SetValue()
@@ -130,6 +132,7 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "lifeTimeMin", lifeTimeMin_);
 	globalVariables->SetValue(groupName, "isVisible", isVisible);
 	globalVariables->SetValue(groupName, "isBillBoard", isBillBoard);
+	globalVariables->SetValue(groupName, "isRamdomColor", isRandomColor);
 }
 
 void ParticleEmitter::AddItem()
@@ -154,6 +157,7 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "lifeTimeMin", lifeTimeMin_);
 	globalVariables->AddItem(groupName, "isVisible", isVisible);
 	globalVariables->AddItem(groupName, "isBillBoard", isBillBoard);
+	globalVariables->AddItem(groupName, "isRamdomColor", isRandomColor);
 }
 
 // ImGuiで値を動かす関数
@@ -204,6 +208,7 @@ void ParticleEmitter::RenderImGui() {
 
 	ImGui::Checkbox("BillBoard", &isBillBoard);
 	Manager_->SetBillBorad(isBillBoard);
+	ImGui::Checkbox("RamdomColor", &isRandomColor);
 	ImGui::End();
 
 #endif // _DEBUG

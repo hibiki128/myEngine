@@ -14,8 +14,11 @@ void TitleScene::Initialize()
 
 	vP_.Initialize();
 
-	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("death", "debug/cube.obj");
+	fall_ = std::make_unique<ParticleEmitter>();
+	fall_->Initialize("fall", "game/smoke.obj");
+
+	Break_ = std::make_unique<ParticleEmitter>();
+	Break_->Initialize("break", "game/star.obj");
 }
 
 void TitleScene::Finalize()
@@ -39,13 +42,21 @@ void TitleScene::Update()
 	}
 
 	if (ImGui::BeginTabBar("2")) {
-		if (ImGui::BeginTabItem("particle")) {
+		if (ImGui::BeginTabItem("fall")) {
 			if (ImGui::Button("Update")) {
-				emitter_->SetActive(false);
+				fall_->SetActive(false);
 			}
-			emitter_->RenderImGui();
+			fall_->RenderImGui();
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("break")) {
+			if (ImGui::Button("Update")) {
+				Break_->SetActive(false);
+			}
+			Break_->RenderImGui();
+			ImGui::EndTabItem();
+		}
+
 		ImGui::EndTabBar();
 	}
 
@@ -56,8 +67,8 @@ void TitleScene::Update()
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-	emitter_->SetValue();
-	emitter_->UpdateOnce(vP_);
+	fall_->UpdateOnce(vP_);
+	Break_->UpdateOnce(vP_);
 	vP_.UpdateMatrix();
 }
 
@@ -73,13 +84,16 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	emitter_->DrawEmitter(vP_);
+	fall_->DrawEmitter(vP_);
+	Break_->DrawEmitter(vP_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->Draw();
+	Break_->Draw();
+	ptCommon_->SetBlendMode(BlendMode::kNormal);
+	fall_->Draw();
 	//-----------------------------
 
 	/// -------描画処理終了-------

@@ -43,7 +43,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
 			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
-			(*particleIterator).velocity *= (*particleIterator).Acce;
+			(*particleIterator).velocity += (*particleIterator).Acce;
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;
@@ -67,7 +67,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 					(*particleIterator).transform.translation_);
 			}
 
-			
+
 			// パーティクルのワールド位置をチェック
 			WorldTransform particleWorldTransform;
 			particleWorldTransform.translation_ = (*particleIterator).transform.translation_;
@@ -161,9 +161,10 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& scale, // スケールを引数として受け取る
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
-	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値をVector3で受け取る
+	const Vector3& startRote, const Vector3& endRote,
+	bool isRamdomColor) // サイズの開始値と終了値をVector3で受け取る
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
@@ -196,10 +197,14 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	};
 
 
-
-	// ランダムな色を設定
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+	if (isRamdomColor) {
+		// ランダムな色を設定
+		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+	}
+	else {
+		particle.color = { 1.0f,1.0f,1.0f,1.0f };
+	}
 
 	// ライフタイムをランダムに設定
 	particle.lifeTime = distLifeTime(randomEngine);
@@ -271,7 +276,6 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
-			texcoord.x = 1.0f - texcoord.x;
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
@@ -335,9 +339,10 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& scale, // スケールを引数として追加
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲を引数として追加
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
-	const Vector3& startAcce, const Vector3& endAcce, 
-	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値を引数として追加
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
+	const Vector3& startAcce, const Vector3& endAcce,
+	const Vector3& startRote, const Vector3& endRote,
+	bool isRandomColor) // サイズの開始値と終了値を引数として追加
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -362,7 +367,8 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 			startAcce,
 			endAcce,
 			startRote,
-			endRote
+			endRote,
+			isRandomColor
 		);
 		newParticles.push_back(particle);
 	}
