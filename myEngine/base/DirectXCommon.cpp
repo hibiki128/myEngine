@@ -536,6 +536,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(Microsoft::WRL
 }
 
 
+
 IDxcBlob* DirectXCommon::CompileShader(
 	// CompilerするShaderファイルへのパス
 	const std::wstring& filePath,
