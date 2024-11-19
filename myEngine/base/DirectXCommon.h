@@ -7,6 +7,7 @@
 #include "string"
 #include"chrono"
 #include "externals/DirectXTex/DirectXTex.h"
+#include <Vector4.h>
 
 // DirectX基盤
 class DirectXCommon {
@@ -36,6 +37,8 @@ public: // メンバ関数
 	/// </summary>
 	void Initialize(WinApp* winApp);
 
+	void PreRenderTexture();
+
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
@@ -58,6 +61,9 @@ public: // メンバ関数
 
 	// DirectX12のTextureResourceを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
@@ -219,7 +225,6 @@ private: // メンバ関数
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index); // GPU
 
 
-
 private:
 
 	// WindowsAPI
@@ -239,6 +244,7 @@ private:
 	// スワップチェーン
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers;
+	Microsoft::WRL::ComPtr<ID3D12Resource> renderResource;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 
@@ -253,7 +259,7 @@ private:
 	IDxcCompiler3* dxcCompiler;
 
 	// RTVを2つ作るのでディスクリプタを2つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[3];
 	// RTV
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	// スワップチェーン
@@ -269,4 +275,5 @@ private:
 	D3D12_RESOURCE_BARRIER barrier{};
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
+	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
 };

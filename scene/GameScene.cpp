@@ -44,7 +44,7 @@ void GameScene::Draw()
 {
 	/// -------描画処理開始-------
 
-		/// Spriteの描画準備
+	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
 	

@@ -74,6 +74,15 @@ public:
     void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
 
     /// <summary>
+    /// SRV生成(RenderTexture用)
+    /// </summary>
+    /// <param name="srvIndex"></param>
+    /// <param name="pResource"></param>
+    /// <param name="numElements"></param>
+    /// <param name="structureByteStride"></param>
+    void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
+
+    /// <summary>
     /// インデックス割り当て
     /// </summary>
     /// <returns></returns>
@@ -101,4 +110,6 @@ public:
     /// <param name="RootParameterIndex"></param>
     /// <param name="srvIndex"></param>
     void SetGraphicsRootDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
+
+
 };

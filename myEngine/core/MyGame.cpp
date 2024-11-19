@@ -36,21 +36,19 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
-	dxCommon->PreDraw();
+	dxCommon->PreRenderTexture();
+
 	srvManager->PreDraw();
 	// -----描画開始-----
-
-
-	// -----シーンごとの処理------
-	
 	object3dCommon->DrawCommonSetting();
 	collisionManager_->Draw(*sceneManager_->GetBaseScene()->GetViewProjection());
 	sceneManager_->Draw();
+	// ------------------------
+	dxCommon->PreDraw();
+
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Draw();
 #endif // _DEBUG
-	// ------------------------
-
 
 	// -----描画終了-----
 	dxCommon->PostDraw();
