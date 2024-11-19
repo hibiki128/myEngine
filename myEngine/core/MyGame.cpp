@@ -44,6 +44,7 @@ void MyGame::Draw()
 	collisionManager_->Draw(*sceneManager_->GetBaseScene()->GetViewProjection());
 	sceneManager_->Draw();
 	// ------------------------
+	dxCommon->PreRenderTexture();
 	dxCommon->PreDraw();
 
 #ifdef _DEBUG

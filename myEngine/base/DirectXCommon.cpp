@@ -130,11 +130,7 @@ void DirectXCommon::PreDraw()
 
 void DirectXCommon::PostDraw()
 {
-	HRESULT hr;
-	//ゲームの処理
-	// これから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
-
+	HRESULT hr; 
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
