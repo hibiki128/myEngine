@@ -25,11 +25,30 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
-	ImGui::Begin("particle");
-	if (ImGui::Button("Update")) {
-		emitter_->SetActive(false);
+	ImGui::Begin("TitleScene");
+
+	if (ImGui::BeginTabBar("1")) {
+		if (ImGui::BeginTabItem("camera")) {
+			ImGui::DragFloat3("translation", &vP_.translation_.x, 0.1f);
+			ImGui::SliderAngle("rotateX", &vP_.rotation_.x);
+			ImGui::SliderAngle("rotateY", &vP_.rotation_.y);
+			ImGui::SliderAngle("rotateZ", &vP_.rotation_.z);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
-	emitter_->RenderImGui();
+
+	if (ImGui::BeginTabBar("2")) {
+		if (ImGui::BeginTabItem("particle")) {
+			if (ImGui::Button("Update")) {
+				emitter_->SetActive(false);
+			}
+			emitter_->RenderImGui();
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+
 	ImGui::End();
 
 	//-----シーン切り替え-----
@@ -37,7 +56,7 @@ void TitleScene::Update()
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-
+	emitter_->SetValue();
 	emitter_->UpdateOnce(vP_);
 	vP_.UpdateMatrix();
 }

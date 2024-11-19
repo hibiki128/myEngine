@@ -24,6 +24,8 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	//transform_.UpdateMatrix();
 	startAcce_ = { 1.0f,1.0f,1.0f };
 	endAcce_ = { 1.0f,1.0f,1.0f };
+	startScale_ = { 1.0f,1.0f,1.0f };
+	endScale_ = { 1.0f,1.0f,1.0f };
 	AddItem();
 	isBillBoard = false;
 	isActive_ = false;
