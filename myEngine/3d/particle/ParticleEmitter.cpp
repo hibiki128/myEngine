@@ -52,7 +52,6 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 		Emit();  // パーティクルを発生させる
 		isActive_ = true;
 	}
-	isBillBoard = false;
 	Manager_->Update(vp_);
 	transform_.UpdateMatrix();
 }

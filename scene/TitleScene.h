@@ -6,9 +6,7 @@
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
 #include"ViewProjection.h"
-#include"Object3d.h"
-#include"WorldTransform.h"
-#include"Sprite.h"
+#include"ParticleEmitter.h"
 
 class TitleScene :public BaseScene
 {
@@ -44,4 +42,6 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
+
+	std::unique_ptr<ParticleEmitter> emitter_;
 };
