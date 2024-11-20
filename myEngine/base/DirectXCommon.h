@@ -224,6 +224,13 @@ private: // メンバ関数
 	/// <returns></returns>
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index); // GPU
 
+	/// <summary>
+	/// バリアを貼る
+	/// </summary>
+	/// <param name="pResource"></param>
+	/// <param name="Before"></param>
+	/// <param name="After"></param>
+	void BarrierTransition(ID3D12Resource* pResource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
 
 private:
 

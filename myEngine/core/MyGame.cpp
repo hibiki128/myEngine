@@ -36,9 +36,9 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
-	dxCommon->PreRenderTexture();
-
 	srvManager->PreDraw();
+
+	dxCommon->PreRenderTexture();
 	// -----描画開始-----
 	object3dCommon->DrawCommonSetting();
 	collisionManager_->Draw(*sceneManager_->GetBaseScene()->GetViewProjection());
@@ -46,7 +46,6 @@ void MyGame::Draw()
 	// ------------------------
 
 	dxCommon->PreDraw();
-
 
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Draw();
