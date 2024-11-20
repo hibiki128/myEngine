@@ -116,8 +116,8 @@ void DirectXCommon::PostDraw()
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする
 
-	// renderTextureResourceのバリア
-	BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	//// renderTextureResourceのバリア
+	//BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// swapChainのバリア
 	BarrierTransition(backBuffers[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);

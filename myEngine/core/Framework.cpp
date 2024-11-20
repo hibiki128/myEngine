@@ -94,7 +94,7 @@ void Framework::Initialize()
 	sceneManager_ = SceneManager::GetInstance();
 
 	GlobalVariables::GetInstance()->LoadFiles();
-	
+
 }
 
 void Framework::Finalize()
@@ -134,6 +134,7 @@ void Framework::Update()
 #endif // _DEBUG
 	sceneManager_->Update();
 	collisionManager_->Update();
+	DisplayFPS();
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
@@ -152,4 +153,23 @@ void Framework::Update()
 void Framework::Draw()
 {
 
+}
+
+void Framework::DisplayFPS()
+{
+#ifdef _DEBUG
+	ImGuiIO& io = ImGui::GetIO();
+
+	// 左上に固定
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+
+	ImGui::Begin("FPS Overlay");
+
+	// 文字色を緑に変更
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255)); // 緑色
+	ImGui::Text("FPS: %.1f", io.Framerate);
+	ImGui::PopStyleColor();
+
+	ImGui::End();
+#endif // _DEBUG
 }

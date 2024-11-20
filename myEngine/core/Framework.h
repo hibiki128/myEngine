@@ -57,6 +57,12 @@ public:// メンバ関数
 	/// <returns></returns>
 	virtual bool IsEndRequest() { return endRequest_; }
 
+private:
+	/// <summary>
+	///  FPS表示
+	/// </summary>
+	void DisplayFPS();
+
 protected:
 
 	Input* input = nullptr;
