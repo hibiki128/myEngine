@@ -1,6 +1,7 @@
 #pragma once
 #include"AbstractSceneFactory.h"
 #include"memory"
+#include"SceneTransition.h"
 class SceneManager
 {
 private:
@@ -18,6 +19,11 @@ public:// メンバ関数
 	/// </summary>
 	/// <returns></returns>
 	static SceneManager* GetInstance();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
 
 	/// <summary>
 	/// 終了
@@ -50,11 +56,21 @@ public: // setter
 	BaseScene* GetBaseScene() { return scene_; }
 
 private:
+	// ゲームのフェーズ(型)
+	enum class Phase {
+		kFadeIn,
+		kPlay,  // ゲームプレイ
+		kFadeOut,
+	};
 	// 今のシーン(実行中のシーン)
 	BaseScene* scene_ = nullptr;
 	// 次のシーン
 	BaseScene* nextScene_ = nullptr;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<SceneTransition> transition_;
+	// 現在のフェーズ
+	Phase phase_ = Phase::kFadeIn;
+
 };
 

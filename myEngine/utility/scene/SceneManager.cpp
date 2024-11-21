@@ -13,6 +13,12 @@ SceneManager* SceneManager::GetInstance()
 	return instance;
 }
 
+void SceneManager::Initialize()
+{
+	transition_ = std::make_unique<SceneTransition>();
+	transition_->Initialize();
+}
+
 void SceneManager::Finalize()
 {
 	scene_->Finalize();
@@ -34,21 +40,35 @@ void SceneManager::Update()
 
 	// 次のシーンの予約があるなら
 	if (nextScene_) {
-		// 旧シーンの終了
-		if (scene_) {
-			scene_->Finalize();
-			delete scene_;
-		}
+		//switch (phase_)
+		//{
+		//case SceneManager::Phase::kFadeIn:
+		//	transition_->Update();
+		//	if (transition_->IsFinished()) {
+		//		phase_ = Phase::kPlay;
+		//	}
+		//	break;
+		//case SceneManager::Phase::kPlay:
 
-		// シーンの切り替え
-		scene_ = nextScene_;
-		nextScene_ = nullptr;
+		//	break;
+		//case SceneManager::Phase::kFadeOut:
+		//	break;
+		//}
 
-		// シーンマネージャをセット
-		scene_->SetSceneManager(this);
+			// 旧シーンの終了
+			if (scene_) {
+				scene_->Finalize();
+				delete scene_;
+			}
+			// シーンの切り替え
+			scene_ = nextScene_;
+			nextScene_ = nullptr;
 
-		// 次のシーンを初期化する
-		scene_->Initialize();
+			// シーンマネージャをセット
+			scene_->SetSceneManager(this);
+
+			// 次のシーンを初期化する
+			scene_->Initialize();
 	}
 	// 実行中シーンを更新する
 	scene_->Update();

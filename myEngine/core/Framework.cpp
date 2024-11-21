@@ -92,6 +92,7 @@ void Framework::Initialize()
 	///-------------------------------------
 
 	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->Initialize();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 	

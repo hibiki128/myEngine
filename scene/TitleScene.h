@@ -7,6 +7,8 @@
 #include"ParticleCommon.h"
 #include"ViewProjection.h"
 #include"ParticleEmitter.h"
+#include"Object3d.h"
+#include"WorldTransform.h"
 
 class TitleScene :public BaseScene
 {
@@ -42,7 +44,11 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
+	WorldTransform wt_;
+	WorldTransform wt2_;
 
 	std::unique_ptr<ParticleEmitter> fall_;
 	std::unique_ptr<ParticleEmitter> Break_;
+	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<Object3d> obj2_;
 };

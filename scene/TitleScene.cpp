@@ -19,6 +19,15 @@ void TitleScene::Initialize()
 
 	Break_ = std::make_unique<ParticleEmitter>();
 	Break_->Initialize("break", "game/star.obj");
+
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize("debug/suzannu.obj");
+	obj2_ = std::make_unique<Object3d>();
+	obj2_->Initialize("debug/ICO.obj");
+
+	wt_.Initialize();
+	wt2_.Initialize();
+	wt2_.translation_ = { 3.0f,0.0f,0.0f };
 }
 
 void TitleScene::Finalize()
@@ -62,14 +71,19 @@ void TitleScene::Update()
 
 	ImGui::End();
 
+	LightGroup::GetInstance()->imgui();
+
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
 	fall_->UpdateOnce(vP_);
+	fall_->Update(vP_);
 	Break_->UpdateOnce(vP_);
 	vP_.UpdateMatrix();
+	wt_.UpdateMatrix();
+	wt2_.UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -84,16 +98,18 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	fall_->DrawEmitter(vP_);
-	Break_->DrawEmitter(vP_);
+	obj_->Draw(wt_, vP_);
+	obj2_->Draw(wt2_, vP_);
+	//fall_->DrawEmitter(vP_);
+	//Break_->DrawEmitter(vP_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	Break_->Draw();
-	ptCommon_->SetBlendMode(BlendMode::kNormal);
-	fall_->Draw();
+	//Break_->Draw();
+	//ptCommon_->SetBlendMode(BlendMode::kNormal);
+	//fall_->Draw();
 	//-----------------------------
 
 	/// -------描画処理終了-------
