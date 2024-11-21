@@ -71,7 +71,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 void DirectXCommon::PreRenderTexture()
 {
-	BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+//	BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetDSVCPUDescriptorHandle(0);
@@ -116,8 +116,8 @@ void DirectXCommon::PostDraw()
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする
 
-	//// renderTextureResourceのバリア
-	//BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	// renderTextureResourceのバリア
+	//BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 	// swapChainのバリア
 	BarrierTransition(backBuffers[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
@@ -663,8 +663,10 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateRenderTextureResourc
 	resourceDesc.DepthOrArraySize = 1; // 深度または配列サイズ
 	resourceDesc.Format = format; // TextureのFormat
 	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
+	resourceDesc.SampleDesc.Quality = 0;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用可能にする
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; // 2D テクスチャ
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
 	// 利用するHeapの設定。非常に特殊な運用。
 	D3D12_HEAP_PROPERTIES heapProperties{};
