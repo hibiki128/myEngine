@@ -32,7 +32,7 @@ void GameScene::Update()
 
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
-		sceneManager_->ChangeScene("TITLE");
+		sceneManager_->NextSceneReservation("TITLE");
 	}
 
 	//----------------------

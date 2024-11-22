@@ -9,6 +9,7 @@
 #include"ParticleEmitter.h"
 #include"Object3d.h"
 #include"WorldTransform.h"
+#include"DebugCamera.h"
 
 class TitleScene :public BaseScene
 {
@@ -51,4 +52,6 @@ private:
 	std::unique_ptr<ParticleEmitter> Break_;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
+
+	std::unique_ptr<DebugCamera> debugCamera_;
 };

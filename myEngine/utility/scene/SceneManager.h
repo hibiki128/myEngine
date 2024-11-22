@@ -51,17 +51,16 @@ public: // setter
 	/// 次シーン予約
 	/// </summary>
 	/// <param name="nextScene"></param>
-	void ChangeScene(const std::string& sceneName);
+	void NextSceneReservation(const std::string& sceneName);
+
+	/// <summary>
+	/// シーン切り替え
+	/// </summary>
+	void SceneChange();
 
 	BaseScene* GetBaseScene() { return scene_; }
 
 private:
-	// ゲームのフェーズ(型)
-	enum class Phase {
-		kFadeIn,
-		kPlay,  // ゲームプレイ
-		kFadeOut,
-	};
 	// 今のシーン(実行中のシーン)
 	BaseScene* scene_ = nullptr;
 	// 次のシーン
@@ -69,8 +68,5 @@ private:
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	std::unique_ptr<SceneTransition> transition_;
-	// 現在のフェーズ
-	Phase phase_ = Phase::kFadeIn;
-
 };
 

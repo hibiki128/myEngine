@@ -28,6 +28,9 @@ void TitleScene::Initialize()
 	wt_.Initialize();
 	wt2_.Initialize();
 	wt2_.translation_ = { 3.0f,0.0f,0.0f };
+
+	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_->Initialize(&vP_);
 }
 
 void TitleScene::Finalize()
@@ -41,10 +44,7 @@ void TitleScene::Update()
 
 	if (ImGui::BeginTabBar("1")) {
 		if (ImGui::BeginTabItem("camera")) {
-			ImGui::DragFloat3("translation", &vP_.translation_.x, 0.1f);
-			ImGui::SliderAngle("rotateX", &vP_.rotation_.x);
-			ImGui::SliderAngle("rotateY", &vP_.rotation_.y);
-			ImGui::SliderAngle("rotateZ", &vP_.rotation_.z);
+			debugCamera_->imgui();
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -68,20 +68,22 @@ void TitleScene::Update()
 
 		ImGui::EndTabBar();
 	}
-
 	ImGui::End();
 
 	LightGroup::GetInstance()->imgui();
 
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
-		sceneManager_->ChangeScene("GAME");
+		sceneManager_->NextSceneReservation("GAME");
 	}
 	//----------------------
 	fall_->UpdateOnce(vP_);
-	fall_->Update(vP_);
 	Break_->UpdateOnce(vP_);
-	vP_.UpdateMatrix();
+
+	debugCamera_->Update();
+	if (!debugCamera_->GetActive()) {
+		vP_.UpdateMatrix();
+	}
 	wt_.UpdateMatrix();
 	wt2_.UpdateMatrix();
 }
@@ -100,16 +102,16 @@ void TitleScene::Draw()
 	//-----3DObjectの描画開始-----
 	obj_->Draw(wt_, vP_);
 	obj2_->Draw(wt2_, vP_);
-	//fall_->DrawEmitter(vP_);
-	//Break_->DrawEmitter(vP_);
+	fall_->DrawEmitter(vP_);
+	Break_->DrawEmitter(vP_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	//Break_->Draw();
-	//ptCommon_->SetBlendMode(BlendMode::kNormal);
-	//fall_->Draw();
+	Break_->Draw();
+	ptCommon_->SetBlendMode(BlendMode::kNormal);
+	fall_->Draw();
 	//-----------------------------
 
 	/// -------描画処理終了-------

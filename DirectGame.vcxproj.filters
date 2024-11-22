@@ -157,6 +157,12 @@
     <Filter Include="ヘッダー ファイル\myEngine\utility\collider">
       <UniqueIdentifier>{f93114d0-d1a7-404e-b2a2-92179ba0bed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\myEngine\3d\light">
+      <UniqueIdentifier>{c3b4c12d-44a5-488f-8759-b486bc3ab9a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\myEngine\3d\light">
+      <UniqueIdentifier>{f796360d-eedd-40fc-8ac6-46bcd3c46d1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -315,8 +321,8 @@
     <ClCompile Include="application\SceneTransition.cpp">
       <Filter>ソース ファイル\application</Filter>
     </ClCompile>
-    <ClCompile Include="LightGroup.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
+      <Filter>ソース ファイル\myEngine\3d\light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,8 +512,8 @@
     <ClInclude Include="application\SceneTransition.h">
       <Filter>ヘッダー ファイル\application</Filter>
     </ClInclude>
-    <ClInclude Include="LightGroup.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="myEngine\3d\light\LightGroup.h">
+      <Filter>ヘッダー ファイル\myEngine\3d\light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

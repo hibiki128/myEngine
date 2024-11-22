@@ -67,6 +67,10 @@ Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
 Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles);
 
+
+// 行列から回転成分をオイラー角に変換して取得
+Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat);
+
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 //void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);

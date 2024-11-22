@@ -1,126 +1,222 @@
 #pragma once
-#define DIRECTINPUT_VERSION 0x0800 // DirectInputのバージョン指定
-#include "dinput.h"
-#include "windows.h"
-#include "wrl.h"
-#include "WinApp.h"
+
+#include <variant>
+//std
+#include<wrl.h>
+#include<vector>
+#include <array>
+#include<memory>
+
 #include"Vector2.h"
 
-// 入力
-class Input
-{
-private:
-    static Input* instance;
+#define DIRECTNPUT_VERSION 0x0800//バージョン指定
+#include <XInput.h>
+#include<dinput.h>
+#include"ViewProjection.h"
+#include"Vector2.h"
 
-    Input() : wheelState(0) {} // 初期化時にホイールの状態を0に設定
-    ~Input() = default;
-    Input(Input&) = delete;
-    Input& operator=(Input&) = delete;
+struct MouseMove {
+	LONG lX;
+	LONG lY;
+	LONG lZ;
+};
+
+class Mouse {
+private:
+	//マウス
+	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse_;
+	DIMOUSESTATE2 mouse_;
+	DIMOUSESTATE2 mousePre_;
+	Vector2 mousePosition_;
+	HWND hWnd_;
+public:
+
+
+	//初期化、更新
+	void Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput, HWND hWnd);
+	void Update();
+
+	/// <summary>
+		/// マウスの押下をチェック
+		/// </summary>
+		/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+		/// <returns>押されているか</returns>
+	bool IsPressMouse(int32_t mouseNumber) const;
+
+	/// <summary>
+	/// マウスのトリガーをチェック。押した瞬間だけtrueになる
+	/// </summary>
+	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <returns>トリガーか</returns>
+	bool IsTriggerMouse(int32_t buttonNumber) const;
+
+	/// <summary>
+	/// マウス移動量を取得
+	/// </summary>
+	/// <returns>マウス移動量</returns>
+	MouseMove GetMouseMove();
+
+	/// <summary>
+	/// ホイールスクロール量を取得する
+	/// </summary>
+	/// <returns>ホイールスクロール量。奥側に回したら+。Windowsの設定で逆にしてたら逆</returns>
+	int32_t GetWheel() const;
+
+	/// <summary>
+	/// マウスの位置を取得する（ウィンドウ座標系）
+	/// </summary>
+	/// <returns>マウスの位置</returns>
+	Vector2 GetMousePos();
+
+	/// <summary>
+	/// 3Dのマウス座標
+	/// </summary>
+	/// <param name="viewprojection"></param>
+	/// <param name="depthFactor"></param>
+	/// <returns></returns>
+	Vector3 GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing = 1.0f) const;
+
+};
+
+class Input {
+
+private:
+	enum class PadType {
+		DirectInput,
+		XInput,
+	};
+	using State = std::variant<DIJOYSTATE2, XINPUT_STATE>;
+
+	struct Joystick {
+		Microsoft::WRL::ComPtr<IDirectInputDevice8> device_;
+		int32_t deadZoneL_;
+		int32_t deadZoneR_;
+		PadType type_;
+		State state_;
+		State statePre_;
+	};
+private:
+	Microsoft::WRL::ComPtr<IDirectInput8>directInput_ = nullptr;
+	Microsoft::WRL::ComPtr<IDirectInputDevice8> keyboard_ = nullptr;
+	std::array<BYTE, 256> key_;
+	std::array<BYTE, 256> keyPre_;
+	std::vector<Joystick>joysticks_;
+	//マウス
+	static std::unique_ptr<Mouse>mouse_;
 
 public:
-    // namespace省略
-    template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
+	// シングルトンインスタンスの取得
+	static Input* GetInstance();
+	void Init(HINSTANCE hInstance, HWND hwnd);
+	void Update();
 
-public: // メンバ関数
+	/// <summary>
+	/// 押し込んでいるか
+	/// </summary>
+	/// <param name="キー番号"></param>
+	/// <returns></returns>
+	bool PushKey(BYTE keyNumber)const;
 
-    /// <summary>
-    /// シングルトンインスタンスの取得
-    /// </summary>
-    /// <returns></returns>
-    static Input* GetInstance();
+	/// <summary>
+	/// トリガーしているか
+	/// </summary>
+	/// <param name="キー番号"></param>
+	/// <returns></returns>
+	bool TriggerKey(BYTE keyNumber)const;
 
-    /// <summary>
-    /// 終了
-    /// </summary>
-    void Finalize();
+	/// <summary>
+	///　離しているか
+	/// </summary>
+	/// <param name="キー番号"></param>
+	/// <returns></returns>
+	bool ReleaseKey(BYTE keyNumber)const;
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="hInstance"></param>
-    /// <param name="hwnd"></param>
-    void Initialize(WinApp* winApp);
+	/// <summary>
+	///　離した瞬間か
+	/// </summary>
+	/// <param name="キー番号"></param>
+	/// <returns></returns>
+	bool ReleaseMomentKey(BYTE keyNumber)const;
 
-    /// <summary>
-    /// 更新
-    /// </summary>
-    void Update();
+	/// <summary>
+	/// 現在のジョイスティック状態を取得する
+	/// </summary>
+	/// <param name="stickNo">ジョイスティック番号</param>
+	/// <param name="out">現在のジョイスティック状態</param>
+	/// <returns>正しく取得できたか</returns>
+	template<typename T> bool GetJoystickState(int32_t stickNo, T& out) const;
 
-    /// <summary>
-    /// キーの押下をチェック
-    /// </summary>
-    /// <param name="keyNumber"></param>
-    /// <returns></returns>
-    bool PushKey(BYTE keyNumber);
+	/// <summary>
+	/// 前回のジョイスティック状態を取得する
+	/// </summary>
+	/// <param name="stickNo">ジョイスティック番号</param>
+	/// <param name="out">前回のジョイスティック状態</param>
+	/// <returns>正しく取得できたか</returns>
+	template<typename T> bool GetJoystickStatePrevious(int32_t stickNo, T& out) const;
 
-    /// <summary>
-    /// キーのトリガーをチェック
-    /// </summary>
-    /// <param name="keyNumber"></param>
-    /// <returns></returns>
-    bool TriggerKey(BYTE keyNumber);
+	/// <summary>
+	/// デッドゾーンを設定する
+	/// </summary>
+	/// <param name="stickNo">ジョイスティック番号</param>
+	/// <param name="deadZoneL">デッドゾーン左スティック 0~32768</param>
+	/// <param name="deadZoneR">デッドゾーン右スティック 0~32768</param>
+	/// <returns>正しく取得できたか</returns>
+	void SetJoystickDeadZone(int32_t stickNo, int32_t deadZoneL, int32_t deadZoneR);
 
-    /// <summary>
-    /// キーのリリースをチェック
-    /// </summary>
-    /// <param name="keyNumber"></param>
-    /// <returns></returns>
-    bool ReleaseKey(BYTE keyNumber);
+	/// <summary>
+	/// 接続されているジョイスティック数を取得する
+	/// </summary>
+	/// <returns>接続されているジョイスティック数</returns>
+	size_t GetNumberOfJoysticks()const;
 
-    /// <summary>
-    /// マウスボタンの押下をチェック
-    /// </summary>
-    /// <param name="buttonNumber">0: 左クリック, 1: 右クリック, 2: ホイールクリック</param>
-    /// <returns></returns>
-    bool PushMouseButton(int buttonNumber);
+	///// <summary>
+	///// 全マウス情報取得
+	///// </summary>
+	///// <returns>マウス情報</returns>
+	//const DIMOUSESTATE2& GetAllMouse() const;
 
-    /// <summary>
-    /// マウスボタンのトリガーをチェック
-    /// </summary>
-    /// <param name="buttonNumber">0: 左クリック, 1: 右クリック, 2: ホイールクリック</param>
-    /// <returns></returns>
-    bool TriggerMouseButton(int buttonNumber);
+	/// <summary>
+	/// マウスの押下をチェック
+	/// </summary>
+	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <returns>押されているか</returns>
+	static	bool IsPressMouse(int32_t mouseNumber);
 
-    /// <summary>
-    /// マウスのX座標取得
-    /// </summary>
-    /// <returns>X軸の移動量</returns>
-    long GetMouseX() const { return mouseState.lX; }
+	/// <summary>
+	/// マウスのトリガーをチェック。押した瞬間だけtrueになる
+	/// </summary>
+	/// <param name="buttonNumber">マウスボタン番号(0:左,1:右,2:中,3~7:拡張マウスボタン)</param>
+	/// <returns>トリガーか</returns>
+	static	bool IsTriggerMouse(int32_t buttonNumber);
 
-    /// <summary>
-    /// マウスのY座標取得
-    /// </summary>
-    /// <returns>Y軸の移動量</returns>
-    long GetMouseY() const { return mouseState.lY; }
+	/// <summary>
+	/// マウス移動量を取得
+	/// </summary>
+	/// <returns>マウス移動量</returns>
+	static	MouseMove GetMouseMove();
 
-    /// <summary>
-    /// マウスホイールの回転量取得
-    /// </summary>
-    /// <returns>ホイールの回転量</returns>
-    int GetWheel() const { return wheelState; }
+	/// <summary>
+	/// ホイールスクロール量を取得する
+	/// </summary>
+	/// <returns>ホイールスクロール量。奥側に回したら+。Windowsの設定で逆にしてたら逆</returns>
+	static	int32_t GetWheel();
 
-    Vector2 GetMousePos();
+	/// <summary>
+	/// マウスの位置を取得する（ウィンドウ座標系）
+	/// </summary>
+	/// <returns>マウスの位置</returns>
+	static	 Vector2 GetMousePos();
 
-private: // メンバ変数
-    // キーボードのデバイス
-    ComPtr<IDirectInputDevice8> keyboard;
-    // マウスのデバイス
-    ComPtr<IDirectInputDevice8> mouse;
-    // DirectInputのインスタンス
-    ComPtr<IDirectInput8> directInput;
+	/// <summary>
+		/// 3Dのマウス座標
+		/// </summary>
+		/// <param name="viewprojection"></param>
+		/// <param name="depthFactor"></param>
+		/// <returns></returns>
+	static Vector3 GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing = 1.0f);
 
-    // 全キーの入力情報を取得する
-    BYTE key[256] = {};
-    // 前回の全キーの状態
-    BYTE keyPre[256] = {};
 
-    // マウスボタンの状態
-    DIMOUSESTATE2 mouseState = {};
-    DIMOUSESTATE2 mouseStatePre = {};
-
-    // ホイールの回転状態
-    int wheelState; // ホイールの状態
-
-    // WindowsAPI
-    WinApp* winApp_ = nullptr;
+	const BYTE* GetKeyState() const { return key_.data(); }
+	const BYTE* GetPreviousKeyState() const { return keyPre_.data(); }
 };
+

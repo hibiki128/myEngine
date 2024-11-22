@@ -40,36 +40,9 @@ void SceneManager::Update()
 
 	// 次のシーンの予約があるなら
 	if (nextScene_) {
-		//switch (phase_)
-		//{
-		//case SceneManager::Phase::kFadeIn:
-		//	transition_->Update();
-		//	if (transition_->IsFinished()) {
-		//		phase_ = Phase::kPlay;
-		//	}
-		//	break;
-		//case SceneManager::Phase::kPlay:
-
-		//	break;
-		//case SceneManager::Phase::kFadeOut:
-		//	break;
-		//}
-
-			// 旧シーンの終了
-			if (scene_) {
-				scene_->Finalize();
-				delete scene_;
-			}
-			// シーンの切り替え
-			scene_ = nextScene_;
-			nextScene_ = nullptr;
-
-			// シーンマネージャをセット
-			scene_->SetSceneManager(this);
-
-			// 次のシーンを初期化する
-			scene_->Initialize();
+		SceneChange();
 	}
+
 	// 実行中シーンを更新する
 	scene_->Update();
 }
@@ -79,11 +52,29 @@ void SceneManager::Draw()
 	scene_->Draw();
 }
 
-void SceneManager::ChangeScene(const std::string& sceneName)
+void SceneManager::NextSceneReservation(const std::string& sceneName)
 {
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
-
+	
 	// 次シーンを生成
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
+}
+
+void SceneManager::SceneChange()
+{
+	// 旧シーンの終了
+	if (scene_) {
+		scene_->Finalize();
+		delete scene_;
+	}
+	// シーンの切り替え
+	scene_ = nextScene_;
+	nextScene_ = nullptr;
+
+	// シーンマネージャをセット
+	scene_->SetSceneManager(this);
+
+	// 次のシーンを初期化する
+	scene_->Initialize();
 }
