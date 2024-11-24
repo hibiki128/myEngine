@@ -110,7 +110,6 @@ void TitleScene::Draw()
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
 	Break_->Draw();
-	ptCommon_->SetBlendMode(BlendMode::kNormal);
 	fall_->Draw();
 	//-----------------------------
 

@@ -26,6 +26,8 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	endAcce_ = { 1.0f,1.0f,1.0f };
 	startScale_ = { 1.0f,1.0f,1.0f };
 	endScale_ = { 1.0f,1.0f,1.0f };
+	alphaMin_ = 1.0f;
+	alphaMax_ = 1.0f;
 	AddItem();
 	isBillBoard = false;
 	isActive_ = true;
@@ -89,7 +91,9 @@ void ParticleEmitter::Emit() {
 		endAcce_,
 		startRote_,
 		endRote_,
-		isRandomColor
+		isRandomColor,
+		alphaMin_,
+		alphaMax_
 	);
 }
 
@@ -112,6 +116,8 @@ void ParticleEmitter::ApplyGlobalVariables()
 	isVisible = globalVariables->GetBoolValue(groupName, "isVisible");
 	isBillBoard = globalVariables->GetBoolValue(groupName, "isBillBoard");
 	isRandomColor = globalVariables->GetBoolValue(groupName, "isRamdomColor");
+	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
+	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
 }
 
 void ParticleEmitter::SetValue()
@@ -133,6 +139,8 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "isVisible", isVisible);
 	globalVariables->SetValue(groupName, "isBillBoard", isBillBoard);
 	globalVariables->SetValue(groupName, "isRamdomColor", isRandomColor);
+	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
+	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
 }
 
 void ParticleEmitter::AddItem()
@@ -158,57 +166,79 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "isVisible", isVisible);
 	globalVariables->AddItem(groupName, "isBillBoard", isBillBoard);
 	globalVariables->AddItem(groupName, "isRamdomColor", isRandomColor);
+	globalVariables->AddItem(groupName, "alphaMin", alphaMin_);
+	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
 }
 
 // ImGuiで値を動かす関数
 void ParticleEmitter::RenderImGui() {
 #ifdef _DEBUG
 	ImGui::Begin(name_.c_str());
-	// transform_.translation_の表示と編集
-	ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
+	if (ImGui::TreeNode("Emitter Data")) {
+		ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
 
-	// transform_.rotation_の表示と編集
-	ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
+		// transform_.rotation_の表示と編集
+		ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
 
-	// transform_.scale_の表示と編集
-	ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
+		// transform_.scale_の表示と編集
+		ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
 
-	// emitFrequency_の表示と編集
-	ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
+		// isVisibleフラグの表示と編集
+		ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Particle")) {
+		if (ImGui::TreeNode("Data")) {
+			// ライフタイムの最小値と最大値の表示と編集
+			ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
+			ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
 
-	// countの表示と編集
-	ImGui::InputInt("Count", &count_, 1, 10000);
+			// 速度
+			ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
+			ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
 
-	// 0から10000の範囲に制限する
-	count_ = std::clamp(count_, 0, 10000);
+			// 大きさ
+			ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
+			ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
 
-	// 速度の最小値と最大値の表示と編集
-	ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
-	ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
+			// 加速度
+			ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.01f);
+			ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.01f);
 
-	// ライフタイムの最小値と最大値の表示と編集
-	ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
-	ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
+			// 回転
+			ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
+			ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
+			ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
+			ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
+			ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
+			ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
 
-	ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
-	ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
+			// 透明度
+			ImGui::DragFloat("Alpha Min", &alphaMin_, 0.1f);
+			ImGui::DragFloat("Alpha Max", &alphaMax_, 0.1f);
 
-	ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.01f);
-	ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("NumData")) {
+			// emitFrequency_の表示と編集
+			ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
 
-	ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
-	ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
-	ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
-	ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
-	ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
-	ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
+			// countの表示と編集
+			ImGui::InputInt("Count", &count_, 1, 10000);
 
-	// isVisibleフラグの表示と編集
-	ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
+			// 0から10000の範囲に制限する
+			count_ = std::clamp(count_, 0, 10000);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("State")) {
+			ImGui::Checkbox("BillBoard", &isBillBoard);
+			Manager_->SetBillBorad(isBillBoard);
+			ImGui::Checkbox("RamdomColor", &isRandomColor);
+			ImGui::TreePop();
+		}
+		ImGui::TreePop();
+	}
 
-	ImGui::Checkbox("BillBoard", &isBillBoard);
-	Manager_->SetBillBorad(isBillBoard);
-	ImGui::Checkbox("RamdomColor", &isRandomColor);
 	ImGui::End();
 
 #endif // _DEBUG

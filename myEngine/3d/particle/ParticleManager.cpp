@@ -51,7 +51,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 
 
 			// アルファ値の計算
-			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+			(*particleIterator).color.w = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 
 			// ワールド行列の計算
 			Matrix4x4 worldMatrix{};
@@ -87,7 +87,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				particleGroup.instancingData[numInstance].WVP = worldViewProjectionMatrix;
 				particleGroup.instancingData[numInstance].World = worldMatrix;
 				particleGroup.instancingData[numInstance].color = (*particleIterator).color;
-				particleGroup.instancingData[numInstance].color.w = alpha;  // アルファ値の設定
+				particleGroup.instancingData[numInstance].color.w = (*particleIterator).color.w;  // アルファ値の設定
 				++numInstance;
 			}
 
@@ -164,13 +164,14 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRamdomColor) // サイズの開始値と終了値をVector3で受け取る
+	bool isRamdomColor, float alphaMin, float alphaMax) // サイズの開始値と終了値をVector3で受け取る
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
 	std::uniform_real_distribution<float> distVelocityY(velocityMin.y, velocityMax.y);
 	std::uniform_real_distribution<float> distVelocityZ(velocityMin.z, velocityMax.z);
 	std::uniform_real_distribution<float> distLifeTime(lifeTimeMin, lifeTimeMax);
+	std::uniform_real_distribution<float> distAlpha(alphaMin, alphaMax);
 
 	Particle particle;
 
@@ -200,10 +201,10 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	if (isRamdomColor) {
 		// ランダムな色を設定
 		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), distAlpha(randomEngine) };
 	}
 	else {
-		particle.color = { 1.0f,1.0f,1.0f,1.0f };
+		particle.color = { 1.0f,1.0f,1.0f, distAlpha(randomEngine) };
 	}
 
 	// ライフタイムをランダムに設定
@@ -342,7 +343,7 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRandomColor) // サイズの開始値と終了値を引数として追加
+	bool isRandomColor,  float alphaMin, float alphaMax) // サイズの開始値と終了値を引数として追加
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -368,7 +369,9 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 			endAcce,
 			startRote,
 			endRote,
-			isRandomColor
+			isRandomColor,
+			alphaMin,
+			alphaMax
 		);
 		newParticles.push_back(particle);
 	}
