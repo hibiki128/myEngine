@@ -88,6 +88,8 @@ private:
 		int32_t active;
 		float radius;
 		float decay;
+		int32_t HalfLambert;
+		int32_t BlinnPhong;
 	};
 
 	// 平行光源データ
@@ -96,6 +98,8 @@ private:
 		Vector3 direction; //!< ライトの向き
 		float intensity;//!< 輝度
 		int32_t active;
+		int32_t HalfLambert;
+		int32_t BlinnPhong;
 	};
 
 	struct CameraForGPU {
@@ -116,7 +120,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource;
 	// バッファリソース内のデータを指すポインタ
 	CameraForGPU* cameraForGPUData = nullptr;
-
 
 	Object3dCommon* obj3dCommon = nullptr;
 	bool isDirectionalLight = true;

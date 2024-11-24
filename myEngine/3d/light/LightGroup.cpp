@@ -68,6 +68,18 @@ void LightGroup::imgui() {
 				directionalLightData->direction = directionalLightData->direction.Normalize();
 				ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
 				ImGui::ColorEdit3("Color", &directionalLightData->color.x);
+				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
+				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
+
+				int selectedLightingType = directionalLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+
+				// Comboで選択されたインデックスに基づいてフラグを設定
+				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
+				{
+					// フラグの設定
+					directionalLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
+					directionalLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				}
 			}
 			ImGui::EndTabItem();
 			if (ImGui::Button("Save")) {
@@ -88,6 +100,18 @@ void LightGroup::imgui() {
 				ImGui::DragFloat("Decay", &pointLightData->decay, 0.1f);
 				ImGui::DragFloat("Radius", &pointLightData->radius, 0.1f);
 				ImGui::ColorEdit3("Color", &pointLightData->color.x);
+				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
+				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
+
+				int selectedLightingType = pointLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+
+				// Comboで選択されたインデックスに基づいてフラグを設定
+				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
+				{
+					// フラグの設定
+					pointLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
+					pointLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				}
 			}
 			if (ImGui::Button("Save")) {
 				SavePointLight();
@@ -114,7 +138,9 @@ void LightGroup::SaveDirectionalLight() {
 		{"active", isDirectionalLight},
 		{"direction", {directionalLightData->direction.x, directionalLightData->direction.y, directionalLightData->direction.z}},
 		{"intensity", directionalLightData->intensity},
-		{"color", {directionalLightData->color.x, directionalLightData->color.y, directionalLightData->color.z}}
+		{"color", {directionalLightData->color.x, directionalLightData->color.y, directionalLightData->color.z}},
+		{"HalfLambert", directionalLightData->HalfLambert},  // 追加
+		{"BlinnPhong", directionalLightData->BlinnPhong}   // 追加
 	};
 
 	// ファイルに書き込み
@@ -139,7 +165,9 @@ void LightGroup::SavePointLight() {
 		{"intensity", pointLightData->intensity},
 		{"decay", pointLightData->decay},
 		{"radius", pointLightData->radius},
-		{"color", {pointLightData->color.x, pointLightData->color.y, pointLightData->color.z}}
+		{"color", {pointLightData->color.x, pointLightData->color.y, pointLightData->color.z}},
+		{"HalfLambert", pointLightData->HalfLambert},  // 追加
+		{"BlinnPhong", pointLightData->BlinnPhong}    // 追加
 	};
 
 	// ファイルに書き込み
@@ -180,6 +208,12 @@ void LightGroup::LoadDirectionalLight() {
 			directionalLightJson["color"][1],
 			directionalLightJson["color"][2]
 	};
+
+	// HalfLambert, BlinnPhong の値を読み込む
+	if (directionalLightJson.contains("HalfLambert"))
+		directionalLightData->HalfLambert = directionalLightJson["HalfLambert"];
+	if (directionalLightJson.contains("BlinnPhong"))
+		directionalLightData->BlinnPhong = directionalLightJson["BlinnPhong"];
 }
 
 void LightGroup::LoadPointLight() {
@@ -216,6 +250,12 @@ void LightGroup::LoadPointLight() {
 			pointLightJson["color"][1],
 			pointLightJson["color"][2]
 	};
+
+	// HalfLambert, BlinnPhong の値を読み込む
+	if (pointLightJson.contains("HalfLambert"))
+		pointLightData->HalfLambert = pointLightJson["HalfLambert"];
+	if (pointLightJson.contains("BlinnPhong"))
+		pointLightData->BlinnPhong = pointLightJson["BlinnPhong"];
 }
 
 void LightGroup::CreatePointLight()
@@ -230,6 +270,8 @@ void LightGroup::CreatePointLight()
 	pointLightData->decay = 1.0f;
 	pointLightData->radius = 2.0f;
 	pointLightData->active = false;
+	pointLightData->HalfLambert = false;
+	pointLightData->BlinnPhong = true;
 }
 
 
@@ -243,6 +285,8 @@ void LightGroup::CreateDirectionLight()
 	directionalLightData->direction = { 0.0f,-1.0f,0.0f };
 	directionalLightData->intensity = 1.0f;
 	directionalLightData->active = true;
+	directionalLightData->HalfLambert = false;
+	directionalLightData->BlinnPhong = true;
 }
 
 

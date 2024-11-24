@@ -118,6 +118,7 @@ void Framework::Finalize()
 #endif // _DEBUG
 	srvManager->Finalize();
 	audio->Finalize();
+	LightGroup::GetInstance()->Finalize();
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
 	particleCommon->Finalize();

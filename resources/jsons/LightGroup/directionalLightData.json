@@ -1,5 +1,7 @@
 {
-    "active": false,
+    "BlinnPhong": 1,
+    "HalfLambert": 0,
+    "active": true,
     "color": [
         1.0,
         1.0,
