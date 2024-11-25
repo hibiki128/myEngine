@@ -150,6 +150,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\base\WinApp.cpp" />
     <ClCompile Include="myEngine\core\MyGame.cpp" />
     <ClCompile Include="myEngine\3d\line\LineManager.cpp" />
+    <ClCompile Include="OffScreen.cpp" />
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
@@ -227,6 +228,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\base\WinApp.h" />
     <ClInclude Include="myEngine\core\MyGame.h" />
     <ClInclude Include="myEngine\3d\line\LineManager.h" />
+    <ClInclude Include="OffScreen.h" />
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />

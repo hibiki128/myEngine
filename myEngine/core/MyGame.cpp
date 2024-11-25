@@ -36,8 +36,10 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
-	dxCommon->PreRenderTexture();
 	srvManager->PreDraw();
+	dxCommon->PreRenderTexture();
+
+	offscreen_->Draw();
 
 	// -----描画開始-----
 	object3dCommon->DrawCommonSetting();

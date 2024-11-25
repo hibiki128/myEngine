@@ -20,6 +20,7 @@
 #include"AbstractSceneFactory.h"
 #include"ParticleCommon.h"
 #include"CollisionManager.h"
+#include"offScreen.h"
 class Framework
 {
 public:// メンバ関数
@@ -78,5 +79,6 @@ protected:
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	std::unique_ptr<CollisionManager> collisionManager_;
+	std::unique_ptr<OffScreen> offscreen_;
 };
 

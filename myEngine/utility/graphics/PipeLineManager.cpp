@@ -661,10 +661,10 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphic
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// Shaderをコンパイルする
-	IDxcBlob* vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
+	IDxcBlob* vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 
-	IDxcBlob* pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
+	IDxcBlob* pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 	///=========DepthStencilStateの設定==========

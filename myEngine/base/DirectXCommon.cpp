@@ -71,17 +71,21 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 void DirectXCommon::PreRenderTexture()
 {
-//	BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	D3D12_RESOURCE_BARRIER offbarrier{};
+	offbarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	offbarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	offbarrier.Transition.pResource = offScreenResource.Get();
+	offbarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
+	offbarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	commandList->ResourceBarrier(1, &offbarrier);
 
 	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetDSVCPUDescriptorHandle(0);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	commandList->OMSetRenderTargets(1, &rtvHandles[2], false, &dsvHandle);
+	commandList->ClearRenderTargetView(rtvHandles[2], clearColorValue.Color, 0, nullptr);
 	// 指定した深度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	// 指定した色で画面全体をクリアする
-	float clearColor[] = { kRenderTargetClearValue.x,kRenderTargetClearValue.y,kRenderTargetClearValue.z,kRenderTargetClearValue.w };// RGBAの順
-	commandList->ClearRenderTargetView(rtvHandles[2], clearColor, 0, nullptr);
-
+	
 	commandList->RSSetViewports(1, &viewport); // Viewportを設定
 	commandList->RSSetScissorRects(1, &scissorRect); // Scirssorを設定
 
@@ -89,6 +93,15 @@ void DirectXCommon::PreRenderTexture()
 
 void DirectXCommon::PreDraw()
 {
+
+	D3D12_RESOURCE_BARRIER offbarrier{};
+	offbarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	offbarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	offbarrier.Transition.pResource = offScreenResource.Get();
+	offbarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	offbarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	commandList->ResourceBarrier(1, &offbarrier);
+
 	//ゲームの処理
 	// これから書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -115,11 +128,8 @@ void DirectXCommon::PostDraw()
 
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする
-
-	// renderTextureResourceのバリア
-	//BarrierTransition(renderResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET,D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-
-	// swapChainのバリア
+	
+	// バリアを貼る
 	BarrierTransition(backBuffers[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// コマンドリストの内容を確定させる。すべてのコマンドを包んでからCloseすること
@@ -339,12 +349,17 @@ void DirectXCommon::RenderTargetViewInitialize()
 
 	//=================RenderTextureResource用のRTVの設定======================
 	// RenderTextureResourceの作成
-	renderResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, rtvDesc.Format, kRenderTargetClearValue);
+	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	clearColorValue.Color[0] = 1.0f;
+	clearColorValue.Color[1] = 0.0f;
+	clearColorValue.Color[2] = 0.0f;
+	clearColorValue.Color[3] = 1.0f;
+	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, rtvDesc.Format, clearColorValue);
 
 	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	// RTVの作成
-	device->CreateRenderTargetView(renderResource.Get(), &rtvDesc, rtvHandles[2]);
+	device->CreateRenderTargetView(offScreenResource.Get(), &rtvDesc, rtvHandles[2]);
 	//==============================================================
 }
 
@@ -653,43 +668,30 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(cons
 	return resource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor)
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, D3D12_CLEAR_VALUE color)
 {
-	// metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(width); // Textureの幅
-	resourceDesc.Height = UINT(height); // Textureの高さ
-	resourceDesc.MipLevels = 1; // ミップマップレベル（デフォルト1）
-	resourceDesc.DepthOrArraySize = 1; // 深度または配列サイズ
-	resourceDesc.Format = format; // TextureのFormat
-	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.Format = format;
+	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.SampleDesc.Quality = 0;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして利用可能にする
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; // 2D テクスチャ
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
-	// 利用するHeapの設定。非常に特殊な運用。
 	D3D12_HEAP_PROPERTIES heapProperties{};
 	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
-	D3D12_CLEAR_VALUE clearValue;
-	clearValue.Format = format;
-	clearValue.Color[0] = clearColor.x;
-	clearValue.Color[1] = clearColor.y;
-	clearValue.Color[2] = clearColor.z;
-	clearValue.Color[3] = clearColor.w;
-
-	// Resourcesの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(
-		&heapProperties, // Heapの設定
-		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。
-		&resourceDesc, // Resourceの設定
-		D3D12_RESOURCE_STATE_RENDER_TARGET, // 初回のResourceState。Textureは基本読むだけ
-		&clearValue, // Clear最適値。使わないのでnullptr
-		IID_PPV_ARGS(&resource) // 作成するResourceポインタへのポインタ
-	);
+	HRESULT hr = device->CreateCommittedResource(&heapProperties,
+		D3D12_HEAP_FLAG_NONE, &resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ, &color,
+		IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
+
 	return resource;
 }
 

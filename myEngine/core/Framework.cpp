@@ -91,6 +91,11 @@ void Framework::Initialize()
 	collisionManager_->Initialize();
 	///-------------------------------------
 
+	///-------OffScreen--------
+	offscreen_ = std::make_unique<OffScreen>();
+	offscreen_->Initialize("white1x1.png");
+	///------------------------
+
 	sceneManager_ = SceneManager::GetInstance();
 
 	GlobalVariables::GetInstance()->LoadFiles();
