@@ -96,7 +96,7 @@ void DirectXCommon::PreDraw()
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };// RGBAの順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 
-	commandList->RSSetViewports(1, &viewport); // Viewportを設定
+	commandList->RSSetViewports(1, &viewport); // Viewport設定
 	commandList->RSSetScissorRects(1, &scissorRect); // Scirssorを設定
 
 }
