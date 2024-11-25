@@ -21,7 +21,9 @@ void SceneManager::Initialize()
 
 void SceneManager::Finalize()
 {
-	scene_->Finalize();
+	if (scene_) {
+		scene_->Finalize();
+	}
 	delete scene_;
 	delete instance;
 	instance = nullptr;
