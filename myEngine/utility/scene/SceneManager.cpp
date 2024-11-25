@@ -31,10 +31,14 @@ void SceneManager::Update()
 {
 	ImGui::Begin("scene");
 	if (ImGui::Button("TitleScene")) {
+		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("TITLE");
+		transition_->SetFadeInStart(true);
 	}
 	if (ImGui::Button("GameScene")) {
+		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("GAME");
+		transition_->SetFadeInStart(true);
 	}
 	ImGui::End();
 
@@ -42,39 +46,61 @@ void SceneManager::Update()
 	if (nextScene_) {
 		SceneChange();
 	}
-
-	// 実行中シーンを更新する
-	scene_->Update();
+	if (!transition_->IsEnd()) {
+		transitionEnd = false;
+		transition_->Update();
+	}
+	else {
+		transitionEnd = true;
+	}
+	if (scene_) {
+		// 実行中シーンを更新する
+		scene_->Update();
+	}
 }
 
 void SceneManager::Draw()
 {
-	scene_->Draw();
+	if (scene_) {
+		scene_->Draw();
+	}
+}
+
+void SceneManager::DrawTransition()
+{
+	if (!transition_->IsEnd()) {
+		transition_->Draw(); // トランジションの描画
+	}
 }
 
 void SceneManager::NextSceneReservation(const std::string& sceneName)
 {
+	transition_->Reset();
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
-	
+
 	// 次シーンを生成
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
+	transition_->SetFadeInStart(true);
 }
 
 void SceneManager::SceneChange()
 {
-	// 旧シーンの終了
-	if (scene_) {
-		scene_->Finalize();
-		delete scene_;
+	if (transition_->FadeInFinish()) {
+		// 旧シーンの終了
+		if (scene_) {
+			scene_->Finalize();
+			delete scene_;
+		}
+		// シーンの切り替え
+		scene_ = nextScene_;
+		nextScene_ = nullptr;
+
+		// シーンマネージャをセット
+		scene_->SetSceneManager(this);
+
+		// 次のシーンを初期化する
+		scene_->Initialize();
+		transition_->SetFadeOutStart(true);
 	}
-	// シーンの切り替え
-	scene_ = nextScene_;
-	nextScene_ = nullptr;
-
-	// シーンマネージャをセット
-	scene_->SetSceneManager(this);
-
-	// 次のシーンを初期化する
-	scene_->Initialize();
 }

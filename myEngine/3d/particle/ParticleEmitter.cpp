@@ -174,73 +174,108 @@ void ParticleEmitter::AddItem()
 void ParticleEmitter::RenderImGui() {
 #ifdef _DEBUG
 	ImGui::Begin(name_.c_str());
-	if (ImGui::TreeNode("Emitter Data")) {
-		ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
 
-		// transform_.rotation_の表示と編集
-		ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
+	// 基本データセクション
+	if (ImGui::CollapsingHeader("Emitter Data")) {
+		// トランスフォームデータをフレーム内に配置
+		ImGui::Text("Transform Data:");
+		ImGui::Separator();
+		ImGui::Columns(2, "TransformColumns", false); // 2列レイアウト
+		ImGui::Text("Position"); ImGui::NextColumn();
+		ImGui::DragFloat3("##Position", &transform_.translation_.x, 0.1f);
+		ImGui::NextColumn();
+		ImGui::Text("Rotation"); ImGui::NextColumn();
+		ImGui::DragFloat3("##Rotation", &transform_.rotation_.x, 0.1f);
+		ImGui::NextColumn();
+		ImGui::Text("Scale"); ImGui::NextColumn();
+		ImGui::DragFloat3("##Scale", &transform_.scale_.x, 0.1f);
+		ImGui::Columns(1); // 列終了
+		ImGui::Separator();
 
-		// transform_.scale_の表示と編集
-		ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
-
-		// isVisibleフラグの表示と編集
-		ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
-		ImGui::TreePop();
+		// 可視性フラグ
+		ImGui::Checkbox("Visible", &isVisible);
 	}
-	if (ImGui::TreeNode("Particle")) {
-		if (ImGui::TreeNode("Data")) {
-			// ライフタイムの最小値と最大値の表示と編集
-			ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
-			ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
 
-			// 速度
+	// パーティクルデータセクション
+	if (ImGui::CollapsingHeader("Particle Data")) {
+		// LifeTimeを折りたたみ可能にする
+		if (ImGui::TreeNode("Lifetime")) {
+			ImGui::Text("Lifetime Settings:");
+			ImGui::Separator();
+			ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f, 0.0f, 10.0f);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("Particle minimum lifetime in seconds.");
+			}
+			ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f, 0.0f, 10.0f);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("Particle maximum lifetime in seconds.");
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+
+		// 速度と加速度
+		if (ImGui::TreeNode("Velocity and Acceleration")) {
+			ImGui::Text("Velocity:");
 			ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
 			ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
 
-			// 大きさ
-			ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
-			ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
-
-			// 加速度
-			ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.01f);
-			ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.01f);
-
-			// 回転
-			ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
-			ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
-			ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
-			ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
-			ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
-			ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
-
-			// 透明度
-			ImGui::DragFloat("Alpha Min", &alphaMin_, 0.1f);
-			ImGui::DragFloat("Alpha Max", &alphaMax_, 0.1f);
-
+			ImGui::Text("Acceleration:");
+			ImGui::DragFloat3("Start Acce", &startAcce_.x, 0.01f);
+			ImGui::DragFloat3("End Acce", &endAcce_.x, 0.01f);
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("NumData")) {
-			// emitFrequency_の表示と編集
-			ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
 
-			// countの表示と編集
-			ImGui::InputInt("Count", &count_, 1, 10000);
+		ImGui::Separator();
 
-			// 0から10000の範囲に制限する
-			count_ = std::clamp(count_, 0, 10000);
+		// サイズ
+		if (ImGui::TreeNode("Size")) {
+			ImGui::Text("Scale:");
+			ImGui::DragFloat3("Start Scale", &startScale_.x, 0.1f);
+			ImGui::DragFloat3("End Scale", &endScale_.x, 0.1f);
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("State")) {
-			ImGui::Checkbox("BillBoard", &isBillBoard);
-			Manager_->SetBillBorad(isBillBoard);
-			ImGui::Checkbox("RamdomColor", &isRandomColor);
+
+		ImGui::Separator();
+
+		// 回転
+		if (ImGui::TreeNode("Rotation")) {
+			ImGui::SliderAngle("Start Rotation X", &startRote_.x);
+			ImGui::SliderAngle("End Rotation X", &endRote_.x);
+			ImGui::SliderAngle("Start Rotation Y", &startRote_.y);
+			ImGui::SliderAngle("End Rotation Y", &endRote_.y);
+			ImGui::SliderAngle("Start Rotation Z", &startRote_.z);
+			ImGui::SliderAngle("End Rotation Z", &endRote_.z);
 			ImGui::TreePop();
 		}
-		ImGui::TreePop();
+
+		ImGui::Separator();
+
+		
+		/// Todo : 透明度をいじっても変更されないので直す
+		//// Alphaを折りたたみ可能にする
+		//if (ImGui::TreeNode("Alpha")) {
+		//	ImGui::Text("Alpha Settings:");
+		//	ImGui::DragFloat("Alpha Min", &alphaMin_, 0.1f, 0.0f, 1.0f);
+		//	ImGui::DragFloat("Alpha Max", &alphaMax_, 0.1f, 0.0f, 1.0f);
+		//	ImGui::TreePop();
+		//}
+	}
+
+	// エミット設定セクション
+	if (ImGui::CollapsingHeader("Emit Settings")) {
+		ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f);
+		ImGui::InputInt("Count", &count_, 1, 100);
+		count_ = std::clamp(count_, 0, 10000);
+	}
+
+	// その他の設定セクション
+	if (ImGui::CollapsingHeader("State Settings")) {
+		ImGui::Checkbox("Billboard", &isBillBoard);
+		ImGui::Checkbox("Random Color", &isRandomColor);
 	}
 
 	ImGui::End();
-
-#endif // _DEBUG
-
+#endif
 }

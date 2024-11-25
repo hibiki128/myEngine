@@ -79,6 +79,7 @@ private:
 		Vector3 endAcce;
 		Vector3 startRote;
 		Vector3 endRote;
+		float initialAlpha;
 	};
 
 	// マテリアルデータ

@@ -40,6 +40,13 @@ public:// メンバ関数
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 遷移描画
+	/// </summary>
+	void DrawTransition();
+
+	bool GetTransitionEnd() { return transitionEnd; }
+
 public: // setter
 	/// <summary>
 	/// シーンファクトリーのセット
@@ -68,5 +75,7 @@ private:
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
 	std::unique_ptr<SceneTransition> transition_;
+
+	bool transitionEnd = false;
 };
 

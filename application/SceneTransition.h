@@ -4,13 +4,6 @@
 class SceneTransition
 {
 public:
-	// フェードの状態
-	enum class Status {
-		None,    // フェードなし
-		FadeIn,  // フェードイン中
-		FadeOut, // フェードアウト中
-	};
-
 	SceneTransition();
 	~SceneTransition();
 
@@ -30,20 +23,35 @@ public:
 	void Draw();
 
 	/// <summary>
-	/// フェード開始
+	/// セット
 	/// </summary>
-	void Start(Status status, float duration);
+	/// <param name="start"></param>
+	void SetFadeInStart(bool start) { fadeInStart = start; }
+	void SetFadeOutStart(bool start) { fadeOutStart = start; }
 
 	/// <summary>
-	/// フェード終了
-	/// </summary>
-	void Stop();
-
-	/// <summary>
-	/// フェード終了判定
+	/// getter
 	/// </summary>
 	/// <returns></returns>
-	bool IsFinished() const;
+	bool IsEnd() { return isEnd; }
+	bool FadeInFinish() { return fadeInFinish; }
+
+	/// <summary>
+	/// リセット
+	/// </summary>
+	void Reset();
+
+private:
+
+	/// <summary>
+	/// フェードイン
+	/// </summary>
+	void FadeIn();
+
+	/// <summary>
+	/// フェードアウト
+	/// </summary>
+	void FadeOut();
 
 private:
 	// フェードの持続時間
@@ -51,12 +59,17 @@ private:
 	// 経過時間カウンター
 	float counter_ = 0.0f;
 
-	// 現在のフェードの状態
-	Status status_ = Status::None;
-
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 
 	uint32_t texture = 0u;
+
+	bool fadeInStart = false;
+	bool fadeOutStart = false;
+	bool fadeInFinish = false;
+	bool fadeOutFinish = false;
+	bool isEnd = false;
+	float In_t = 0.0f;
+	float Out_t = 0.0f;
 
 };
 
