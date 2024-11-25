@@ -13,6 +13,10 @@ void TitleScene::Initialize()
 	input_ = Input::GetInstance();
 
 	vP_.Initialize();
+	wt_.Initialize();
+
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize("debug/suzannu.obj");
 }
 
 void TitleScene::Finalize()
@@ -29,6 +33,7 @@ void TitleScene::Update()
 	//----------------------
 
 	vP_.UpdateMatrix();
+	wt_.UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -43,7 +48,7 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-
+	obj_->Draw(wt_, vP_);
 	//--------------------------
 
 	/// Particleの描画準備

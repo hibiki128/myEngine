@@ -12,13 +12,8 @@ public:
 	void Draw();
 
 private:
-	void CreateVartexResource();
+	
 private:
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexGrayResource_ = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_{};
-
-	D3D12_INDEX_BUFFER_VIEW indexBufferView_{};
-
 	DirectXCommon* dxCommon;
 	SrvManager* srvManager_;
 	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;

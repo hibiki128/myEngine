@@ -351,9 +351,9 @@ void DirectXCommon::RenderTargetViewInitialize()
 	// RenderTextureResourceの作成
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	clearColorValue.Color[0] = 1.0f;
-	clearColorValue.Color[1] = 0.0f;
+	clearColorValue.Color[1] = 1.0f;
 	clearColorValue.Color[2] = 0.0f;
-	clearColorValue.Color[3] = 1.0f;
+	clearColorValue.Color[3] = 0.0f;
 	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, rtvDesc.Format, clearColorValue);
 
 	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
