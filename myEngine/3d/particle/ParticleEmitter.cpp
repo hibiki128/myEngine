@@ -254,13 +254,13 @@ void ParticleEmitter::RenderImGui() {
 
 		
 		/// Todo : 透明度をいじっても変更されないので直す
-		//// Alphaを折りたたみ可能にする
-		//if (ImGui::TreeNode("Alpha")) {
-		//	ImGui::Text("Alpha Settings:");
-		//	ImGui::DragFloat("Alpha Min", &alphaMin_, 0.1f, 0.0f, 1.0f);
-		//	ImGui::DragFloat("Alpha Max", &alphaMax_, 0.1f, 0.0f, 1.0f);
-		//	ImGui::TreePop();
-		//}
+		// Alphaを折りたたみ可能にする
+		if (ImGui::TreeNode("Alpha")) {
+			ImGui::Text("Alpha Settings:");
+			ImGui::DragFloat("Alpha Min", &alphaMin_, 0.1f, 0.0f, 1.0f);
+			ImGui::DragFloat("Alpha Max", &alphaMax_, 0.1f, 0.0f, 1.0f);
+			ImGui::TreePop();
+		}
 	}
 
 	// エミット設定セクション

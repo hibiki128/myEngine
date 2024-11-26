@@ -77,5 +77,6 @@ private:
 	std::unique_ptr<SceneTransition> transition_;
 
 	bool transitionEnd = false;
+	bool firstChange = false;
 };
 

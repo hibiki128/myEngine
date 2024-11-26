@@ -28,6 +28,7 @@ public:
 	/// <param name="start"></param>
 	void SetFadeInStart(bool start) { fadeInStart = start; }
 	void SetFadeOutStart(bool start) { fadeOutStart = start; }
+	void SetInFinish(bool isFinish) { fadeInFinish = isFinish; }
 
 	/// <summary>
 	/// getter
@@ -35,6 +36,7 @@ public:
 	/// <returns></returns>
 	bool IsEnd() { return isEnd; }
 	bool FadeInFinish() { return fadeInFinish; }
+	bool FadeInStart() { return fadeInStart; }
 
 	/// <summary>
 	/// リセット

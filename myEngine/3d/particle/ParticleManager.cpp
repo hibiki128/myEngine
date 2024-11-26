@@ -51,7 +51,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 
 
 			// アルファ値の計算
-			(*particleIterator).color.w = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+			(*particleIterator).color.w = (*particleIterator).initialAlpha - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
 
 			// ワールド行列の計算
 			Matrix4x4 worldMatrix{};
@@ -206,7 +206,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	else {
 		particle.color = { 1.0f,1.0f,1.0f, distAlpha(randomEngine) };
 	}
-
+	particle.initialAlpha = distAlpha(randomEngine);
 	// ライフタイムをランダムに設定
 	particle.lifeTime = distLifeTime(randomEngine);
 	particle.currentTime = 0.0f;

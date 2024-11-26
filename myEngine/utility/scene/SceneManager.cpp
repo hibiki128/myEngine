@@ -22,6 +22,7 @@ void SceneManager::Initialize()
 void SceneManager::Finalize()
 {
 	if (scene_) {
+		firstChange = false;
 		scene_->Finalize();
 	}
 	delete scene_;
@@ -77,14 +78,25 @@ void SceneManager::DrawTransition()
 
 void SceneManager::NextSceneReservation(const std::string& sceneName)
 {
-	transition_->Reset();
-	assert(sceneFactory_);
-	assert(nextScene_ == nullptr);
+	// トランジション中なら処理をスキップ
+	if (!transition_->IsEnd() && transition_->FadeInStart()) {
+		return; // すでに遷移中なので、次の遷移予約はしない
+	}
+
+	transition_->Reset(); // トランジションをリセット
 
 	// 次シーンを生成
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
-	transition_->SetFadeInStart(true);
+
+	if (!firstChange) {
+		firstChange = true;
+		transition_->SetInFinish(true);
+	}
+	else {
+		transition_->SetFadeInStart(true);
+	}
 }
+
 
 void SceneManager::SceneChange()
 {
