@@ -17,6 +17,7 @@ void OffScreen::Draw()
 {
 	psoManager_->DrawCommonSetting(graphicsPipelineState, rootSignature);
 	srvManager_ = TextureManager::GetInstance()->GetSrvManager();
+	srvManager_->CreateSRVforRenderTexture(srvManager_->Allocate() + 1,dxCommon->GetOffScreenResource());
 	srvManager_->SetGraphicsRootDescriptorTable(0, TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath));
 	dxCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }

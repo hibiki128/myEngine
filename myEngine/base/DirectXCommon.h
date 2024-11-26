@@ -116,7 +116,7 @@ public: // メンバ関数
 	/// <param name="shaderVisible"></param>
 	/// <returns></returns>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
+	ID3D12Resource* GetOffScreenResource() { return offScreenResource.Get(); }
 	IDxcUtils* GetDxcUtils() { return dxcUtils; }
 	IDxcCompiler3* GetDxcCompiler() { return dxcCompiler; }
 
@@ -281,6 +281,7 @@ private:
 	D3D12_RECT scissorRect{};
 	// TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
+	D3D12_RESOURCE_BARRIER offbarrier{};
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
 	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };

@@ -80,7 +80,7 @@ public:
     /// <param name="pResource"></param>
     /// <param name="numElements"></param>
     /// <param name="structureByteStride"></param>
-    void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStride);
+    void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource);
 
     /// <summary>
     /// インデックス割り当て

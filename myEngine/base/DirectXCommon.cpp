@@ -71,7 +71,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 void DirectXCommon::PreRenderTexture()
 {
-	D3D12_RESOURCE_BARRIER offbarrier{};
 	offbarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	offbarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	offbarrier.Transition.pResource = offScreenResource.Get();
@@ -80,7 +79,7 @@ void DirectXCommon::PreRenderTexture()
 	commandList->ResourceBarrier(1, &offbarrier);
 
 	// 描画先のRTVとDSVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetDSVCPUDescriptorHandle(0);
 	commandList->OMSetRenderTargets(1, &rtvHandles[2], false, &dsvHandle);
 	commandList->ClearRenderTargetView(rtvHandles[2], clearColorValue.Color, 0, nullptr);
 	// 指定した深度で画面全体をクリアする
@@ -94,7 +93,6 @@ void DirectXCommon::PreRenderTexture()
 void DirectXCommon::PreDraw()
 {
 
-	D3D12_RESOURCE_BARRIER offbarrier{};
 	offbarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	offbarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	offbarrier.Transition.pResource = offScreenResource.Get();
@@ -128,8 +126,7 @@ void DirectXCommon::PostDraw()
 
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
 	// 今回はRenderTargetからPresentにする
-	
-	// バリアを貼る
+	//// バリアを貼る
 	BarrierTransition(backBuffers[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// コマンドリストの内容を確定させる。すべてのコマンドを包んでからCloseすること
@@ -351,10 +348,10 @@ void DirectXCommon::RenderTargetViewInitialize()
 	// RenderTextureResourceの作成
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	clearColorValue.Color[0] = 1.0f;
-	clearColorValue.Color[1] = 1.0f;
+	clearColorValue.Color[1] = 0.0f;
 	clearColorValue.Color[2] = 0.0f;
-	clearColorValue.Color[3] = 0.0f;
-	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, rtvDesc.Format, clearColorValue);
+	clearColorValue.Color[3] = 1.0f;
+	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, clearColorValue.Format, clearColorValue);
 
 	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 

@@ -93,7 +93,7 @@ void Framework::Initialize()
 
 	///-------OffScreen--------
 	offscreen_ = std::make_unique<OffScreen>();
-	offscreen_->Initialize("white1x1.png");
+	offscreen_->Initialize("uvChecker.png");
 	///------------------------
 
 	sceneManager_ = SceneManager::GetInstance();
