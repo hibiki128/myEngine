@@ -50,6 +50,7 @@ private:
 
 	std::unique_ptr<ParticleEmitter> fall_;
 	std::unique_ptr<ParticleEmitter> Break_;
+	std::unique_ptr<ParticleEmitter> WeekBreak_;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
 

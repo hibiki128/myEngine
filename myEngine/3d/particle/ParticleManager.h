@@ -35,6 +35,7 @@ public:
 
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
 	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
+	void SetAcceMultipy(bool isAcceMultipy) { isAcceMultipy_ = isAcceMultipy; }
 
 private:
 	/// <summary>
@@ -135,6 +136,7 @@ private:
 
 	bool isBillboard = false;
 	bool isRandomRotate_ = false;
+	bool isAcceMultipy_ = false;
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数

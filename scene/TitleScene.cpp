@@ -20,6 +20,9 @@ void TitleScene::Initialize()
 	Break_ = std::make_unique<ParticleEmitter>();
 	Break_->Initialize("break", "game/star.obj");
 
+	WeekBreak_ = std::make_unique<ParticleEmitter>();
+	WeekBreak_->Initialize("WeekBreak", "debug/Triangle2D.obj");
+
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("debug/suzannu.obj");
 	obj2_ = std::make_unique<Object3d>();
@@ -65,6 +68,13 @@ void TitleScene::Update()
 			Break_->RenderImGui();
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("WeekBreak")) {
+			if (ImGui::Button("Update")) {
+				WeekBreak_->SetActive(false);
+			}
+			WeekBreak_->RenderImGui();
+			ImGui::EndTabItem();
+		}
 
 		ImGui::EndTabBar();
 	}
@@ -79,6 +89,7 @@ void TitleScene::Update()
 	//----------------------
 	fall_->UpdateOnce(vP_);
 	Break_->UpdateOnce(vP_);
+	WeekBreak_->UpdateOnce(vP_);
 
 	debugCamera_->Update();
 	if (!debugCamera_->GetActive()) {
@@ -100,17 +111,20 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	obj_->Draw(wt_, vP_);
-	obj2_->Draw(wt2_, vP_);
+	/*obj_->Draw(wt_, vP_);
+	obj2_->Draw(wt2_, vP_);*/
 	fall_->DrawEmitter(vP_);
 	Break_->DrawEmitter(vP_);
+	WeekBreak_->DrawEmitter(vP_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
+	ptCommon_->SetBlendMode(BlendMode::kNormal);
 	Break_->Draw();
 	fall_->Draw();
+	WeekBreak_->Draw();
 	//-----------------------------
 
 	/// -------描画処理終了-------

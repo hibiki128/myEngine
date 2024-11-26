@@ -31,6 +31,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	AddItem();
 	isBillBoard = false;
 	isActive_ = true;
+	isAcceMultiply = false;
 	ApplyGlobalVariables();
 }
 
@@ -62,6 +63,9 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 
 void ParticleEmitter::Draw()
 {
+	Manager_->SetRandomRotate(isRandomRotate);
+	Manager_->SetAcceMultipy(isAcceMultiply);
+	Manager_->SetBillBorad(isBillBoard);
 	Manager_->Draw();
 }
 
@@ -119,6 +123,7 @@ void ParticleEmitter::ApplyGlobalVariables()
 	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
 	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
 	isRandomRotate = globalVariables->GetBoolValue(groupName, "isRandomRotate");
+	isAcceMultiply = globalVariables->GetBoolValue(groupName, "isAcceMultiply"); 
 }
 
 void ParticleEmitter::SetValue()
@@ -143,6 +148,7 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
 	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
 	globalVariables->SetValue(groupName, "isRandomRotate", isRandomRotate);
+	globalVariables->SetValue(groupName, "isAcceMultiply", isAcceMultiply);
 }
 
 void ParticleEmitter::AddItem()
@@ -171,6 +177,7 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "alphaMin", alphaMin_);
 	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
 	globalVariables->AddItem(groupName, "isRandomRotate", isRandomRotate);
+	globalVariables->AddItem(groupName, "isAcceMultiply", isAcceMultiply);
 }
 
 // ImGuiで値を動かす関数
@@ -225,8 +232,9 @@ void ParticleEmitter::RenderImGui() {
 			ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
 
 			ImGui::Text("Acceleration:");
-			ImGui::DragFloat3("Start Acce", &startAcce_.x, 0.01f);
-			ImGui::DragFloat3("End Acce", &endAcce_.x, 0.01f);
+			ImGui::DragFloat3("Start Acce", &startAcce_.x, 0.001f);
+			ImGui::DragFloat3("End Acce", &endAcce_.x, 0.001f);
+			ImGui::Checkbox("isAcceMultipy", &isAcceMultiply);
 			ImGui::TreePop();
 		}
 
@@ -253,7 +261,6 @@ void ParticleEmitter::RenderImGui() {
 				ImGui::SliderAngle("End Rotation Z", &endRote_.z);
 			}
 			ImGui::Checkbox("isRandomRotate", &isRandomRotate);
-			Manager_->SetRandomRotate(isRandomRotate);
 			ImGui::TreePop();
 		}
 
@@ -280,7 +287,6 @@ void ParticleEmitter::RenderImGui() {
 	// その他の設定セクション
 	if (ImGui::CollapsingHeader("State Settings")) {
 		ImGui::Checkbox("Billboard", &isBillBoard);
-		Manager_->SetBillBorad(isBillBoard);
 		ImGui::Checkbox("Random Color", &isRandomColor);
 	}
 

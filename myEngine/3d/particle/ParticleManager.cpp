@@ -49,8 +49,12 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			else {
 				(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
 			}
-
-			(*particleIterator).velocity += (*particleIterator).Acce;
+			if (isAcceMultipy_) {
+				(*particleIterator).velocity *= (*particleIterator).Acce;
+			}
+			else {
+				(*particleIterator).velocity += (*particleIterator).Acce;
+			}
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;
@@ -172,7 +176,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
 	bool isRamdomColor, float alphaMin, float alphaMax
-) // サイズの開始値と終了値をVector3で受け取る
+)
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
@@ -206,7 +210,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	if (isRandomRotate_) {
 		// 回転速度をランダムに設定（0~5の範囲）
 		std::uniform_real_distribution<float> distRotateXVelocity(-0.07f, 0.07f);
-		std::uniform_real_distribution<float> distRotateYVelocity(-0.07f,0.07f);
+		std::uniform_real_distribution<float> distRotateYVelocity(-0.07f, 0.07f);
 		std::uniform_real_distribution<float> distRotateZVelocity(-0.07f, 0.07f);
 		particle.rotateVelocity.x = distRotateXVelocity(randomEngine);
 		particle.rotateVelocity.y = distRotateYVelocity(randomEngine);

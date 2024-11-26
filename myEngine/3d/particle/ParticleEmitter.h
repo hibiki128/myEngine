@@ -70,6 +70,8 @@ private:
 
     bool isActive_ = false;
 
+    bool isAcceMultiply = false;
+
     std::unique_ptr<Object3d> emitterObj;
     std::unique_ptr<ParticleManager> Manager_;
 
