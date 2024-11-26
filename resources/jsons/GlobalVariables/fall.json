@@ -41,6 +41,7 @@
         "emitFrequency": 0.10000000149011612,
         "isBillBoard": false,
         "isRamdomColor": false,
+        "isRandomRotate": false,
         "isVisible": false,
         "lifeTimeMax": 1.0,
         "lifeTimeMin": 0.5,

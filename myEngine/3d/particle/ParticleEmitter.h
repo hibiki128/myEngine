@@ -60,6 +60,7 @@ private:
     float alphaMin_;
     float alphaMax_;
     bool isRandomColor = true;
+    bool isRandomRotate = false;
 
     float deltaTime = 1.0f / 60.0f;
 

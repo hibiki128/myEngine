@@ -34,6 +34,7 @@ public:
 	void CreateParticleGroup(const std::string name, const std::string& filename);
 
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
+	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
 
 private:
 	/// <summary>
@@ -79,6 +80,7 @@ private:
 		Vector3 endAcce;
 		Vector3 startRote;
 		Vector3 endRote;
+		Vector3 rotateVelocity;
 		float initialAlpha;
 	};
 
@@ -121,7 +123,7 @@ private:
 	Material* materialData = nullptr;
 
 	SrvManager* srvManager_;
-
+	static std::unordered_map<std::string, ModelData> modelCache;
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
 	// Δtを定義
@@ -132,13 +134,14 @@ private:
 	std::mt19937 randomEngine;
 
 	bool isBillboard = false;
+	bool isRandomRotate_ = false;
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
 	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
 		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
-		const Vector3& startRote, const Vector3& endRote, bool isRamdomColor, float alphaMin, float alphaMax);
+		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax);
 
 
 private:

@@ -2,6 +2,7 @@
 #include <random>
 #include"TextureManager.h"
 #include"fstream"
+std::unordered_map<std::string, ParticleManager::ModelData> ParticleManager::modelCache;
 
 void ParticleManager::Initialize(SrvManager* srvManager)
 {
@@ -42,7 +43,13 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			t = std::clamp(t, 0.0f, 1.0f);
 			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
-			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
+			if (isRandomRotate_) {
+				(*particleIterator).transform.rotation_ += (*particleIterator).rotateVelocity;
+			}
+			else {
+				(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
+			}
+
 			(*particleIterator).velocity += (*particleIterator).Acce;
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
@@ -164,7 +171,8 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRamdomColor, float alphaMin, float alphaMax) // サイズの開始値と終了値をVector3で受け取る
+	bool isRamdomColor, float alphaMin, float alphaMax
+) // サイズの開始値と終了値をVector3で受け取る
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
@@ -187,8 +195,6 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	particle.endScale = particleEndScale;
 	particle.startAcce = startAcce;
 	particle.endAcce = endAcce;
-	particle.startRote = startRote;
-	particle.endRote = endRote;
 
 	// 速度をランダムに設定
 	particle.velocity = {
@@ -197,6 +203,19 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 		distVelocityZ(randomEngine)
 	};
 
+	if (isRandomRotate_) {
+		// 回転速度をランダムに設定（0~5の範囲）
+		std::uniform_real_distribution<float> distRotateXVelocity(-0.07f, 0.07f);
+		std::uniform_real_distribution<float> distRotateYVelocity(-0.07f,0.07f);
+		std::uniform_real_distribution<float> distRotateZVelocity(-0.07f, 0.07f);
+		particle.rotateVelocity.x = distRotateXVelocity(randomEngine);
+		particle.rotateVelocity.y = distRotateYVelocity(randomEngine);
+		particle.rotateVelocity.z = distRotateZVelocity(randomEngine);
+	}
+	else {
+		particle.startRote = startRote;
+		particle.endRote = endRote;
+	}
 
 	if (isRamdomColor) {
 		// ランダムな色を設定
@@ -243,8 +262,15 @@ ParticleManager::MaterialData ParticleManager::LoadMaterialTemplateFile(const st
 }
 
 
-ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& directoryPath, const std::string& filename)
-{
+ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+	std::string fullPath = directoryPath + filename;
+
+	// キャッシュを確認して、既に読み込まれている場合はそれを返す
+	auto it = modelCache.find(fullPath);
+	if (it != modelCache.end()) {
+		return it->second;
+	}
+
 	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
 	std::vector<Vector2> texcoords; // テクスチャ座標
@@ -254,19 +280,17 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 	std::string folderPath;
 	size_t lastSlashPos = filename.find_last_of("/\\");
 	if (lastSlashPos != std::string::npos) {
-		// ファイル名の前にフォルダがある場合は、そのフォルダ部分を使用する
 		folderPath = filename.substr(0, lastSlashPos);
 	}
 
-	std::ifstream file(directoryPath + filename); // ファイルを開く
+	std::ifstream file(fullPath); // ファイルを開く
 	assert(file.is_open()); // ファイルが開けなかったら停止
 
 	while (std::getline(file, line)) {
 		std::string identifier;
 		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読み込む
+		s >> identifier;
 
-		// identifierに応じた処理
 		if (identifier == "v") {
 			Vector4 position;
 			s >> position.x >> position.y >> position.z;
@@ -282,19 +306,16 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 		}
 		else if (identifier == "f") {
 			VertexData triangle[3];
-			// 面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
 				s >> vertexDefinition;
-				// 頂点の要素へのIndexは「位置/UV/法線」で格納されているので、分解してIndexを取得する
 				std::istringstream v(vertexDefinition);
 				uint32_t elementIndices[3];
 				for (int32_t element = 0; element < 3; ++element) {
 					std::string index;
-					std::getline(v, index, '/'); // 区切りでインデックスを読んでいく
+					std::getline(v, index, '/');
 					elementIndices[element] = std::stoi(index);
 				}
-				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				VertexData vertex = { position, texcoord };
@@ -303,20 +324,20 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 			}
 		}
 		else if (identifier == "mtllib") {
-			// materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
-
 			if (!folderPath.empty()) {
-				// ファイル名の前にフォルダがあればそれを追加する
 				modelData.material = LoadMaterialTemplateFile(directoryPath + folderPath, materialFilename);
 			}
 			else {
-				// ファイル名の前にフォルダがあればそれを追加する
 				modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 			}
 		}
 	}
+
+	// キャッシュに保存
+	modelCache[fullPath] = modelData;
+
 	return modelData;
 }
 
@@ -343,7 +364,7 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRandomColor,  float alphaMin, float alphaMax) // サイズの開始値と終了値を引数として追加
+	bool isRandomColor, float alphaMin, float alphaMax) // サイズの開始値と終了値を引数として追加
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");

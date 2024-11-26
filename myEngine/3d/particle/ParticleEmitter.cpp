@@ -118,6 +118,7 @@ void ParticleEmitter::ApplyGlobalVariables()
 	isRandomColor = globalVariables->GetBoolValue(groupName, "isRamdomColor");
 	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
 	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
+	isRandomRotate = globalVariables->GetBoolValue(groupName, "isRandomRotate");
 }
 
 void ParticleEmitter::SetValue()
@@ -141,6 +142,7 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "isRamdomColor", isRandomColor);
 	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
 	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
+	globalVariables->SetValue(groupName, "isRandomRotate", isRandomRotate);
 }
 
 void ParticleEmitter::AddItem()
@@ -168,6 +170,7 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "isRamdomColor", isRandomColor);
 	globalVariables->AddItem(groupName, "alphaMin", alphaMin_);
 	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
+	globalVariables->AddItem(groupName, "isRandomRotate", isRandomRotate);
 }
 
 // ImGuiで値を動かす関数
@@ -241,18 +244,22 @@ void ParticleEmitter::RenderImGui() {
 
 		// 回転
 		if (ImGui::TreeNode("Rotation")) {
-			ImGui::SliderAngle("Start Rotation X", &startRote_.x);
-			ImGui::SliderAngle("End Rotation X", &endRote_.x);
-			ImGui::SliderAngle("Start Rotation Y", &startRote_.y);
-			ImGui::SliderAngle("End Rotation Y", &endRote_.y);
-			ImGui::SliderAngle("Start Rotation Z", &startRote_.z);
-			ImGui::SliderAngle("End Rotation Z", &endRote_.z);
+			if (!isRandomRotate) {
+				ImGui::SliderAngle("Start Rotation X", &startRote_.x);
+				ImGui::SliderAngle("End Rotation X", &endRote_.x);
+				ImGui::SliderAngle("Start Rotation Y", &startRote_.y);
+				ImGui::SliderAngle("End Rotation Y", &endRote_.y);
+				ImGui::SliderAngle("Start Rotation Z", &startRote_.z);
+				ImGui::SliderAngle("End Rotation Z", &endRote_.z);
+			}
+			ImGui::Checkbox("isRandomRotate", &isRandomRotate);
+			Manager_->SetRandomRotate(isRandomRotate);
 			ImGui::TreePop();
 		}
 
 		ImGui::Separator();
 
-		
+
 		/// Todo : 透明度をいじっても変更されないので直す
 		// Alphaを折りたたみ可能にする
 		if (ImGui::TreeNode("Alpha")) {
@@ -273,6 +280,7 @@ void ParticleEmitter::RenderImGui() {
 	// その他の設定セクション
 	if (ImGui::CollapsingHeader("State Settings")) {
 		ImGui::Checkbox("Billboard", &isBillBoard);
+		Manager_->SetBillBorad(isBillBoard);
 		ImGui::Checkbox("Random Color", &isRandomColor);
 	}
 
