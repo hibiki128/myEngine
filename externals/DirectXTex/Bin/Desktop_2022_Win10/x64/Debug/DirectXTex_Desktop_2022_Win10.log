@@ -1,6 +1,0 @@
-﻿  BC.cpp
-  BC4BC5.cpp
-  BC6HBC7.cpp
-  BCDirectCompute.cpp
-  DirectXTex_Desktop_2022_Win10.vcxproj -> C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(5599,5): error MSB3541: Files は無効な値 "<<<<<<< HEAD" を含んでいます。パスに無効な文字が含まれています。
