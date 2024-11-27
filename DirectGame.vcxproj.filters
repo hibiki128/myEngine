@@ -324,6 +324,9 @@
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
       <Filter>ソース ファイル\myEngine\3d\light</Filter>
     </ClCompile>
+    <ClCompile Include="myEngine\3d\line\PrimitiveDrawer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -334,6 +337,9 @@
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="resources\shaders\Sprite.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Primitive.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
@@ -515,6 +521,9 @@
     <ClInclude Include="myEngine\3d\light\LightGroup.h">
       <Filter>ヘッダー ファイル\myEngine\3d\light</Filter>
     </ClInclude>
+    <ClInclude Include="myEngine\3d\line\PrimitiveDrawer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
@@ -533,6 +542,15 @@
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\BasicGeometryShader.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Primitive.PS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Primitive.VS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
   </ItemGroup>
