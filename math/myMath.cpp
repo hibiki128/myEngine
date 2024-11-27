@@ -312,6 +312,14 @@ Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat) {
 	return eulerAngles;
 }
 
+float radiansToDegrees(float radians) {
+	return radians * (180.0f / std::numbers::pi_v<float>);
+}
+
+float degreesToRadians(float degrees) {
+	return degrees * (std::numbers::pi_v<float> / 180.0f);
+}
+
 
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {

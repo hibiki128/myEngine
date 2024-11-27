@@ -1,5 +1,15 @@
 {
     "fall": {
+        "AllScale Max": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "AllScale Min": [
+            0.0,
+            0.0,
+            0.0
+        ],
         "Emit scale": [
             1.0,
             0.0,
@@ -35,13 +45,26 @@
             1.2000000476837158,
             1.2000000476837158
         ],
+        "RotationVelo Max": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "RotationVelo Min": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Scale Max": 0.0,
+        "Scale Min": 0.0,
         "alphaMax": 0.699999988079071,
         "alphaMin": 0.30000001192092896,
         "count": 6,
         "emitFrequency": 0.10000000149011612,
+        "isAcceMultiply": false,
         "isBillBoard": false,
         "isRamdomColor": false,
-        "isRandomRotate": false,
+        "isRandomRotate": true,
         "isVisible": false,
         "lifeTimeMax": 1.0,
         "lifeTimeMin": 0.5,

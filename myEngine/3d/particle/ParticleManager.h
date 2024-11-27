@@ -36,6 +36,8 @@ public:
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
 	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
 	void SetAcceMultipy(bool isAcceMultipy) { isAcceMultipy_ = isAcceMultipy; }
+	void SetRandomSize(bool isRandomSize) { isRandomSize_ = isRandomSize; }
+	void SetAllRandomSize(bool isAllRandomSize) { isRandomAllSize_ = isAllRandomSize; }
 
 private:
 	/// <summary>
@@ -137,6 +139,8 @@ private:
 	bool isBillboard = false;
 	bool isRandomRotate_ = false;
 	bool isAcceMultipy_ = false;
+	bool isRandomSize_ = false;
+	bool isRandomAllSize_ = false;
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
@@ -144,7 +148,9 @@ public:
 		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
 		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
 		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax,
-		const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax);
+		const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+		const Vector3& allScaleMax, const Vector3& allScaleMin,
+		const float& scaleMin, const float& scaleMax, const Vector3& rotation);
 
 
 private:
@@ -172,10 +178,13 @@ private:
 
 	Particle MakeNewParticle(std::mt19937& randomEngine,
 		const Vector3& translate,
+		const Vector3& rotation,
 		const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax,
 		float lifeTimeMin, float lifeTimeMax, const Vector3& particleStartScale, const Vector3& particleEndScale,
 		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote
-		, bool isRamdomColor, float alphaMin, float alphaMax, const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax);
+		, bool isRamdomColor, float alphaMin, float alphaMax, const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+		const Vector3& allScaleMax, const Vector3& allScaleMin,
+		const float& scaleMin, const float& scaleMax);
 };
 

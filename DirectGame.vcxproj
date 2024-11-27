@@ -103,6 +103,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Skydome.cpp" />
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp" />
     <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
@@ -172,6 +173,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Skydome.h" />
     <ClInclude Include="myEngine\3d\light\LightGroup.h" />
     <ClInclude Include="myEngine\utility\collider\Collider.h" />
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />

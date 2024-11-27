@@ -42,36 +42,39 @@ private:
 
     std::string name_;          // パーティクルの名前
     WorldTransform transform_;       // 位置や回転などのトランスフォーム
-    float emitFrequency_;       // パーティクルの発生頻度
     int count_;                 // 一度に発生させるパーティクルの数
-    float elapsedTime_;         // 経過時間
 
+    float emitFrequency_;       // パーティクルの発生頻度
+    float elapsedTime_;         // 経過時間
     // Emitに関連するメンバ変数を追加
-    Vector3 velocityMin_;       // 速度の最小値
-    Vector3 velocityMax_;       // 速度の最大値
     float lifeTimeMin_;         // ライフタイムの最小値
     float lifeTimeMax_;         // ライフタイムの最大値
+    float alphaMin_;
+    float alphaMax_;
+    float deltaTime = 1.0f / 60.0f;
+    float scaleMin;
+    float scaleMax;
+
+    Vector3 velocityMin_;       // 速度の最小値
+    Vector3 velocityMax_;       // 速度の最大値
     Vector3 startScale_;
     Vector3 endScale_;
     Vector3 startAcce_;
     Vector3 endAcce_;
     Vector3 startRote_ = {};
     Vector3 endRote_ = {};
-    float alphaMin_;
-    float alphaMax_;
+    Vector3 rotateVelocityMin;
+    Vector3 rotateVelocityMax;
+    Vector3 allScaleMin;
+    Vector3 allScaleMax;
+
+    bool isRandomScale = false;
+    bool isAllRamdomScale = false;
     bool isRandomColor = true;
     bool isRandomRotate = false;
-    Vector3 rotateVelocityMax;
-    Vector3 rotateVelocityMin;
-
-    float deltaTime = 1.0f / 60.0f;
-
     bool isVisible;
-
     bool isBillBoard = true;
-
     bool isActive_ = false;
-
     bool isAcceMultiply = false;
 
     std::unique_ptr<Object3d> emitterObj;

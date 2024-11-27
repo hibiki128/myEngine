@@ -41,7 +41,10 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			}
 			float t = (*particleIterator).currentTime / (*particleIterator).lifeTime;
 			t = std::clamp(t, 0.0f, 1.0f);
+
 			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
+
+
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
 			if (isRandomRotate_) {
 				(*particleIterator).transform.rotation_ += (*particleIterator).rotateVelocity;
@@ -169,6 +172,7 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 ParticleManager::Particle ParticleManager::MakeNewParticle(
 	std::mt19937& randomEngine,
 	const Vector3& translate,
+	const Vector3& rotation,
 	const Vector3& scale, // スケールを引数として受け取る
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲
 	float lifeTimeMin, float lifeTimeMax,
@@ -176,7 +180,9 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
 	bool isRamdomColor, float alphaMin, float alphaMax,
-	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+	const Vector3& allScaleMax, const Vector3& allScaleMin,
+	const float& scaleMin, const float& scaleMax
 )
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
@@ -188,25 +194,60 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 
 	Particle particle;
 
-	// スケールを考慮したランダムな位置を計算
+	// スケールを考慮したランダムな位置を生成
 	Vector3 randomTranslate = {
 		distribution(randomEngine) * scale.x,
 		distribution(randomEngine) * scale.y,
 		distribution(randomEngine) * scale.z
 	};
-	particle.transform.translation_ = translate + randomTranslate;
 
-	particle.startScale = particleStartScale;
+	// 回転行列を適用してランダムな位置を回転
+	Matrix4x4 rotationMatrix = MakeRotateXYZMatrix(rotation);
+
+	// ランダム位置を回転行列で変換
+	Vector3 rotatedPosition = {
+		randomTranslate.x * rotationMatrix.m[0][0] + randomTranslate.y * rotationMatrix.m[1][0] + randomTranslate.z * rotationMatrix.m[2][0],
+		randomTranslate.x * rotationMatrix.m[0][1] + randomTranslate.y * rotationMatrix.m[1][1] + randomTranslate.z * rotationMatrix.m[2][1],
+		randomTranslate.x * rotationMatrix.m[0][2] + randomTranslate.y * rotationMatrix.m[1][2] + randomTranslate.z * rotationMatrix.m[2][2]
+	};
+
+	// 回転されたランダムな位置をトランスレーションに加算
+	particle.transform.translation_ = translate + rotatedPosition;
+
+	if (isRandomAllSize_) {
+		std::uniform_real_distribution<float> distScaleX(allScaleMin.x, allScaleMax.x);
+		std::uniform_real_distribution<float> distScaleY(allScaleMin.y, allScaleMax.y);
+		std::uniform_real_distribution<float> distScaleZ(allScaleMin.z, allScaleMax.z);
+		particle.startScale = { distScaleX(randomEngine),distScaleY(randomEngine),distScaleZ(randomEngine) };
+	}
+	else if (isRandomSize_) {
+		std::uniform_real_distribution<float> distScale(scaleMin, scaleMax);
+		particle.startScale.x = distScale(randomEngine);
+		particle.startScale.y = particle.startScale.x;
+		particle.startScale.z = particle.startScale.x;
+	}
+	else {
+		particle.startScale = particleStartScale;
+	}
 	particle.endScale = particleEndScale;
+
 	particle.startAcce = startAcce;
 	particle.endAcce = endAcce;
 
-	// 速度をランダムに設定
-	particle.velocity = {
+	// パーティクルの速度をランダムに設定
+	Vector3 randomVelocity = {
 		distVelocityX(randomEngine),
 		distVelocityY(randomEngine),
 		distVelocityZ(randomEngine)
 	};
+
+	// エミッターの回転を速度ベクトルに適用
+	particle.velocity = {
+		randomVelocity.x * rotationMatrix.m[0][0] + randomVelocity.y * rotationMatrix.m[1][0] + randomVelocity.z * rotationMatrix.m[2][0],
+		randomVelocity.x * rotationMatrix.m[0][1] + randomVelocity.y * rotationMatrix.m[1][1] + randomVelocity.z * rotationMatrix.m[2][1],
+		randomVelocity.x * rotationMatrix.m[0][2] + randomVelocity.y * rotationMatrix.m[1][2] + randomVelocity.z * rotationMatrix.m[2][2]
+	};
+
 
 	if (isRandomRotate_) {
 		// 回転速度をランダムに設定
@@ -376,7 +417,9 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
 	bool isRandomColor, float alphaMin, float alphaMax,
-	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax)
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+	const Vector3& allScaleMax, const Vector3& allScaleMin,
+	const float& scaleMin, const float& scaleMax, const Vector3& rotation)
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -391,6 +434,7 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 		Particle particle = MakeNewParticle(
 			randomEngine,
 			position,
+			rotation,
 			scale,          // 追加されたスケール
 			velocityMin,
 			velocityMax,    // 追加された速度の範囲
@@ -406,7 +450,9 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 			alphaMin,
 			alphaMax,
 			rotateVelocityMin,
-			rotateVelocityMax
+			rotateVelocityMax,
+			allScaleMax, allScaleMin,
+			scaleMin,scaleMax
 		);
 		newParticles.push_back(particle);
 	}
