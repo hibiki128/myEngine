@@ -39,6 +39,8 @@ public:
 	void CreateParticleGroup(const std::string name, const std::string& filename);
 
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
+	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
+	void SetAcceMultipy(bool isAcceMultipy) { isAcceMultipy_ = isAcceMultipy; }
 
 	// AABBとVector3の当たり判定
 	bool IsCollision(const AABB& aabb, const Vector3& point) {
@@ -75,13 +77,11 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	struct MaterialData
 	{
 		std::string textureFilePath;
-		uint32_t textureIndex = 0;
 	};
 
 	struct ModelData
@@ -103,6 +103,8 @@ private:
 		Vector3 endAcce;
 		Vector3 startRote;
 		Vector3 endRote;
+		Vector3 rotateVelocity;
+		float initialAlpha;
 	};
 
 	// マテリアルデータ
@@ -143,11 +145,8 @@ private:
 	// バッファリソース内のデータを指すポインタ
 	Material* materialData = nullptr;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;
-	ParticleForGPU* instancingData = nullptr;
-
 	SrvManager* srvManager_;
-	
+	static std::unordered_map<std::string, ModelData> modelCache;
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
 	// Δtを定義
@@ -157,7 +156,9 @@ private:
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
 
-	bool isBillboard = true;
+	bool isBillboard = false;
+	bool isRandomRotate_ = false;
+	bool isAcceMultipy_ = false;
 
 	AccelerationField accelerationField;
 	
@@ -166,7 +167,10 @@ private:
 
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
-	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale, const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale, const Vector3& particleEndScale,const Vector3& startAcce,const Vector3& endAcce,const Vector3& startRote,const Vector3& endRote);
+	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,
+		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
+		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
+		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax);
 
 
 private:
@@ -195,8 +199,9 @@ private:
 	Particle MakeNewParticle(std::mt19937& randomEngine,
 		const Vector3& translate,
 		const Vector3& scale,
-		const Vector3& velocityMin, const Vector3& velocityMax, 
-		float lifeTimeMin, float lifeTimeMax,const Vector3& particleStartScale,const Vector3& particleEndScale,
-		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote);
+		const Vector3& velocityMin, const Vector3& velocityMax,
+		float lifeTimeMin, float lifeTimeMax, const Vector3& particleStartScale, const Vector3& particleEndScale,
+		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote
+		, bool isRamdomColor, float alphaMin, float alphaMax);
 };
 

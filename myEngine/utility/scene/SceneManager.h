@@ -1,6 +1,7 @@
 #pragma once
 #include"AbstractSceneFactory.h"
 #include"memory"
+#include"SceneTransition.h"
 class SceneManager
 {
 private:
@@ -20,6 +21,11 @@ public:// メンバ関数
 	static SceneManager* GetInstance();
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -34,6 +40,13 @@ public:// メンバ関数
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// 遷移描画
+	/// </summary>
+	void DrawTransition();
+
+	bool GetTransitionEnd() { return transitionEnd; }
+
 public: // setter
 	/// <summary>
 	/// シーンファクトリーのセット
@@ -45,7 +58,14 @@ public: // setter
 	/// 次シーン予約
 	/// </summary>
 	/// <param name="nextScene"></param>
-	void ChangeScene(const std::string& sceneName);
+	void NextSceneReservation(const std::string& sceneName);
+
+	/// <summary>
+	/// シーン切り替え
+	/// </summary>
+	void SceneChange();
+
+	BaseScene* GetBaseScene() { return scene_; }
 
 private:
 	// 今のシーン(実行中のシーン)
@@ -54,5 +74,9 @@ private:
 	BaseScene* nextScene_ = nullptr;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<SceneTransition> transition_;
+
+	bool transitionEnd = false;
+	bool firstChange = false;
 };
 

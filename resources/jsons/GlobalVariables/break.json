@@ -1,0 +1,60 @@
+{
+    "break": {
+        "Emit scale": [
+            1.0,
+            0.10000000149011612,
+            1.0
+        ],
+        "Particle EndAcce": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Particle EndRote": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Particle EndScale": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Particle StartAcce": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "Particle StartRote": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Particle StartScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "alphaMax": 1.0,
+        "alphaMin": 1.0,
+        "count": 12,
+        "emitFrequency": 0.10000000149011612,
+        "isAcceMultiply": true,
+        "isBillBoard": false,
+        "isRamdomColor": true,
+        "isRandomRotate": true,
+        "isVisible": true,
+        "lifeTimeMax": 1.0,
+        "lifeTimeMin": 1.0,
+        "maxVelocity": [
+            20.0,
+            20.0,
+            20.0
+        ],
+        "minVelocity": [
+            -20.0,
+            5.0,
+            -20.0
+        ]
+    }
+}

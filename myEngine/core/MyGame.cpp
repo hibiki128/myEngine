@@ -11,7 +11,7 @@ void MyGame::Initialize()
 	sceneFactory_ = new SceneFactory();
 	// シーンマネージャに最初のシーンをセット
 	sceneManager_->SetSceneFactory(sceneFactory_);
-	sceneManager_->ChangeScene("TITLE");
+	sceneManager_->NextSceneReservation("TITLE");
 	// -----------------------
 
 }
@@ -19,7 +19,7 @@ void MyGame::Initialize()
 void MyGame::Finalize()
 {
 	// -----ゲーム固有の処理-----
-	
+
 	// -----------------------
 
 	Framework::Finalize();
@@ -31,7 +31,7 @@ void MyGame::Update()
 	// -----ゲーム固有の処理-----
 
 	// -----------------------
-	
+
 }
 
 void MyGame::Draw()
@@ -42,9 +42,18 @@ void MyGame::Draw()
 
 
 	// -----シーンごとの処理------
-	
+
+	object3dCommon->DrawCommonSetting();
+	if (sceneManager_->GetTransitionEnd()) {
+		collisionManager_->Draw(*sceneManager_->GetBaseScene()->GetViewProjection());
+	}
 	sceneManager_->Draw();
 
+	spriteCommon->DrawCommonSetting();
+	sceneManager_->DrawTransition();
+#ifdef _DEBUG
+	ImGuiManager::GetInstance()->Draw();
+#endif // _DEBUG
 	// ------------------------
 
 

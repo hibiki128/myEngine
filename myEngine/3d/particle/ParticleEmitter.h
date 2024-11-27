@@ -19,6 +19,8 @@ public:
     // 更新処理を行うUpdate関数
     void Update(const ViewProjection& vp_);
 
+    void UpdateOnce(const ViewProjection& vp_);
+
     void Draw();
 
     void DrawEmitter(const ViewProjection& vp_);
@@ -28,13 +30,14 @@ public:
     void SetPosition(Vector3& position) { transform_.translation_ = position; }
     void SetScale(Vector3& scale) { transform_.scale_ = scale; }
     void SetCount(int& count) { count_ = count; }
+    void SetActive(bool isActive) { isActive_ = isActive; }
+    void SetValue();
 
 private:
     // パーティクルを発生させるEmit関数
     void Emit();
 
     void ApplyGlobalVariables();
-    void SetValue();
     void AddItem();
 
     std::string name_;          // パーティクルの名前
@@ -54,12 +57,20 @@ private:
     Vector3 endAcce_;
     Vector3 startRote_ = {};
     Vector3 endRote_ = {};
+    float alphaMin_;
+    float alphaMax_;
+    bool isRandomColor = true;
+    bool isRandomRotate = false;
 
     float deltaTime = 1.0f / 60.0f;
 
     bool isVisible;
 
     bool isBillBoard = true;
+
+    bool isActive_ = false;
+
+    bool isAcceMultiply = false;
 
     std::unique_ptr<Object3d> emitterObj;
     std::unique_ptr<ParticleManager> Manager_;

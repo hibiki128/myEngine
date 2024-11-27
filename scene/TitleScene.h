@@ -33,6 +33,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	ViewProjection* GetViewProjection()override { return &vP_; }
+
 private:
 	Audio* audio_;
 	Input* input_;

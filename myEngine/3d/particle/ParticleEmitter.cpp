@@ -14,17 +14,25 @@ ParticleEmitter::ParticleEmitter()
 void ParticleEmitter::Initialize(const std::string& name, const std::string& fileName)
 {
 	emitterObj = std::make_unique<Object3d>();
-	emitterObj->Initialize("OBB.obj");
+	emitterObj->Initialize("debug/OBB.obj");
 	name_ = name;
 	transform_.Initialize();
 	Manager_ = std::make_unique<ParticleManager>();
 	Manager_->Initialize(SrvManager::GetInstance());
 	Manager_->CreateParticleGroup(name_, fileName);
-	emitFrequency_ = 1.0f;
-
+	emitFrequency_ = 0.1f;
+	//transform_.UpdateMatrix();
+	startAcce_ = { 1.0f,1.0f,1.0f };
+	endAcce_ = { 1.0f,1.0f,1.0f };
+	startScale_ = { 1.0f,1.0f,1.0f };
+	endScale_ = { 1.0f,1.0f,1.0f };
+	count_ = 3;
+	alphaMin_ = 1.0f;
+	alphaMax_ = 1.0f;
 	AddItem();
-
-
+	isBillBoard = false;
+	isActive_ = true;
+	isAcceMultiply = false;
 	ApplyGlobalVariables();
 }
 
@@ -43,8 +51,22 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 	transform_.UpdateMatrix();
 }
 
+void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
+{
+	SetValue();
+	if (!isActive_) {
+		Emit();  // パーティクルを発生させる
+		isActive_ = true;
+	}
+	Manager_->Update(vp_);
+	transform_.UpdateMatrix();
+}
+
 void ParticleEmitter::Draw()
 {
+	Manager_->SetRandomRotate(isRandomRotate);
+	Manager_->SetAcceMultipy(isAcceMultiply);
+	Manager_->SetBillBorad(isBillBoard);
 	Manager_->Draw();
 }
 
@@ -73,7 +95,10 @@ void ParticleEmitter::Emit() {
 		startAcce_,
 		endAcce_,
 		startRote_,
-		endRote_
+		endRote_,
+		isRandomColor,
+		alphaMin_,
+		alphaMax_
 	);
 }
 
@@ -95,6 +120,11 @@ void ParticleEmitter::ApplyGlobalVariables()
 	lifeTimeMin_ = globalVariables->GetFloatValue(groupName, "lifeTimeMin");
 	isVisible = globalVariables->GetBoolValue(groupName, "isVisible");
 	isBillBoard = globalVariables->GetBoolValue(groupName, "isBillBoard");
+	isRandomColor = globalVariables->GetBoolValue(groupName, "isRamdomColor");
+	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
+	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
+	isRandomRotate = globalVariables->GetBoolValue(groupName, "isRandomRotate");
+	isAcceMultiply = globalVariables->GetBoolValue(groupName, "isAcceMultiply"); 
 }
 
 void ParticleEmitter::SetValue()
@@ -115,6 +145,11 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "lifeTimeMin", lifeTimeMin_);
 	globalVariables->SetValue(groupName, "isVisible", isVisible);
 	globalVariables->SetValue(groupName, "isBillBoard", isBillBoard);
+	globalVariables->SetValue(groupName, "isRamdomColor", isRandomColor);
+	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
+	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
+	globalVariables->SetValue(groupName, "isRandomRotate", isRandomRotate);
+	globalVariables->SetValue(groupName, "isAcceMultiply", isAcceMultiply);
 }
 
 void ParticleEmitter::AddItem()
@@ -139,64 +174,123 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "lifeTimeMin", lifeTimeMin_);
 	globalVariables->AddItem(groupName, "isVisible", isVisible);
 	globalVariables->AddItem(groupName, "isBillBoard", isBillBoard);
+	globalVariables->AddItem(groupName, "isRamdomColor", isRandomColor);
+	globalVariables->AddItem(groupName, "alphaMin", alphaMin_);
+	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
+	globalVariables->AddItem(groupName, "isRandomRotate", isRandomRotate);
+	globalVariables->AddItem(groupName, "isAcceMultiply", isAcceMultiply);
 }
 
 // ImGuiで値を動かす関数
 void ParticleEmitter::RenderImGui() {
 #ifdef _DEBUG
+	ImGui::Begin(name_.c_str());
 
-	if (ImGui::BeginTabBar(name_.c_str())) {
-		if (ImGui::BeginTabItem(name_.c_str())) {
-			Manager_->imgui();
-			// transform_.translation_の表示と編集
-			ImGui::DragFloat3("Position", &transform_.translation_.x, 0.1f); // x, y, z
+	// 基本データセクション
+	if (ImGui::CollapsingHeader("エミッターデータ")) {
+		// トランスフォームデータをフレーム内に配置
+		ImGui::Text("Transformデータ:");
+		ImGui::Separator();
+		ImGui::Columns(2, "TransformColumns", false); // 2列レイアウト
+		ImGui::Text("位置"); ImGui::NextColumn();
+		ImGui::DragFloat3("##位置", &transform_.translation_.x, 0.1f);
+		ImGui::NextColumn();
+		ImGui::Text("回転"); ImGui::NextColumn();
+		ImGui::DragFloat3("##回転", &transform_.rotation_.x, 0.1f);
+		ImGui::NextColumn();
+		ImGui::Text("大きさ"); ImGui::NextColumn();
+		ImGui::DragFloat3("##大きさ", &transform_.scale_.x, 0.1f);
+		ImGui::Columns(1); // 列終了
+		ImGui::Separator();
 
-			// transform_.rotation_の表示と編集
-			ImGui::DragFloat3("Rotation", &transform_.rotation_.x, 0.1f); // x, y, z
-
-			// transform_.scale_の表示と編集
-			ImGui::DragFloat3("Scale", &transform_.scale_.x, 0.1f); // x, y, z
-
-			// emitFrequency_の表示と編集
-			ImGui::DragFloat("Emit Frequency", &emitFrequency_, 0.1f, 0.1f, 10.0f); // 0.1〜5.0の範囲
-
-			// countの表示と編集
-			ImGui::InputInt("Count", &count_, 1, 10000);
-
-			// 0から10000の範囲に制限する
-			count_ = std::clamp(count_, 0, 10000);
-
-			// 速度の最小値と最大値の表示と編集
-			ImGui::DragFloat3("Velocity Min", &velocityMin_.x, 0.1f);
-			ImGui::DragFloat3("Velocity Max", &velocityMax_.x, 0.1f);
-
-			// ライフタイムの最小値と最大値の表示と編集
-			ImGui::DragFloat("LifeTime Min", &lifeTimeMin_, 0.1f);
-			ImGui::DragFloat("LifeTime Max", &lifeTimeMax_, 0.1f);
-
-			ImGui::DragFloat3("StartScale", &startScale_.x, 0.1f);
-			ImGui::DragFloat3("EndScale", &endScale_.x, 0.1f);
-
-			ImGui::DragFloat3("StartAcce", &startAcce_.x, 0.1f);
-			ImGui::DragFloat3("EndAcce", &endAcce_.x, 0.1f);
-
-			ImGui::SliderAngle("StartRoteX", &startRote_.x, 0.1f);
-			ImGui::SliderAngle("StartRoteY", &startRote_.y, 0.1f);
-			ImGui::SliderAngle("StartRoteZ", &startRote_.z, 0.1f);
-			ImGui::SliderAngle("EndRoteX", &endRote_.x, 0.1f);
-			ImGui::SliderAngle("EndRoteY", &endRote_.y, 0.1f);
-			ImGui::SliderAngle("EndRoteZ", &endRote_.z, 0.1f);
-
-			// isVisibleフラグの表示と編集
-			ImGui::Checkbox("Visible", &isVisible); // 可視性のチェックボックス
-
-			ImGui::Checkbox("BillBoard", &isBillBoard);
-			Manager_->SetBillBorad(isBillBoard);
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
+		// 可視性フラグ
+		ImGui::Checkbox("表示", &isVisible);
 	}
 
-#endif // _DEBUG
+	// パーティクルデータセクション
+	if (ImGui::CollapsingHeader("パーティクルデータ")) {
+		// LifeTimeを折りたたみ可能にする
+		if (ImGui::TreeNode("寿命")) {
+			ImGui::Text("寿命設定:");
+			ImGui::Separator();
+			ImGui::DragFloat("最小値", &lifeTimeMin_, 0.1f, 0.0f, 10.0f);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("パーティクルの寿命の最小値です");
+			}
+			ImGui::DragFloat("最大値", &lifeTimeMax_, 0.1f, 0.0f, 10.0f);
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("パーティクルの寿命の最大値です");
+			}
+			ImGui::TreePop();
+		}
 
+		ImGui::Separator();
+
+		// 速度と加速度
+		if (ImGui::TreeNode("速度、加速度")) {
+			ImGui::Text("速度:");
+			ImGui::DragFloat3("最小値", &velocityMin_.x, 0.1f);
+			ImGui::DragFloat3("最大値", &velocityMax_.x, 0.1f);
+
+			ImGui::Text("加速度:");
+			ImGui::DragFloat3("最初", &startAcce_.x, 0.001f);
+			ImGui::DragFloat3("最後", &endAcce_.x, 0.001f);
+			ImGui::Checkbox("乗算", &isAcceMultiply);
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+
+		// サイズ
+		if (ImGui::TreeNode("大きさ")) {
+			ImGui::Text("大きさ:");
+			ImGui::DragFloat3("最初", &startScale_.x, 0.1f);
+			ImGui::DragFloat3("最後", &endScale_.x, 0.1f);
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+
+		// 回転
+		if (ImGui::TreeNode("回転")) {
+			if (!isRandomRotate) {
+				ImGui::SliderAngle("最初 X", &startRote_.x);
+				ImGui::SliderAngle("最後 X", &endRote_.x);
+				ImGui::SliderAngle("最初 Y", &startRote_.y);
+				ImGui::SliderAngle("最後 Y", &endRote_.y);
+				ImGui::SliderAngle("最初 Z", &startRote_.z);
+				ImGui::SliderAngle("最後 Z", &endRote_.z);
+			}
+			ImGui::Checkbox("ランダムな回転", &isRandomRotate);
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+
+
+		/// Todo : 透明度をいじっても変更されないので直す
+		// Alphaを折りたたみ可能にする
+		if (ImGui::TreeNode("透明度")) {
+			ImGui::Text("透明度の設定:");
+			ImGui::DragFloat("最小値", &alphaMin_, 0.1f, 0.0f, 1.0f);
+			ImGui::DragFloat("最大値", &alphaMax_, 0.1f, 0.0f, 1.0f);
+			ImGui::TreePop();
+		}
+	}
+
+	// エミット設定セクション
+	if (ImGui::CollapsingHeader("パーティクルの数、間隔")) {
+		ImGui::DragFloat("間隔", &emitFrequency_, 0.1f, 0.1f, 10.0f);
+		ImGui::InputInt("数", &count_, 1, 100);
+		count_ = std::clamp(count_, 0, 10000);
+	}
+
+	// その他の設定セクション
+	if (ImGui::CollapsingHeader("各状態の設定")) {
+		ImGui::Checkbox("ビルボード", &isBillBoard);
+		ImGui::Checkbox("ランダムカラー", &isRandomColor);
+	}
+
+	ImGui::End();
+#endif
 }

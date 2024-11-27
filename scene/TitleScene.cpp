@@ -3,6 +3,7 @@
 #include"SceneManager.h"
 #include"SrvManager.h"
 
+
 void TitleScene::Initialize()
 {
 	audio_ = Audio::GetInstance();
@@ -69,10 +70,5 @@ void TitleScene::Draw()
 	emitter_->Draw();
 	//-----------------------------
 
-
-	/// ----------------------------------
-#ifdef _DEBUG
-	ImGuiManager::GetInstance()->Draw();
-#endif // _DEBUG
 	/// -------描画処理終了-------
 }

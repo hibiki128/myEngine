@@ -1,0 +1,16 @@
+{
+    "active": false,
+    "color": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "decay": 1.0,
+    "intensity": 10.0,
+    "position": [
+        -1.0,
+        4.0,
+        -3.0
+    ],
+    "radius": 2.0
+}

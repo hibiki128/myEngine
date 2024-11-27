@@ -21,13 +21,8 @@ public: // メンバ関数
 	/// <param name="anchorpoint">アンカーポイント</param>
 	/// <param name="isFlipX">左右反転</param>
 	/// <param name="isFlipY">上下反転</param>
-	void Initialize(const std::string& textureFilePath,Vector2 position,Vector4 color={1,1,1,1},Vector2 anchorpoint={0.0f,0.0f},bool isFlipX = false,bool isFlipY = false);
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-
+	void Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color = { 1,1,1,1 }, Vector2 anchorpoint = { 0.0f,0.0f }, bool isFlipX = false, bool isFlipY = false);
+	
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -54,7 +49,8 @@ public: // メンバ関数
 	void SetPosition(const Vector2& position) { this->position_ = position; }
 	void SetRotation(float rotation) { this->rotation = rotation; }
 	void SetSize(const Vector2& size) { this->size = size; }
-	void SetColor(const Vector4& color) { materialData->color = color; }
+	void SetColor(const Vector3& color) { materialData->color.x = color.x, materialData->color.y = color.y, materialData->color.z = color.z; }
+	void SetAlpha(const float& alpha) { materialData->color.w = alpha; }
 	void SetTexturePath(std::string textureFilePath);
 	void SetAnchorPoint(const Vector2& anchorPoint) { this->anchorPoint_ = anchorPoint; }
 	void SetFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
@@ -63,6 +59,11 @@ public: // メンバ関数
 	void SetTexSize(const Vector2& textureSize) { this->textureSize = textureSize; }
 
 private: // メンバ関数
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 頂点データ作成
@@ -95,15 +96,13 @@ private:
 	struct VertexData {
 		Vector4 position;
 		Vector2 texcoord;
-		Vector3 normal;
 	};
 
 	// マテリアルデータ
 	struct Material {
 		Vector4 color;
-		int32_t enableLighting;
-		float padding[3];
 		Matrix4x4 uvTransform;
+		float padding[3];
 	};
 
 	// 座標変換行列データ

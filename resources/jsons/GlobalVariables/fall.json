@@ -1,0 +1,59 @@
+{
+    "fall": {
+        "Emit scale": [
+            1.0,
+            0.0,
+            1.0
+        ],
+        "Particle EndAcce": [
+            0.0,
+            -0.3799999952316284,
+            0.0
+        ],
+        "Particle EndRote": [
+            3.1415927410125732,
+            0.0,
+            0.0
+        ],
+        "Particle EndScale": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "Particle StartAcce": [
+            0.0,
+            0.2199999988079071,
+            0.0
+        ],
+        "Particle StartRote": [
+            3.577924966812134,
+            -0.0,
+            0.0
+        ],
+        "Particle StartScale": [
+            1.2000000476837158,
+            1.2000000476837158,
+            1.2000000476837158
+        ],
+        "alphaMax": 0.699999988079071,
+        "alphaMin": 0.30000001192092896,
+        "count": 6,
+        "emitFrequency": 0.10000000149011612,
+        "isBillBoard": false,
+        "isRamdomColor": false,
+        "isRandomRotate": false,
+        "isVisible": false,
+        "lifeTimeMax": 1.0,
+        "lifeTimeMin": 0.5,
+        "maxVelocity": [
+            3.0,
+            2.5,
+            2.0
+        ],
+        "minVelocity": [
+            -3.0,
+            1.0,
+            -2.0
+        ]
+    }
+}

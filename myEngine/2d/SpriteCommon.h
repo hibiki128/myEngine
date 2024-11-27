@@ -22,6 +22,8 @@ private:
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 
+	BlendMode blendMode_ = BlendMode::kNormal;
+
 public: // メンバ関数
 
 	/// <summary>
@@ -54,6 +56,6 @@ public: // メンバ関数
 	/// <summary>
 	/// ブレンドモードの切り替え
 	/// </summary>
-	void ChangeBlendMode(BlendMode blendMode);
+	void SetBlendMode(BlendMode blendMode);
 };
 

@@ -4,11 +4,13 @@
 #include"fstream"
 #include <Quaternion.h>
 
-void LineManager::Initialize(SrvManager* srvManager)
+void LineManager::Initialize(const std::string& filename)
 {
 	particleCommon = ParticleCommon::GetInstance();
-	srvManager_ = srvManager;
+	srvManager_ = SrvManager::GetInstance();
 	randomEngine.seed(seedGenerator());
+
+	CreateParticleGroup("line0", filename);
 }
 
 void LineManager::Update(const ViewProjection& viewProjection, const std::vector<Vector3>& startPoints, const std::vector<Vector3>& endPoints)
@@ -56,7 +58,7 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 			// スケールの計算（始点と終点の距離を求めてスケールに反映）
 			Vector3 lineVector = endPoint - startPoint;
 			float length = lineVector.Length(); // 2点間の距離
-			lineIterator->transform.scale_ = Vector3(length, 0.01f, 0.01f); // X方向に線の長さを反映、他の軸は0.2
+			lineIterator->transform.scale_ = Vector3(length, 1.0f, 1.0f); // X方向に線の長さを反映、他の軸は0.2
 
 			// クォータニオンで回転の計算（始点から終点への回転を計算）
 			Quaternion rotationQuat;
@@ -77,9 +79,9 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 
 			// インスタンスデータに設定
 			if (numInstance < kNumMaxInstance) {
-				instancingData[numInstance].WVP = worldViewProjectionMatrix;
-				instancingData[numInstance].World = worldMatrix;
-				instancingData[numInstance].color = lineIterator->color; // colorも更新
+				lineGroup.instancingData[numInstance].WVP = worldViewProjectionMatrix;
+				lineGroup.instancingData[numInstance].World = worldMatrix;
+				lineGroup.instancingData[numInstance].color = lineIterator->color; // colorも更新
 				++numInstance;
 			}
 
@@ -89,21 +91,21 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 			// 次のライン要素に進む
 			++lineIterator;
 		}
-
-		// インスタンシングデータのコピー
-		if (lineGroup.instancingData) {
-			std::memcpy(lineGroup.instancingData, instancingData, sizeof(ParticleForGPU) * numInstance);
-		}
 	}
 }
 
+
+
 void LineManager::Draw()
 {
+
+	//Update(viewProjection,startPoints,endPoints);
 
 	particleCommon->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	for (auto& [groupName, lineGroup] : lineGroups) {
 		if (lineGroup.instanceCount > 0) {
+
 			particleCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 			srvManager_->SetGraphicsRootDescriptorTable(1, lineGroup.instancingSRVIndex);
@@ -126,7 +128,6 @@ void LineManager::CreateParticleGroup(const std::string name, const std::string&
 	CreateVartexData(filename);
 	lineGroup.material.textureFilePath = modelData.material.textureFilePath;
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-	lineGroup.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 	lineGroup.instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
 	lineGroup.instancingSRVIndex = srvManager_->Allocate() + 1;
@@ -140,17 +141,6 @@ void LineManager::CreateParticleGroup(const std::string name, const std::string&
 
 void LineManager::CreateVartexData(const std::string& filename)
 {
-	// インスタンス用のTransformationMatrixリソースを作る
-	instancingResource = particleCommon->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
-	// 書き込むためのアドレスを取得
-	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
-	// 単位行列を書き込んでおく
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-		instancingData[index].WVP = MakeIdentity4x4();
-		instancingData[index].World = MakeIdentity4x4();
-		instancingData[index].color = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
 	modelData = LoadObjFile("resources/models/", filename);
 
 	// 頂点リソースを作る
@@ -187,7 +177,7 @@ LineManager::MaterialData LineManager::LoadMaterialTemplateFile(const std::strin
 
 	// テクスチャが張られていない場合の処理
 	if (materialData.textureFilePath.empty()) {
-		materialData.textureFilePath = directoryPath + "/../images/white1x1.png";
+		materialData.textureFilePath = directoryPath + "/" + "white1x1.png";
 	}
 
 	return materialData;
@@ -198,17 +188,24 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 {
 	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
-	std::vector<Vector3> normals; // 法線
 	std::vector<Vector2> texcoords; // テクスチャ座標
 	std::string line; // ファイルから読んだ1行目を格納するもの
 
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
-	assert(file.is_open()); // とりあえず開けなかったら止める
+	// ファイル名からフォルダ部分を取得
+	std::string folderPath;
+	size_t lastSlashPos = filename.find_last_of("/\\");
+	if (lastSlashPos != std::string::npos) {
+		// ファイル名の前にフォルダがある場合は、そのフォルダ部分を使用する
+		folderPath = filename.substr(0, lastSlashPos);
+	}
+
+	std::ifstream file(directoryPath + filename); // ファイルを開く
+	assert(file.is_open()); // ファイルが開けなかったら停止
 
 	while (std::getline(file, line)) {
 		std::string identifier;
 		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読む
+		s >> identifier; // 先頭の識別子を読み込む
 
 		// identifierに応じた処理
 		if (identifier == "v") {
@@ -221,15 +218,9 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
-			texcoord.x = 1.0f - texcoord.x;
+		/*	texcoord.x = 1.0f - texcoord.x;*/
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
-		}
-		else if (identifier == "vn") {
-			Vector3 normal;
-			s >> normal.x >> normal.y >> normal.z;
-			normal.x *= -1.0f;
-			normals.push_back(normal);
 		}
 		else if (identifier == "f") {
 			VertexData triangle[3];
@@ -248,22 +239,24 @@ LineManager::ModelData LineManager::LoadObjFile(const std::string& directoryPath
 				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
-				Vector3 normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position,texcoord,normal };
+				VertexData vertex = { position, texcoord };
 				modelData.vertices.push_back(vertex);
-				triangle[faceVertex] = { position,texcoord,normal };
+				triangle[faceVertex] = { position, texcoord };
 			}
-			// 頂点を逆順で登録することで、周り順を逆にする
-			modelData.vertices.push_back(triangle[2]);
-			modelData.vertices.push_back(triangle[1]);
-			modelData.vertices.push_back(triangle[0]);
 		}
 		else if (identifier == "mtllib") {
 			// materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
-			// 基本的にobjファイルと同一階層にmtlは存在させるので、ディレクトリ名とファイル名を渡す
-			modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+
+			if (!folderPath.empty()) {
+				// ファイル名の前にフォルダがあればそれを追加する
+				modelData.material = LoadMaterialTemplateFile(directoryPath + folderPath, materialFilename);
+			}
+			else {
+				// ファイル名の前にフォルダがあればそれを追加する
+				modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			}
 		}
 	}
 	return modelData;

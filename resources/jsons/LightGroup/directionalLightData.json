@@ -1,0 +1,16 @@
+{
+    "BlinnPhong": 1,
+    "HalfLambert": 0,
+    "active": true,
+    "color": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "direction": [
+        0.0,
+        -1.0,
+        0.0
+    ],
+    "intensity": 1.0
+}
