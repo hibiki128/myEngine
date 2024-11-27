@@ -10,6 +10,7 @@
 #include"Object3d.h"
 #include"WorldTransform.h"
 #include"DebugCamera.h"
+#include"vector"
 
 class TitleScene :public BaseScene
 {
@@ -51,6 +52,7 @@ private:
 	std::unique_ptr<ParticleEmitter> fall_;
 	std::unique_ptr<ParticleEmitter> Break_;
 	std::unique_ptr<ParticleEmitter> WeekBreak_;
+	std::vector<std::unique_ptr<ParticleEmitter>> coreFractions_;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
 

@@ -14,6 +14,22 @@ void TitleScene::Initialize()
 
 	vP_.Initialize();
 
+	for (int i = 0; i < 3; i++) {
+		std::unique_ptr<ParticleEmitter> emitter_;
+		emitter_ = std::make_unique<ParticleEmitter>();
+		if (i == 0) {
+			emitter_->Initialize("core1", "game/coreFraction1.obj");
+		}
+		else if (i == 1) {
+			emitter_->Initialize("core2", "game/coreFraction2.obj");
+		}
+		else if (i == 2) {
+			emitter_->Initialize("core3", "game/coreFraction3.obj");
+		}
+
+		coreFractions_.push_back(std::move(emitter_));
+	}
+
 	fall_ = std::make_unique<ParticleEmitter>();
 	fall_->Initialize("fall", "game/smoke.obj");
 
@@ -53,31 +69,54 @@ void TitleScene::Update()
 		ImGui::EndTabBar();
 	}
 
-	if (ImGui::BeginTabBar("2")) {
-		if (ImGui::BeginTabItem("fall")) {
-			if (ImGui::Button("Update")) {
-				fall_->SetActive(false);
-			}
-			fall_->RenderImGui();
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("break")) {
-			if (ImGui::Button("Update")) {
-				Break_->SetActive(false);
-			}
-			Break_->RenderImGui();
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("WeekBreak")) {
-			if (ImGui::Button("Update")) {
-				WeekBreak_->SetActive(false);
-			}
-			WeekBreak_->RenderImGui();
-			ImGui::EndTabItem();
-		}
+	//if (ImGui::BeginTabBar("2")) {
+	//	if (ImGui::BeginTabItem("fall")) {
+	//		if (ImGui::Button("Update")) {
+	//			fall_->SetActive(false);
+	//		}
+	//		fall_->RenderImGui();
+	//		ImGui::EndTabItem();
+	//	}
+	//	if (ImGui::BeginTabItem("break")) {
+	//		if (ImGui::Button("Update")) {
+	//			Break_->SetActive(false);
+	//		}
+	//		Break_->RenderImGui();
+	//		ImGui::EndTabItem();
+	//	}
+	//	if (ImGui::BeginTabItem("WeekBreak")) {
+	//		if (ImGui::Button("Update")) {
+	//			WeekBreak_->SetActive(false);
+	//		}
+	//		WeekBreak_->RenderImGui();
+	//		ImGui::EndTabItem();
+	//	}
+	//	for (size_t i = 0; i < coreFractions_.size(); ++i) {
+	//		// 各ParticleEmitterごとにタブを作成
+	//		std::string tabName = "CoreFraction " + std::to_string(i + 1);
+	//		if (ImGui::BeginTabItem(tabName.c_str())) {
+	//			// 更新ボタン
+	//			if (ImGui::Button(("Update##" + std::to_string(i)).c_str())) {
+	//				// ParticleEmitterを無効化（仮にSetActiveを用いるとします）
+	//				coreFractions_[i]->SetActive(false);
+	//			}
 
-		ImGui::EndTabBar();
-	}
+	//			// ImGuiによるプロパティやデバッグ情報のレンダリング
+	//			coreFractions_[i]->RenderImGui();
+
+	//			ImGui::EndTabItem();
+	//		}
+	//	}
+	//	if(ImGui::BeginTabItem("AllCore")) {
+	//		if (ImGui::Button("Update")) {
+	//			for (auto& coreFraction_ : coreFractions_) {
+	//				coreFraction_->SetActive(false);
+	//			}
+	//		}
+	//		ImGui::EndTabItem();
+	//	}
+	//	ImGui::EndTabBar();
+	//}
 	ImGui::End();
 
 	LightGroup::GetInstance()->imgui();
@@ -87,10 +126,12 @@ void TitleScene::Update()
 		sceneManager_->NextSceneReservation("GAME");
 	}
 	//----------------------
-	fall_->UpdateOnce(vP_);
+	/*fall_->UpdateOnce(vP_);
 	Break_->UpdateOnce(vP_);
 	WeekBreak_->UpdateOnce(vP_);
-
+	for (auto& coreFraction_ : coreFractions_) {
+		coreFraction_->UpdateOnce(vP_);
+	}*/
 	debugCamera_->Update();
 	if (!debugCamera_->GetActive()) {
 		vP_.UpdateMatrix();
@@ -112,19 +153,25 @@ void TitleScene::Draw()
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	/*obj_->Draw(wt_, vP_);
-	obj2_->Draw(wt2_, vP_);*/
+	obj2_->Draw(wt2_, vP_);
 	fall_->DrawEmitter(vP_);
 	Break_->DrawEmitter(vP_);
 	WeekBreak_->DrawEmitter(vP_);
+	for (auto& coreFraction_ : coreFractions_) {
+		coreFraction_->DrawEmitter(vP_);
+	}*/
+
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	ptCommon_->SetBlendMode(BlendMode::kNormal);
-	Break_->Draw();
+	/*Break_->Draw();
 	fall_->Draw();
 	WeekBreak_->Draw();
+	for (auto& coreFraction_ : coreFractions_) {
+		coreFraction_->Draw();
+	}*/
 	//-----------------------------
 
 	/// -------描画処理終了-------
