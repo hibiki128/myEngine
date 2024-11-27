@@ -175,7 +175,8 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRamdomColor, float alphaMin, float alphaMax
+	bool isRamdomColor, float alphaMin, float alphaMax,
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax
 )
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
@@ -208,13 +209,19 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	};
 
 	if (isRandomRotate_) {
-		// 回転速度をランダムに設定（0~5の範囲）
-		std::uniform_real_distribution<float> distRotateXVelocity(-0.07f, 0.07f);
-		std::uniform_real_distribution<float> distRotateYVelocity(-0.07f, 0.07f);
-		std::uniform_real_distribution<float> distRotateZVelocity(-0.07f, 0.07f);
+		// 回転速度をランダムに設定
+		std::uniform_real_distribution<float> distRotateXVelocity(rotateVelocityMin.x, rotateVelocityMax.x);
+		std::uniform_real_distribution<float> distRotateYVelocity(rotateVelocityMin.y, rotateVelocityMax.y);
+		std::uniform_real_distribution<float> distRotateZVelocity(rotateVelocityMin.z, rotateVelocityMax.z);
+		std::uniform_real_distribution<float> distRotateX(0.0f, 2.0f);
+		std::uniform_real_distribution<float> distRotateY(0.0f, 2.0f);
+		std::uniform_real_distribution<float> distRotateZ(0.0f, 2.0f);
 		particle.rotateVelocity.x = distRotateXVelocity(randomEngine);
 		particle.rotateVelocity.y = distRotateYVelocity(randomEngine);
 		particle.rotateVelocity.z = distRotateZVelocity(randomEngine);
+		particle.transform.rotation_.x = distRotateX(randomEngine);
+		particle.transform.rotation_.y = distRotateY(randomEngine);
+		particle.transform.rotation_.z = distRotateZ(randomEngine);
 	}
 	else {
 		particle.startRote = startRote;
@@ -234,7 +241,7 @@ ParticleManager::Particle ParticleManager::MakeNewParticle(
 	particle.lifeTime = distLifeTime(randomEngine);
 	particle.currentTime = 0.0f;
 
-	return std::move(particle);
+	return particle;
 }
 
 ParticleManager::MaterialData ParticleManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
@@ -368,7 +375,8 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
 	const Vector3& startRote, const Vector3& endRote,
-	bool isRandomColor, float alphaMin, float alphaMax) // サイズの開始値と終了値を引数として追加
+	bool isRandomColor, float alphaMin, float alphaMax,
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax)
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -396,7 +404,9 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 			endRote,
 			isRandomColor,
 			alphaMin,
-			alphaMax
+			alphaMax,
+			rotateVelocityMin,
+			rotateVelocityMax
 		);
 		newParticles.push_back(particle);
 	}

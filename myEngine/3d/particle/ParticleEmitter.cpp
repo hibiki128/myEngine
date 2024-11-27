@@ -1,15 +1,7 @@
 #include "ParticleEmitter.h"
 
 // コンストラクタ
-ParticleEmitter::ParticleEmitter()
-	:
-	velocityMin_{ -1.0f, -1.0f, -1.0f }, // 速度の最小値
-	velocityMax_{ 1.0f, 1.0f, 1.0f }, // 速度の最大値
-	lifeTimeMin_{ 1.0f }, // ライフタイムの最小値
-	lifeTimeMax_{ 3.0f }, // ライフタイムの最大値
-	isVisible{ true }      // 初期状態は可視
-
-{}
+ParticleEmitter::ParticleEmitter() {}
 
 void ParticleEmitter::Initialize(const std::string& name, const std::string& fileName)
 {
@@ -22,10 +14,17 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	Manager_->CreateParticleGroup(name_, fileName);
 	emitFrequency_ = 0.1f;
 	//transform_.UpdateMatrix();
+	velocityMin_ = { -1.0f, -1.0f, -1.0f };
+	velocityMax_ = { 1.0f, 1.0f, 1.0f };
+	lifeTimeMin_ = { 1.0f };
+	lifeTimeMax_ = { 3.0f };
+	isVisible = true;
 	startAcce_ = { 1.0f,1.0f,1.0f };
 	endAcce_ = { 1.0f,1.0f,1.0f };
 	startScale_ = { 1.0f,1.0f,1.0f };
 	endScale_ = { 1.0f,1.0f,1.0f };
+	rotateVelocityMin = { -0.07f,-0.07f,-0.07f };
+	rotateVelocityMax = { 0.07f,0.07f,0.07f };
 	count_ = 3;
 	alphaMin_ = 1.0f;
 	alphaMax_ = 1.0f;
@@ -98,7 +97,9 @@ void ParticleEmitter::Emit() {
 		endRote_,
 		isRandomColor,
 		alphaMin_,
-		alphaMax_
+		alphaMax_,
+		rotateVelocityMin,
+		rotateVelocityMax
 	);
 }
 
@@ -124,7 +125,9 @@ void ParticleEmitter::ApplyGlobalVariables()
 	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
 	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
 	isRandomRotate = globalVariables->GetBoolValue(groupName, "isRandomRotate");
-	isAcceMultiply = globalVariables->GetBoolValue(groupName, "isAcceMultiply"); 
+	isAcceMultiply = globalVariables->GetBoolValue(groupName, "isAcceMultiply");
+	rotateVelocityMin = globalVariables->GetVector3Value(groupName, "RotationVelo Min");
+	rotateVelocityMax = globalVariables->GetVector3Value(groupName, "RotationVelo Max");
 }
 
 void ParticleEmitter::SetValue()
@@ -149,7 +152,8 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
 	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
 	globalVariables->SetValue(groupName, "isRandomRotate", isRandomRotate);
-	globalVariables->SetValue(groupName, "isAcceMultiply", isAcceMultiply);
+	globalVariables->SetValue(groupName, "RotationVelo Min", rotateVelocityMin);
+	globalVariables->SetValue(groupName, "RotationVelo Max", rotateVelocityMax);
 }
 
 void ParticleEmitter::AddItem()
@@ -179,6 +183,8 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
 	globalVariables->AddItem(groupName, "isRandomRotate", isRandomRotate);
 	globalVariables->AddItem(groupName, "isAcceMultiply", isAcceMultiply);
+	globalVariables->AddItem(groupName, "RotationVelo Min", rotateVelocityMin);
+	globalVariables->AddItem(groupName, "RotationVelo Max", rotateVelocityMax);
 }
 
 // ImGuiで値を動かす関数
@@ -262,6 +268,10 @@ void ParticleEmitter::RenderImGui() {
 				ImGui::SliderAngle("最後 Z", &endRote_.z);
 			}
 			ImGui::Checkbox("ランダムな回転", &isRandomRotate);
+			if (isRandomRotate) {
+				ImGui::DragFloat3("最小速度", &rotateVelocityMin.x, 0.01f);
+				ImGui::DragFloat3("最大速度", &rotateVelocityMax.x, 0.01f);
+			}
 			ImGui::TreePop();
 		}
 

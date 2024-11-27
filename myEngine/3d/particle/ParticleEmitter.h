@@ -61,6 +61,8 @@ private:
     float alphaMax_;
     bool isRandomColor = true;
     bool isRandomRotate = false;
+    Vector3 rotateVelocityMax;
+    Vector3 rotateVelocityMin;
 
     float deltaTime = 1.0f / 60.0f;
 

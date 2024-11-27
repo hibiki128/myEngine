@@ -143,7 +143,8 @@ public:
 	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
 		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
-		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax);
+		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax,
+		const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax);
 
 
 private:
@@ -175,6 +176,6 @@ private:
 		const Vector3& velocityMin, const Vector3& velocityMax,
 		float lifeTimeMin, float lifeTimeMax, const Vector3& particleStartScale, const Vector3& particleEndScale,
 		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote
-		, bool isRamdomColor, float alphaMin, float alphaMax);
+		, bool isRamdomColor, float alphaMin, float alphaMax, const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax);
 };
 
