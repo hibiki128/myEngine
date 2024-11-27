@@ -58,23 +58,23 @@ void LightGroup::Draw()
 }
 
 void LightGroup::imgui() {
-	ImGui::Begin("Light");
+	//ImGui::Begin("Light");
 
 	if (ImGui::BeginTabBar("Direction")) {
-		if (ImGui::BeginTabItem("Direction")) {
-			ImGui::Checkbox("directionalLight", &isDirectionalLight);
+		if (ImGui::BeginTabItem("平行光源")) {
+			ImGui::Checkbox("切り替え", &isDirectionalLight);
 			if (directionalLightData->active) {
-				ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.1f);
+				ImGui::DragFloat3("光の方向", &directionalLightData->direction.x, 0.1f);
 				directionalLightData->direction = directionalLightData->direction.Normalize();
-				ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
-				ImGui::ColorEdit3("Color", &directionalLightData->color.x);
+				ImGui::DragFloat("輝度", &directionalLightData->intensity, 0.01f);
+				ImGui::ColorEdit3("色", &directionalLightData->color.x);
 				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
 				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
 
 				int selectedLightingType = directionalLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
 
 				// Comboで選択されたインデックスに基づいてフラグを設定
-				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
+				if (ImGui::Combo("反射の種類", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
 				{
 					// フラグの設定
 					directionalLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
@@ -82,7 +82,7 @@ void LightGroup::imgui() {
 				}
 			}
 			ImGui::EndTabItem();
-			if (ImGui::Button("Save")) {
+			if (ImGui::Button("保存")) {
 				SaveDirectionalLight();
 				std::string message = std::format("DirectionalLight saved.");
 				MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
@@ -92,14 +92,14 @@ void LightGroup::imgui() {
 	}
 
 	if (ImGui::BeginTabBar("Point")) {
-		if (ImGui::BeginTabItem("Point")) {
-			ImGui::Checkbox("pointLight", &isPointLight);
+		if (ImGui::BeginTabItem("点光源")) {
+			ImGui::Checkbox("切り替え", &isPointLight);
 			if (pointLightData->active) {
-				ImGui::DragFloat3("Position", &pointLightData->position.x, 0.1f);
-				ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f);
-				ImGui::DragFloat("Decay", &pointLightData->decay, 0.1f);
-				ImGui::DragFloat("Radius", &pointLightData->radius, 0.1f);
-				ImGui::ColorEdit3("Color", &pointLightData->color.x);
+				ImGui::DragFloat3("位置", &pointLightData->position.x, 0.1f);
+				ImGui::DragFloat("輝度", &pointLightData->intensity, 0.01f);
+				ImGui::DragFloat("減衰率", &pointLightData->decay, 0.1f);
+				ImGui::DragFloat("最大距離", &pointLightData->radius, 0.1f);
+				ImGui::ColorEdit3("色", &pointLightData->color.x);
 				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
 				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
 
@@ -113,7 +113,7 @@ void LightGroup::imgui() {
 					pointLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
 				}
 			}
-			if (ImGui::Button("Save")) {
+			if (ImGui::Button("保存")) {
 				SavePointLight();
 				std::string message = std::format("PointLight saved.");
 				MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
@@ -123,7 +123,7 @@ void LightGroup::imgui() {
 		ImGui::EndTabBar();
 	}
 
-	ImGui::End();
+//	ImGui::End();
 }
 
 void LightGroup::SaveDirectionalLight() {
@@ -265,8 +265,8 @@ void LightGroup::CreatePointLight()
 	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
 	// デフォルト値
 	pointLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	pointLightData->position = { -1.0f,4.0f,-3.0f };
-	pointLightData->intensity = 10.0f;
+	pointLightData->position = { 0.0f,0.0f,-3.0f };
+	pointLightData->intensity = 1.0f;
 	pointLightData->decay = 1.0f;
 	pointLightData->radius = 2.0f;
 	pointLightData->active = false;

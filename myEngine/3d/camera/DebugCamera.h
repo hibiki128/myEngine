@@ -37,5 +37,6 @@ private:
 	Matrix4x4 matRotDelta;
 	Matrix4x4 rotateXYZMatrix;
 	bool isActive_ = false;
+	bool isManual = false;
 };
 

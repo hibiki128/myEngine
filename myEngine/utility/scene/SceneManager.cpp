@@ -32,13 +32,13 @@ void SceneManager::Finalize()
 
 void SceneManager::Update()
 {
-	ImGui::Begin("scene");
-	if (ImGui::Button("TitleScene")) {
+	ImGui::Begin("シーン選択");
+	if (ImGui::Button("タイトルシーン")) {
 		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("TITLE");
 		transition_->SetFadeInStart(true);
 	}
-	if (ImGui::Button("GameScene")) {
+	if (ImGui::Button("ゲームシーン")) {
 		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("GAME");
 		transition_->SetFadeInStart(true);

@@ -12,10 +12,16 @@ void TitleScene::Initialize()
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 
-	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("emi0","plane.obj");
+	LightGroup::GetInstance()->Initialize();
 
 	vp_.Initialize();
+	wt_.Initialize();
+
+	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_->Initialize(&vp_);
+
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize("debug/suzannu.obj");
 }
 
 void TitleScene::Finalize()
@@ -26,27 +32,21 @@ void TitleScene::Finalize()
 void TitleScene::Update()
 {
 
-	ImGui::Begin("scene");
-	if(ImGui::BeginTabBar("camera")) {
-		if (ImGui::BeginTabItem("camera")) {
-			ImGui::DragFloat3("translation", &vp_.translation_.x, 0.1f);
-			ImGui::DragFloat3("rotation", &vp_.rotation_.x, 0.1f);
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
-	}
-
-	emitter_->RenderImGui();
-
+	ImGui::Begin("titleScene");
+	debugCamera_->imgui();
+	LightGroup::GetInstance()->imgui();
 	ImGui::End();
 
 	if (input_->TriggerKey(DIK_RETURN)) {
-		sceneManager_->ChangeScene("GAME");
+		sceneManager_->NextSceneReservation("GAME");
 	}
-
-	vp_.UpdateMatrix();
-
-	emitter_->Update(vp_);
+	if (debugCamera_->GetActive()) {
+		debugCamera_->Update();
+	}
+	else {
+		vp_.UpdateMatrix();
+	}
+	wt_.UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -61,13 +61,13 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	emitter_->DrawEmitter(vp_);
+	obj_->Draw(wt_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->Draw();
+
 	//-----------------------------
 
 	/// -------描画処理終了-------

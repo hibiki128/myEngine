@@ -42,23 +42,31 @@ void DebugCamera::imgui()
 {
 #ifdef _DEBUG
 	if (ImGui::BeginTabBar("debugCamera")) {
-		if (ImGui::BeginTabItem("debugCamera")) {
-			ImGui::Checkbox("CameraActive", &isActive_);
+		if (ImGui::BeginTabItem("デバッグカメラ")) {
+			ImGui::Checkbox("デバッグカメラ切り替え", &isActive_);
 			if (isActive_) {
-				ImGui::DragFloat3("translation", &translation_.x, 0.01f);
+				ImGui::Checkbox("操作説明", &isManual);
+				if (isManual) {
+					ImGui::Separator();
+					ImGui::Text("・右クリック押しながら動かすと回転する");
+					ImGui::Text("・マウスホイール押しながら動かすと左右に移動する");
+					ImGui::Text("・マウスホイールを転がすと前後に移動する");
+					ImGui::Separator();
+				}
+				ImGui::DragFloat3("位置", &translation_.x, 0.01f);
 				Vector3 rotate = GetEulerAnglesFromMatrix(matRot_);
-				ImGui::DragFloat3("rotation", &rotate.x, 0.01f);
-				ImGui::DragFloat("ZSpeed", &moveZspeed, 0.001f);
-				ImGui::DragFloat("mouseSensitivity", &mouseSensitivity, 0.001f);
-				if (ImGui::Button("Camera Reset")) {
+				ImGui::DragFloat3("回転", &rotate.x, 0.01f);
+				ImGui::DragFloat("Z速度", &moveZspeed, 0.001f);
+				ImGui::DragFloat("カメラの速さ", &mouseSensitivity, 0.001f);
+				if (ImGui::Button("カメラリセット")) {
 					translation_ = { 0.0f,0.0f,-50.0f };
 					matRot_ = MakeIdentity4x4();
 				}
-				if (ImGui::Button("Speed Reset")) {
+				if (ImGui::Button("速度リセット")) {
 					mouseSensitivity = 0.003f;
 					moveZspeed = 0.005f;
 				}
-				ImGui::Checkbox("useMouse", &useMouse);
+				ImGui::Checkbox("マウスの切り替え", &useMouse);
 			}
 			ImGui::EndTabItem();
 		}
