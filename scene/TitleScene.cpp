@@ -31,16 +31,13 @@ void TitleScene::Initialize()
 	}
 
 	fall_ = std::make_unique<ParticleEmitter>();
-	fall_->Initialize("fall", "game/smoke.obj");
+	fall_->Initialize("cloud", "game/cloud.obj");
 
 	Break_ = std::make_unique<ParticleEmitter>();
 	Break_->Initialize("break", "game/star.obj");
 
 	WeekBreak_ = std::make_unique<ParticleEmitter>();
 	WeekBreak_->Initialize("WeekBreak", "debug/Triangle2D.obj");
-
-	starrySky = std::make_unique<ParticleEmitter>();
-	starrySky->Initialize("starrySky_left","game/starry.obj");
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("debug/suzannu.obj");
@@ -53,9 +50,6 @@ void TitleScene::Initialize()
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vP_);
-
-	skyDome_ = std::make_unique<Skydome>();
-	skyDome_->Init();
 }
 
 void TitleScene::Finalize()
@@ -76,7 +70,7 @@ void TitleScene::Update()
 	}
 
 	if (ImGui::BeginTabBar("2")) {
-		if (ImGui::BeginTabItem("title")) {
+		if (ImGui::BeginTabItem("cloud")) {
 			if (ImGui::Button("Update")) {
 				fall_->SetActive(false);
 			}
@@ -121,10 +115,6 @@ void TitleScene::Update()
 			}
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("starry")) {
-			starrySky->RenderImGui();
-			ImGui::EndTabItem();
-		}
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
@@ -139,12 +129,10 @@ void TitleScene::Update()
 	fall_->UpdateOnce(vP_);
 	Break_->UpdateOnce(vP_);
 	WeekBreak_->UpdateOnce(vP_);
-	starrySky->Update(vP_);
 	for (auto& coreFraction_ : coreFractions_) {
 		coreFraction_->UpdateOnce(vP_);
 	}
 	debugCamera_->Update();
-	skyDome_->Update();
 	if (!debugCamera_->GetActive()) {
 		vP_.UpdateMatrix();
 	}
@@ -164,8 +152,6 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	starrySky->DrawEmitter(vP_);
-	skyDome_->Draw(vP_);
 	obj_->Draw(wt_, vP_);
 	obj2_->Draw(wt2_, vP_);
 	fall_->DrawEmitter(vP_);
@@ -180,12 +166,12 @@ void TitleScene::Draw()
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
 	Break_->Draw();
-	fall_->Draw();
 	WeekBreak_->Draw();
 	for (auto& coreFraction_ : coreFractions_) {
 		coreFraction_->Draw();
 	}
-	starrySky->Draw();
+	ptCommon_->SetBlendMode(BlendMode::kNormal);
+	fall_->Draw();
 	//-----------------------------
 
 	/// -------描画処理終了-------

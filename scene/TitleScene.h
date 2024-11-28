@@ -53,12 +53,9 @@ private:
 	std::unique_ptr<ParticleEmitter> fall_;
 	std::unique_ptr<ParticleEmitter> Break_;
 	std::unique_ptr<ParticleEmitter> WeekBreak_;
-	std::unique_ptr<ParticleEmitter> starrySky;
 	std::vector<std::unique_ptr<ParticleEmitter>> coreFractions_;
 	std::unique_ptr<Object3d> obj_;
 	std::unique_ptr<Object3d> obj2_;
-	/// 天球
-	std::unique_ptr<Skydome>skyDome_;
 
 	std::unique_ptr<DebugCamera> debugCamera_;
 };
