@@ -47,7 +47,7 @@ void MyGame::Draw()
 	// ------------------------
 
 	dxCommon->PreDraw();
-	//offscreen_->Draw();
+	offscreen_->Draw();
 
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Draw();

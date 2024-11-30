@@ -37,6 +37,8 @@ public: // メンバ関数
 	/// </summary>
 	void Initialize(WinApp* winApp);
 
+	void CreateOffscreenSRV();
+
 	void PreRenderTexture();
 
 	/// <summary>
@@ -122,6 +124,10 @@ public: // メンバ関数
 
 	// バックバッファの数を取得
 	size_t GetBackBufferCount()const { return backBuffers.size(); }
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetOffScreenGPUHandle() { return offScreenSrvHandleGPU; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetOffScreenCPUHandle() { return offScreenSrvHandleCPU; }
+	uint32_t GetOffScreenSrvIndex() { return offScreenSrvIndex; }
 #pragma endregion
 
 private: // メンバ関数
@@ -285,4 +291,8 @@ private:
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
 	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
+
+	uint32_t offScreenSrvIndex = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE offScreenSrvHandleCPU;        // SRV作成時に必要なCPUハンドル
+	D3D12_GPU_DESCRIPTOR_HANDLE offScreenSrvHandleGPU;        // 描画コマンドに必要なGPUハンドル
 };

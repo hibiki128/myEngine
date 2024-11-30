@@ -8,6 +8,7 @@
 #include "StringUtility.h"
 #include "format"
 #include"thread"
+#include"SrvManager.h"
 using namespace Logger;
 using namespace StringUtility;
 
@@ -67,6 +68,13 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	ScissorRectInitialize();
 	// DXCコンパイラの生成
 	CreateDXCompiler();
+}
+
+void DirectXCommon::CreateOffscreenSRV()
+{
+	offScreenSrvIndex = SrvManager::GetInstance()->Allocate();
+	offScreenSrvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(offScreenSrvIndex);
+	offScreenSrvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(offScreenSrvIndex);
 }
 
 void DirectXCommon::PreRenderTexture()

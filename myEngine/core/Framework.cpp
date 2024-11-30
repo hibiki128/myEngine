@@ -31,7 +31,7 @@ void Framework::Initialize()
 	winApp = WinApp::GetInstance();
 	winApp->Initialize();
 	///-----------------------
-
+	
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
 	dxCommon = DirectXCommon::GetInstance();
@@ -50,10 +50,12 @@ void Framework::Initialize()
 	srvManager->Initialize();
 	///--------------------------
 
+	dxCommon->CreateOffscreenSRV();
+
 	///----------Input-----------
 	// 入力の初期化
 	input = Input::GetInstance();
-	input->Initialize(winApp);
+	input->Init(winApp->GetHInstance(),winApp->GetHwnd());
 	///--------------------------
 
 	///-----------TextureManager----------
@@ -122,7 +124,7 @@ void Framework::Finalize()
 #endif // _DEBUG
 	srvManager->Finalize();
 	audio->Finalize();
-	input->Finalize();
+	
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
 	particleCommon->Finalize();

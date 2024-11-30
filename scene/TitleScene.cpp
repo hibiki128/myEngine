@@ -17,6 +17,9 @@ void TitleScene::Initialize()
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("debug/suzannu.obj");
+
+	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_->Initialize(&vP_);
 }
 
 void TitleScene::Finalize()
@@ -26,13 +29,23 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
+
+	ImGui::Begin("scene"); 
+	debugCamera_->imgui();
+	ImGui::End();
+
 	//-----シーン切り替え-----
 	if (input_->TriggerKey(DIK_RETURN)) {
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-
+	if (debugCamera_->GetActive()) {
+		debugCamera_->Update();
+	}
+	else {
 	vP_.UpdateMatrix();
+	}
+
 	wt_.UpdateMatrix();
 }
 

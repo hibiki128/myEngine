@@ -11,14 +11,16 @@ void OffScreen::Initialize(const std::string& textureFilePath)
 	psoManager_->Initialize(dxCommon);
 	rootSignature = psoManager_->CreateRenderRootSignature(rootSignature);
 	graphicsPipelineState = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState, rootSignature, blendMode_);
+
+	
 }
 
 void OffScreen::Draw()
 {
 	psoManager_->DrawCommonSetting(graphicsPipelineState, rootSignature);
 	srvManager_ = TextureManager::GetInstance()->GetSrvManager();
-	srvManager_->CreateSRVforRenderTexture(srvManager_->Allocate() + 1,dxCommon->GetOffScreenResource());
-	srvManager_->SetGraphicsRootDescriptorTable(0, TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath));
+	srvManager_->CreateSRVforRenderTexture(dxCommon->GetOffScreenSrvIndex(), dxCommon->GetOffScreenResource());
+	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(0, dxCommon->GetOffScreenGPUHandle());
 	dxCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 

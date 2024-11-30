@@ -8,6 +8,7 @@
 #include"ViewProjection.h"
 #include"Object3d.h"
 #include"WorldTransform.h"
+#include"DebugCamera.h"
 
 class TitleScene :public BaseScene
 {
@@ -44,6 +45,7 @@ private:
 
 	ViewProjection vP_;
 	WorldTransform wt_;
+	std::unique_ptr<DebugCamera>debugCamera_;
 
 	std::unique_ptr<Object3d> obj_;
 };

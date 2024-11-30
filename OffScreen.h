@@ -26,5 +26,6 @@ private:
 
 	std::string directoryPath_ = "resources/images";
 	std::string fullpath;
+	
 };
 
