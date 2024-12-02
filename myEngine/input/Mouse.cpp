@@ -2,10 +2,10 @@
 #include <cmath>
 #include"myMath.h"
 #include<assert.h>
-void Mouse::Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput, HWND hWnd) {
+void Mouse::Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput,HWND hWnd) {
     hWnd_ = hWnd;
     //マウスデバイスの生成
-    HRESULT  result = directInput->CreateDevice(GUID_SysMouse, &devMouse_, NULL);
+  HRESULT  result = directInput->CreateDevice(GUID_SysMouse, &devMouse_, NULL);
     assert(SUCCEEDED(result));
     mousePosition_ = { 0.0f, 0.0f }; // 初期値の確認
 

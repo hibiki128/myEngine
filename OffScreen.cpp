@@ -5,12 +5,12 @@
 
 void OffScreen::Initialize()
 {
-	dxCommon = DirectXCommon::GetInstance();
-	psoManager_ = std::make_unique<PipeLineManager>();
-	psoManager_->Initialize(dxCommon);
-	rootSignature = psoManager_->CreateRenderRootSignature(rootSignature);
-	graphicsPipelineState[0] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[0], rootSignature, ShaderMode::kNone);
-	graphicsPipelineState[1] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[1], rootSignature, ShaderMode::kGray);
+    dxCommon = DirectXCommon::GetInstance();
+    psoManager_ = std::make_unique<PipeLineManager>();
+    psoManager_->Initialize(dxCommon);
+    rootSignature = psoManager_->CreateRenderRootSignature(rootSignature);
+    graphicsPipelineState[0] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[0], rootSignature, ShaderMode::kNone);
+    graphicsPipelineState[1] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[1], rootSignature, ShaderMode::kGray);
 }
 
 
@@ -29,9 +29,9 @@ void OffScreen::Draw()
     default:
         break;
     }
-	srvManager_ = SrvManager::GetInstance();
-	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(0, dxCommon->GetOffScreenGPUHandle());
-	dxCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+    srvManager_ = SrvManager::GetInstance();
+    dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(0, dxCommon->GetOffScreenGPUHandle());
+    dxCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
 void OffScreen::DrawCommonSetting()

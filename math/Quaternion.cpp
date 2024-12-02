@@ -38,3 +38,36 @@ Vector3 Quaternion::ToEulerAngles() const
 
     return angles;
 }
+
+void Quaternion::SetFromEulerAngles(const Vector3& eulerAngles)
+{
+    // ピッチ（X軸）、ヨー（Y軸）、ロール（Z軸）をラジアンで取得
+    float halfPitch = eulerAngles.x * 0.5f;
+    float halfYaw = eulerAngles.y * 0.5f;
+    float halfRoll = eulerAngles.z * 0.5f;
+
+    float sinPitch = std::sin(halfPitch);
+    float cosPitch = std::cos(halfPitch);
+    float sinYaw = std::sin(halfYaw);
+    float cosYaw = std::cos(halfYaw);
+    float sinRoll = std::sin(halfRoll);
+    float cosRoll = std::cos(halfRoll);
+
+    // クォータニオンを計算
+    w = cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll;
+    x = sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll;
+    y = cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll;
+    z = cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll;
+}
+
+float Quaternion::Length() const
+{
+    return std::sqrt(w * w + x * x + y * y + z * z);
+}
+
+Quaternion Quaternion::Normalize() const
+{
+    float len = Length();
+    if (len == 0.0f) return Quaternion();
+    return Quaternion(w / len, x / len, y / len, z / len);
+}

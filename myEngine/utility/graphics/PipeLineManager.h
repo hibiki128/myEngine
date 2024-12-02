@@ -62,14 +62,14 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateSpriteGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_);
 
 	/// <summary>
-    /// ルートシグネチャの作成
-    /// </summary>
+	/// ルートシグネチャの作成
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateRenderRootSignature(Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
 
 	/// <summary>
 	/// グラフィックスパイプラインの作成
 	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,ShaderMode shaderMode_);
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, ShaderMode shaderMode_);
 
 	/// <summary>
 	/// 共通描画設定

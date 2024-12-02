@@ -33,7 +33,7 @@ class Audio
 	};
 
 private:
-	static const int kMaxSoundData = 1024;
+	static const int kMaxSoundData = 2108;
 
 	static Audio* instance;
 

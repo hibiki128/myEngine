@@ -36,7 +36,7 @@ Collider::Collider() {
 	// グループがまだ存在しない場合のみ作成
 	if (!variables_->GroupExists(groupName)) {
 		variables_->CreateGroup(groupName);
-		variables_->AddItem(groupName, "Cube Translation", SphereOffset);
+		variables_->AddItem(groupName, "Sphere Translation", SphereOffset);
 		variables_->AddItem(groupName, "AABB Min", AABBOffset.min);
 		variables_->AddItem(groupName, "AABB Max", AABBOffset.max);
 		variables_->AddItem(groupName, "OBB center", OBBOffset.center);
@@ -63,7 +63,8 @@ void Collider::UpdateWorldTransform() {
 	Cubewt_.UpdateMatrix();
 
 	// AABBの現在の最小点と最大点を取得
-	aabb = GetAABB();
+	aabb.min = GetCenterPosition() - scale_;
+	aabb.max = GetCenterPosition() + scale_;
 	aabb.min = aabb.min + AABBOffset.min;
 	aabb.max = aabb.max + AABBOffset.max;
 
@@ -76,7 +77,7 @@ void Collider::UpdateWorldTransform() {
 	AABBwt_.scale_ = aabbScale;
 	AABBwt_.UpdateMatrix();
 
-	obb.center = GetCenterPos();
+	obb.center = GetCenterPosition();
 	obb.center = obb.center + OBBOffset.center;
 	MakeOBBOrientations(obb, GetCenterRotation());
 	obb.size = { 1.0f,1.0f,1.0f };
@@ -104,7 +105,7 @@ void Collider::DrawOBB(const ViewProjection& viewProjection) {
 
 void Collider::ApplyVariables()
 {
-	SphereOffset = variables_->GetVector3Value(groupName, "Cube Translation");
+	SphereOffset = variables_->GetVector3Value(groupName, "Sphere Translation");
 	AABBOffset.min = variables_->GetVector3Value(groupName, "AABB Min");
 	AABBOffset.max = variables_->GetVector3Value(groupName, "AABB Max");
 	OBBOffset.center = variables_->GetVector3Value(groupName, "OBB center");

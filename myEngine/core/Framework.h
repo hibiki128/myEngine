@@ -1,26 +1,20 @@
 #pragma once
-#include"D3DResourceLeakChecker.h"
-#include"d3dx12.h"
 #include"DirectXCommon.h"
-#include"DirectXTex.h"
 #ifdef _DEBUG
-#include"ImGuiManager.h"
 #endif // _DEBUG
 #include"Input.h"
-#include"ModelManager.h"
-#include"Object3d.h"
 #include"Object3dCommon.h"
-#include"Sprite.h"
 #include"SpriteCommon.h"
 #include"SrvManager.h"
-#include "StringUtility.h"
-#include"TextureManager.h"
 #include"Audio.h"
 #include"SceneManager.h"
 #include"AbstractSceneFactory.h"
 #include"ParticleCommon.h"
 #include"CollisionManager.h"
+#include"ModelManager.h"
+#include"TextureManager.h"
 #include"offScreen.h"
+
 class Framework
 {
 public:// メンバ関数
@@ -48,37 +42,49 @@ public:// メンバ関数
 	virtual void Update();
 
 	/// <summary>
+	/// リソース
+	/// </summary>
+	void LoadResource();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	virtual void Draw() = 0;
+
+	void PlaySounds();
 
 	/// <summary>
 	/// 終了チェック
 	/// </summary>
 	/// <returns></returns>
 	virtual bool IsEndRequest() { return endRequest_; }
-
 private:
 	/// <summary>
-	///  FPS表示
-	/// </summary>
+    ///  FPS表示
+    /// </summary>
 	void DisplayFPS();
 
 protected:
 
 	Input* input = nullptr;
 	Audio* audio = nullptr;
+	DirectXCommon* dxCommon = nullptr;
+	WinApp* winApp = nullptr;
+	// シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
+
 	SceneManager* sceneManager_ = nullptr;
+	SrvManager* srvManager = nullptr;
+	TextureManager* textureManager_ = nullptr;
+	ModelManager* modelManager_ = nullptr;
+
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
 	ParticleCommon* particleCommon = nullptr;
-	DirectXCommon* dxCommon = nullptr;
-	WinApp* winApp;
-	SrvManager* srvManager=nullptr;
-	bool endRequest_;
-	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<OffScreen> offscreen_;
+
+	bool endRequest_;
 };
 

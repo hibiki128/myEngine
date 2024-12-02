@@ -91,15 +91,14 @@ public:
 	virtual Vector3 GetCenterPosition() const = 0;
 	virtual Vector3 GetCenterRotation() const = 0;
 
-	virtual AABB GetAABB()const = 0;
 	// 種別IDを取得
 	uint32_t GetTypeID() const { return typeID_; }
 	// 種別IDを設定
 	void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
 
-	Vector3 GetCenterPos() { return Cubewt_.translation_; }
-	AABB GetAABBPos() { return aabb; }
-	OBB GetOBBPos() { return obb; }
+	Vector3 GetCenter() { return Cubewt_.translation_; }
+	AABB GetAABB() { return aabb; }
+	OBB GetOBB() { return obb; }
 
 	/// <summary>
 	/// setter
@@ -108,6 +107,7 @@ public:
 	void SetRadius(float radius) { radius_ = radius; }
 	void SetIsColliding(bool colliding) { wasColliding = isColliding; isColliding = colliding; }
 	void SetCollisionEnabled(bool enabled) { isCollisionEnabled_ = enabled; }
+	void SetAABBScale(Vector3 scale) { scale_ = scale; }
 
 	bool IsCollisionEnabled() const { return isCollisionEnabled_; }
 	bool IsColliding() const { return isColliding; }
@@ -137,6 +137,7 @@ private:
 	OBB obb;
 	Vector3 aabbCenter;
 	Vector3 aabbScale;
+	Vector3 scale_ = { 1.0f,1.0f,1.0f };
 
 	static int counter; // 静的カウンタ
 	Vector3 SphereOffset = { 0.0f,0.0f,0.0f };

@@ -35,6 +35,10 @@ void CollisionManager::Initialize() {
 
 void CollisionManager::UpdateWorldTransform() {
 	ApplyGlobalVariables();
+	//// 非表示なら抜ける
+	//if (!visible) {
+	//	return;
+	//}
 	// 全てのコライダーについて
 	for (Collider* collider : colliders_) {
 		// 更新
@@ -81,21 +85,21 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	// 球の衝突チェック
 	if (sphereCollision) {
-		Vector3 posA = colliderA->GetCenterPos();
-		Vector3 posB = colliderB->GetCenterPos();
+		Vector3 posA = colliderA->GetCenter();
+		Vector3 posB = colliderB->GetCenter();
 		float distance = (posA - posB).Length();
 		isCollidingNow = (distance <= colliderA->GetRadius() + colliderB->GetRadius());
 	}
 
 	// AABBの衝突チェック
 	if (aabbCollision && !isCollidingNow) {
-		isCollidingNow = IsCollision(colliderA->GetAABBPos(), colliderB->GetAABBPos());
+		isCollidingNow = IsCollision(colliderA->GetAABB(), colliderB->GetAABB());
 	}
 
 	// OBB同士の衝突チェック
 	if (obbCollision && !isCollidingNow) {
-		OBB obbA = colliderA->GetOBBPos();
-		OBB obbB = colliderB->GetOBBPos();
+		OBB obbA = colliderA->GetOBB();
+		OBB obbB = colliderB->GetOBB();
 		isCollidingNow = IsCollision(obbA, obbB);
 	}
 
@@ -188,14 +192,11 @@ bool CollisionManager::IsCollision(const OBB& obb1, const OBB& obb2) {
 
 	// 各軸に対してSATを使って衝突判定を行う
 	for (const Vector3& axis : axes) {
-		// 軸の長さがほぼ0でないか確認
-		if (axis.Length() > 0.0001f) {
-			Vector3 normalizedAxis = axis.Normalize();  // 正規化された軸
-			if (!testAxis(normalizedAxis, obb1, obb2)) {
-				return false;  // 衝突しない場合は即座にfalse
-			}
+		if (axis.Length() > 0.0001f && !testAxis(axis.Normalize(), obb1, obb2)) {
+			return false;
 		}
 	}
+
 
 	return true;  // 全ての軸で衝突している場合はtrue
 }

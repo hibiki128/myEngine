@@ -18,25 +18,6 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 
 	// 単位行列を書き込んでおく
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
-
-	Update();
-}
-
-void Model::Update()
-{
-	vertexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-
-	// 頂点バッファビューを作成する
-	vertexBufferView;
-	// リソースの先頭のアドレスから使う
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズは頂点のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	// 1頂点あたりのサイズ
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
 
 void Model::Draw()
@@ -62,6 +43,8 @@ void Model::CreateVartexData()
 
 	// 頂点データの設定
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
 
 Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
@@ -80,7 +63,7 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 			std::string textureFilename;
 			s >> textureFilename;
 			// 連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
+			materialData.textureFilePath = directoryPath + "../images/" + textureFilename;
 		}
 	}
 
@@ -128,7 +111,6 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
-			/*texcoord.x = 1.0f - texcoord.x;*/
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}

@@ -25,8 +25,8 @@ public: // メンバ関数
 	void Finalize();
 
 	/// <summary>
-    ///  初期化
-    /// </summary>
+	///  初期化
+	/// </summary>
 	void  Initialize();
 
 	/// <summary>
@@ -53,7 +53,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[5];
 
 	BlendMode blendMode_ = BlendMode::kNormal;
 

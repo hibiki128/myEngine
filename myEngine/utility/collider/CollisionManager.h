@@ -11,10 +11,10 @@ private:
 
 	bool visible = true;
 
-	bool sphereCollision = true;
+	bool sphereCollision = true; 
 
-	bool aabbCollision = true;
-
+	bool aabbCollision = true; 
+	
 	bool obbCollision = true;
 
 public:

@@ -21,10 +21,10 @@ private:
 	Vector2 mousePosition_;
 	HWND hWnd_;
 public:
-
+	
 
 	//初期化、更新
-	void Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput, HWND hWnd);
+	void Init(Microsoft::WRL::ComPtr<IDirectInput8>directInput,HWND hWnd);
 	void Update();
 
 	/// <summary>
@@ -57,7 +57,7 @@ public:
 	/// マウスの位置を取得する（ウィンドウ座標系）
 	/// </summary>
 	/// <returns>マウスの位置</returns>
-	Vector2 GetMousePos();
+	Vector2 GetMousePos() ;
 
 	/// <summary>
 	/// 3Dのマウス座標
@@ -65,6 +65,6 @@ public:
 	/// <param name="viewprojection"></param>
 	/// <param name="depthFactor"></param>
 	/// <returns></returns>
-	Vector3 GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing = 1.0f) const;
+	Vector3 GetMousePos3D(const ViewProjection& viewprojection, float depthFactor, float blockSpacing=1.0f) const;
 
 };

@@ -1,11 +1,13 @@
 #pragma once
 #include "Audio.h"
-#include"BaseScene.h"
+#include "BaseScene.h"
 #include "Input.h"
-#include"Object3dCommon.h"
+#include "Object3dCommon.h"
 #include "SpriteCommon.h"
-#include"ParticleCommon.h"
+#include "ParticleCommon.h"
 #include"ViewProjection.h"
+#include"DebugCamera.h"
+
 class GameScene : public BaseScene
 {
 public: // メンバ関数
@@ -32,10 +34,20 @@ public: // メンバ関数
 
 	ViewProjection* GetViewProjection()override { return &vp_; }
 private:
+	void Debug();
+
+	void CameraUpdate();
+
+	void ChangeScene();
+private:
+
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+
+	// ビュープロジェクション
 	ViewProjection vp_;
+	std::unique_ptr<DebugCamera> debugCamera_;
 };

@@ -93,7 +93,7 @@ void DirectXCommon::PreRenderTexture()
 	commandList->ClearRenderTargetView(rtvHandles[2], clearColorValue.Color, 0, nullptr);
 	// 指定した深度で画面全体をクリアする
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	
+
 	commandList->RSSetViewports(1, &viewport); // Viewportを設定
 	commandList->RSSetScissorRects(1, &scissorRect); // Scirssorを設定
 

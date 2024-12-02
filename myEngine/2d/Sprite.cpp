@@ -3,7 +3,7 @@
 #include "math/myMath.h"
 #include "TextureManager.h"
 
-void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color , Vector2 anchorpoint, bool isFlipX, bool isFlipY)
+void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color, Vector2 anchorpoint, bool isFlipX, bool isFlipY)
 {
 	// 引数で受け取ってメンバ変数に記録する
 	spriteCommon_ = SpriteCommon::GetInstance();
@@ -83,7 +83,7 @@ void Sprite::Update()
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
 	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-	Matrix4x4 worldProjectionMatrix = (worldMatrix *(viewMatrix * projectionMatrix));
+	Matrix4x4 worldProjectionMatrix = (worldMatrix * (viewMatrix * projectionMatrix));
 	transformationMatrixData->WVP = worldProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
 }

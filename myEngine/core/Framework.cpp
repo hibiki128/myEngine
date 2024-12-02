@@ -1,5 +1,8 @@
 #include "Framework.h"
 #include"GlobalVariables.h"
+#include"ImGuiManager.h"
+#include <D3DResourceLeakChecker.h>
+#include"myEngine/Frame/Frame.h"
 
 void Framework::Run()
 {
@@ -31,7 +34,7 @@ void Framework::Initialize()
 	winApp = WinApp::GetInstance();
 	winApp->Initialize();
 	///-----------------------
-	
+
 	///---------DirectXCommon----------
 	// DirectXCommonの初期化
 	dxCommon = DirectXCommon::GetInstance();
@@ -50,20 +53,23 @@ void Framework::Initialize()
 	srvManager->Initialize();
 	///--------------------------
 
+	// offscreenのSRV作成
 	dxCommon->CreateOffscreenSRV();
 
 	///----------Input-----------
 	// 入力の初期化
 	input = Input::GetInstance();
-	input->Init(winApp->GetHInstance(),winApp->GetHwnd());
+	input->Init(winApp->GetHInstance(), winApp->GetHwnd());
 	///--------------------------
 
 	///-----------TextureManager----------
-	TextureManager::GetInstance()->Initialize(srvManager);
+	textureManager_ = TextureManager::GetInstance();
+	textureManager_->Initialize(srvManager);
 	///-----------------------------------
 
 	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(srvManager);
+	modelManager_ = ModelManager::GetInstance();
+	modelManager_->Initialize(srvManager);
 	///----------------------------------
 
 	///----------SpriteCommon------------
@@ -93,14 +99,22 @@ void Framework::Initialize()
 	collisionManager_->Initialize();
 	///-------------------------------------
 
+	///-------SceneManager--------
+	sceneManager_ = SceneManager::GetInstance();
+	sceneManager_->Initialize();
+	///---------------------------
+
 	///-------OffScreen--------
 	offscreen_ = std::make_unique<OffScreen>();
 	offscreen_->Initialize();
 	///------------------------
 
-	sceneManager_ = SceneManager::GetInstance();
+	LightGroup::GetInstance()->Initialize();
 
 	GlobalVariables::GetInstance()->LoadFiles();
+	
+	/// 時間の初期化
+	Frame::Init();
 
 }
 
@@ -112,11 +126,11 @@ void Framework::Finalize()
 	winApp->Finalize();
 
 	/// -------TextureManager-------
-	TextureManager::GetInstance()->Finalize();
+	textureManager_->Finalize();
 	///-----------------------------
 
 	/// -------ModelCommon-------
-	ModelManager::GetInstance()->Finalize();
+	modelManager_->Finalize();
 	///---------------------------
 
 #ifdef _DEBUG
@@ -124,7 +138,7 @@ void Framework::Finalize()
 #endif // _DEBUG
 	srvManager->Finalize();
 	audio->Finalize();
-	
+	LightGroup::GetInstance()->Finalize();
 	object3dCommon->Finalize();
 	spriteCommon->Finalize();
 	particleCommon->Finalize();
@@ -134,6 +148,8 @@ void Framework::Finalize()
 
 void Framework::Update()
 {
+	/// deltaTimeの更新
+	Frame::Update();
 #ifdef _DEBUG
 
 	ImGuiManager::GetInstance()->Begin();
@@ -142,8 +158,8 @@ void Framework::Update()
 	offscreen_->DrawCommonSetting();
 	sceneManager_->Update();
 	collisionManager_->Update();
-	DisplayFPS();
 #ifdef _DEBUG
+	DisplayFPS();
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
 
@@ -158,6 +174,15 @@ void Framework::Update()
 	endRequest_ = winApp->ProcessMessage();
 }
 
+void Framework::LoadResource()
+{
+	
+}
+
+void  Framework::PlaySounds() {
+	
+}
+
 void Framework::Draw()
 {
 
@@ -168,14 +193,24 @@ void Framework::DisplayFPS()
 #ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 
-	// 左上に固定
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	// ウィンドウ固定
+	ImGui::SetNextWindowPos(ImVec2(1230, 0), ImGuiCond_Always);
+	ImGui::SetNextWindowBgAlpha(0.0f); // 背景を完全透明に設定
 
-	ImGui::Begin("FPS Overlay");
+	// ウィンドウフラグを設定
+	ImGui::Begin("FPS Overlay", nullptr,
+		ImGuiWindowFlags_NoTitleBar |         // タイトルバーを非表示
+		ImGuiWindowFlags_NoResize |          // リサイズを禁止
+		ImGuiWindowFlags_NoMove |            // ウィンドウの移動を禁止
+		ImGuiWindowFlags_NoScrollbar |       // スクロールバーを非表示
+		ImGuiWindowFlags_NoCollapse |        // 折りたたみボタンを非表示
+		ImGuiWindowFlags_AlwaysAutoResize |  // 必要なサイズに自動調整
+		ImGuiWindowFlags_NoBackground        // 背景を非表示
+	);
 
-	// 文字色を緑に変更
-	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255)); // 緑色
-	ImGui::Text("FPS: %.1f", io.Framerate);
+	// 文字色を緑に設定
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(100, 255, 100, 255));
+	ImGui::Text("%.1f", io.Framerate);
 	ImGui::PopStyleColor();
 
 	ImGui::End();

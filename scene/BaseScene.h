@@ -34,5 +34,6 @@ public:
 protected:
 	// シーンマネージャ
 	SceneManager* sceneManager_ = nullptr;
+
 };
 

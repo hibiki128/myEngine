@@ -50,11 +50,6 @@ public:
 	void Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename);
 
 	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-
-	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();

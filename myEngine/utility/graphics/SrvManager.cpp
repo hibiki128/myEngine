@@ -33,7 +33,7 @@ void SrvManager::PreDraw()
 {
     // 描画用のDescriptorHeapの設定
     ID3D12DescriptorHeap* descriptorHeaps[] = { descriptorHeap.Get() };
-    dxCommon->GetCommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+    dxCommon->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT Format, UINT MipLevels)

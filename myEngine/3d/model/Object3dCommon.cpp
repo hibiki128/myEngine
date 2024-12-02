@@ -24,15 +24,37 @@ void Object3dCommon::Initialize()
 	psoManager_ = std::make_unique<PipeLineManager>();
 	psoManager_->Initialize(dxCommon_);
 	rootSignature = psoManager_->CreateRootSignature(rootSignature);
-	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature, blendMode_);
+	graphicsPipelineState[0] = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState[0], rootSignature, BlendMode::kNormal);
+	graphicsPipelineState[1] = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState[1], rootSignature, BlendMode::kAdd);
+	graphicsPipelineState[2] = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState[2], rootSignature, BlendMode::kSubtract);
+	graphicsPipelineState[3] = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState[3], rootSignature, BlendMode::kMultiply);
+	graphicsPipelineState[4] = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState[4], rootSignature, BlendMode::kScreen);
 }
 
 void Object3dCommon::DrawCommonSetting()
 {
-	psoManager_->DrawCommonSetting(graphicsPipelineState,rootSignature);
+	psoManager_->DrawCommonSetting(graphicsPipelineState[0], rootSignature);
 }
 
 void Object3dCommon::SetBlendMode(BlendMode blendMode)
 {
-	psoManager_->CreateGraphicsPipeLine(graphicsPipelineState, rootSignature, blendMode);
+	switch (blendMode) {
+	case BlendMode::kNormal:
+		psoManager_->DrawCommonSetting(graphicsPipelineState[0], rootSignature);
+		break;
+	case BlendMode::kAdd:
+		psoManager_->DrawCommonSetting(graphicsPipelineState[1], rootSignature);
+		break;
+	case BlendMode::kSubtract:
+		psoManager_->DrawCommonSetting(graphicsPipelineState[2], rootSignature);
+		break;
+	case BlendMode::kMultiply:
+		psoManager_->DrawCommonSetting(graphicsPipelineState[3], rootSignature);
+		break;
+	case BlendMode::kScreen:
+		psoManager_->DrawCommonSetting(graphicsPipelineState[4], rootSignature);
+		break;
+	default:
+		break;
+	}
 }
