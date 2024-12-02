@@ -1,5 +1,6 @@
 #include "FullScreen.hlsli"
 
+
 // 3x3カーネル用
 static const float2 kIndex3x3[3][3] =
 {
@@ -58,6 +59,12 @@ static const float kKernel7x7[7][7] =
     { 1.0f / 49.0f, 1.0f / 49.0f, 1.0f / 49.0f, 1.0f / 49.0f, 1.0f / 49.0f, 1.0f / 49.0f, 1.0f / 49.0f },
 };
 
+
+cbuffer KernelSettings : register(b0)
+{
+    int kernelSize; // カーネルのサイズ（3, 5, 7 のいずれか）
+};
+
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 
@@ -76,39 +83,57 @@ PixelShaderOutput main(VertexShaderOutput input)
     output.color.rgb = float3(0.0f, 0.0f, 0.0f);
     output.color.a = 1.0f;
 
-    // 3x3カーネル適用処理
-    
-    for (int x = 0; x < 3; ++x)
+    if (kernelSize == 3)
     {
-        for (int y = 0; y < 3; ++y)
+        for (int x = 0; x <= 3; ++x)
         {
-            float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-            float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
-            output.color.rgb += fetchColor * kKernel3x3[x][y];
+            for (int y = 0; y <= 3; ++y)
+            {
+            // テクスチャ座標を計算
+                float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
+
+            // テクスチャの値をサンプリング
+                float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
+
+            // カーネル値を掛けて加算
+                output.color.rgb += fetchColor * kKernel3x3[x][y];
+            }
         }
     }
-    
-    // 5x5カーネル適用処理
-    //for (int x = 0; x < 5; ++x)
-    //{
-    //    for (int y = 0; y < 5; ++y)
-    //    {
-    //        float2 texcoord = input.texcoord + kIndex5x5[x][y] * uvStepSize;
-    //        float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
-    //        output.color.rgb += fetchColor * kKernel5x5[x][y];
-    //    }
-    //}
-    
-    // 7x7カーネル適用処理
-    //for (int x = 0; x < 7; ++x)
-    //{
-    //    for (int y = 0; y < 7; ++y)
-    //    {
-    //        float2 texcoord = input.texcoord + kIndex7x7[x][y] * uvStepSize;
-    //        float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
-    //        output.color.rgb += fetchColor * kKernel7x7[x][y];
-    //    }
-    //}
+    else if (kernelSize == 5)
+    {
+        for (int x = 0; x <= 5; ++x)
+        {
+            for (int y = 0; y <= 5; ++y)
+            {
+            // テクスチャ座標を計算
+                float2 texcoord = input.texcoord + kIndex5x5[x][y] * uvStepSize;
+
+            // テクスチャの値をサンプリング
+                float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
+
+            // カーネル値を掛けて加算
+                output.color.rgb += fetchColor * kKernel5x5[x][y];
+            }
+        }
+    }
+    else if (kernelSize == 7)
+    {
+        for (int x = 0; x <= 6; ++x)
+        {
+            for (int y = 0; y <= 6; ++y)
+            {
+            // テクスチャ座標を計算
+                float2 texcoord = input.texcoord + kIndex7x7[x][y] * uvStepSize;
+
+            // テクスチャの値をサンプリング
+                float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
+
+            // カーネル値を掛けて加算
+                output.color.rgb += fetchColor * kKernel7x7[x][y];
+            }
+        }
+    }
 
     return output;
 }
