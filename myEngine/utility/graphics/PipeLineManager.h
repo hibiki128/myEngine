@@ -22,7 +22,8 @@ enum class ShaderMode {
 	kNone,
 	kGray,
 	kVigneet,
-	kSmooth
+	kSmooth,
+	kGauss
 };
 
 class PipeLineManager

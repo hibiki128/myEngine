@@ -78,15 +78,15 @@ PixelShaderOutput main(VertexShaderOutput input)
 
     // 3x3カーネル適用処理
     
-    //for (int x = 0; x < 3; ++x)
-    //{
-    //    for (int y = 0; y < 3; ++y)
-    //    {
-    //        float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
-    //        float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
-    //        output.color.rgb += fetchColor * kKernel3x3[x][y];
-    //    }
-    //}
+    for (int x = 0; x < 3; ++x)
+    {
+        for (int y = 0; y < 3; ++y)
+        {
+            float2 texcoord = input.texcoord + kIndex3x3[x][y] * uvStepSize;
+            float3 fetchColor = gTexture.Sample(gSampler, texcoord).rgb;
+            output.color.rgb += fetchColor * kKernel3x3[x][y];
+        }
+    }
     
     // 5x5カーネル適用処理
     //for (int x = 0; x < 5; ++x)

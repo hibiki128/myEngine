@@ -637,6 +637,10 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphic
 		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/BoxFilter.PS.hlsl", L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 		break;
+	case ShaderMode::kGauss:
+		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/GaussianFilter.PS.hlsl", L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+		break;
 	default:
 		break;
 	}
