@@ -12,6 +12,7 @@ void OffScreen::Initialize()
     graphicsPipelineState[0] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[0], rootSignature, ShaderMode::kNone);
     graphicsPipelineState[1] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[1], rootSignature, ShaderMode::kGray);
     graphicsPipelineState[2] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[2], rootSignature, ShaderMode::kVigneet);
+    graphicsPipelineState[3] = psoManager_->CreateRenderGraphicsPipeLine(graphicsPipelineState[3], rootSignature, ShaderMode::kSmooth);
 }
 
 
@@ -30,6 +31,9 @@ void OffScreen::Draw()
     case ShaderMode::kVigneet:
         psoManager_->DrawCommonSetting(graphicsPipelineState[2], rootSignature);
         break;
+    case ShaderMode::kSmooth:
+        psoManager_->DrawCommonSetting(graphicsPipelineState[3], rootSignature);
+        break;
     default:
         break;
     }
@@ -43,7 +47,7 @@ void OffScreen::DrawCommonSetting()
     ImGui::Begin("Offscreen");
 
     // ShaderModeを文字列で表現
-    const char* shaderModeItems[] = { "None", "Gray","Vignett"};
+    const char* shaderModeItems[] = { "None", "Gray","Vignett","Smooth"};
     int currentShaderMode = static_cast<int>(shaderMode_);
 
     // Comboを描画してユーザーが選択した場合に値を更新

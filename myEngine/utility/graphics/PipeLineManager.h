@@ -21,7 +21,8 @@ enum class BlendMode {
 enum class ShaderMode {
 	kNone,
 	kGray,
-	kVigneet
+	kVigneet,
+	kSmooth
 };
 
 class PipeLineManager
