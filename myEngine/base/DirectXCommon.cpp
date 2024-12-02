@@ -73,6 +73,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 void DirectXCommon::CreateOffscreenSRV()
 {
 	offScreenSrvIndex = SrvManager::GetInstance()->Allocate();
+	SrvManager::GetInstance()->CreateSRVforRenderTexture(offScreenSrvIndex, offScreenResource.Get());
 	offScreenSrvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(offScreenSrvIndex);
 	offScreenSrvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(offScreenSrvIndex);
 }
@@ -355,9 +356,9 @@ void DirectXCommon::RenderTargetViewInitialize()
 	//=================RenderTextureResource用のRTVの設定======================
 	// RenderTextureResourceの作成
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	clearColorValue.Color[0] = 1.0f;
-	clearColorValue.Color[1] = 0.0f;
-	clearColorValue.Color[2] = 0.0f;
+	clearColorValue.Color[0] = 0.1f;
+	clearColorValue.Color[1] = 0.25f;
+	clearColorValue.Color[2] = 0.5f;
 	clearColorValue.Color[3] = 1.0f;
 	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, clearColorValue.Format, clearColorValue);
 

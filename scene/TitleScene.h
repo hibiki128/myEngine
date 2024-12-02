@@ -44,8 +44,10 @@ private:
 	ParticleCommon* ptCommon_;
 
 	ViewProjection vP_;
-	WorldTransform wt_;
+	WorldTransform wt1_;
+	WorldTransform wt2_;
 	std::unique_ptr<DebugCamera>debugCamera_;
 
-	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<Object3d> suzannu_;
+	std::unique_ptr<Object3d> sphere_;
 };

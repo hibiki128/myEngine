@@ -559,7 +559,6 @@ Microsoft::WRL::ComPtr<ID3D12RootSignature> PipeLineManager::CreateRenderRootSig
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// DescriptorRange
-	// DescriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
 	descriptorRange[0].NumDescriptors = 1; // 数は1つ
@@ -603,7 +602,7 @@ Microsoft::WRL::ComPtr<ID3D12RootSignature> PipeLineManager::CreateRenderRootSig
 	return rootSignature;
 }
 
-Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_)
+Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, ShaderMode shaderMode_)
 {
 
 	HRESULT hr;
@@ -613,12 +612,29 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphic
 	layout.pInputElementDescs = nullptr;
 	layout.NumElements = 0;
 
-	// Shaderをコンパイルする
-	IDxcBlob* vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
+	IDxcBlob* vertexShaderBlob{};
+	IDxcBlob* pixelShaderBlob{};
+	switch (shaderMode_)
+	{
+	case ShaderMode::kNone:
+		// Shaderをコンパイルする
+		vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
+		assert(vertexShaderBlob != nullptr);
 
-	IDxcBlob* pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
+		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+		break;
+	case ShaderMode::kGray:
+		// Shaderをコンパイルする
+		vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
+		assert(vertexShaderBlob != nullptr);
+
+		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+		break;
+	default:
+		break;
+	}
 
 	///=========DepthStencilStateの設定==========
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};

@@ -3,7 +3,6 @@
 #include "d3d12.h"
 #include <DirectXCommon.h>
 
-// static を削除
 enum class BlendMode {
 	// ブレンドなし
 	kNone,
@@ -14,9 +13,14 @@ enum class BlendMode {
 	// 減算
 	kSubtract,
 	// 乗算
-	kMultiply, // スペルミスを修正
+	kMultiply,
 	// スクリーン
 	kScreen,
+};
+
+enum class ShaderMode {
+	kNone,
+	kGray
 };
 
 class PipeLineManager
@@ -65,13 +69,12 @@ public:
 	/// <summary>
 	/// グラフィックスパイプラインの作成
 	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature, BlendMode blendMode_);
-
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateRenderGraphicsPipeLine(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature,ShaderMode shaderMode_);
 
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void DrawCommonSetting(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature);
+	void DrawCommonSetting(Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState, Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignatur);
 
 private:
 	DirectXCommon* dxCommon_;

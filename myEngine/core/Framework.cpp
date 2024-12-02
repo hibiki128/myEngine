@@ -95,7 +95,7 @@ void Framework::Initialize()
 
 	///-------OffScreen--------
 	offscreen_ = std::make_unique<OffScreen>();
-	offscreen_->Initialize("uvChecker.png");
+	offscreen_->Initialize();
 	///------------------------
 
 	sceneManager_ = SceneManager::GetInstance();
@@ -139,6 +139,7 @@ void Framework::Update()
 	ImGuiManager::GetInstance()->Begin();
 	GlobalVariables::GetInstance()->Update();
 #endif // _DEBUG
+	offscreen_->DrawCommonSetting();
 	sceneManager_->Update();
 	collisionManager_->Update();
 	DisplayFPS();

@@ -13,10 +13,16 @@ void TitleScene::Initialize()
 	input_ = Input::GetInstance();
 
 	vP_.Initialize();
-	wt_.Initialize();
+	wt1_.Initialize();
+	wt2_.Initialize();
 
-	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("debug/suzannu.obj");
+	wt1_.translation_ = { -2.0f,0.0f,0.0f };
+	wt2_.translation_ = { 2.0f,0.0f,0.0f };
+
+	suzannu_ = std::make_unique<Object3d>();
+	suzannu_->Initialize("debug/suzannu.obj");
+	sphere_ = std::make_unique<Object3d>();
+	sphere_->Initialize("debug/sphere.obj");
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vP_);
@@ -46,7 +52,8 @@ void TitleScene::Update()
 	vP_.UpdateMatrix();
 	}
 
-	wt_.UpdateMatrix();
+	wt1_.UpdateMatrix();
+	wt2_.UpdateMatrix();
 }
 
 void TitleScene::Draw()
@@ -61,7 +68,8 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	obj_->Draw(wt_, vP_);
+	suzannu_->Draw(wt1_, vP_);
+	sphere_->Draw(wt2_, vP_);
 	//--------------------------
 
 	/// Particleの描画準備

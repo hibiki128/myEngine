@@ -7,12 +7,13 @@ class DirectXCommon;
 class OffScreen
 {
 public:
-	void Initialize(const std::string& textureFilePath);
+	void Initialize();
 
 	void Draw();
 
+	void DrawCommonSetting();
 private:
-	
+
 private:
 	DirectXCommon* dxCommon;
 	SrvManager* srvManager_;
@@ -21,11 +22,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
-	BlendMode blendMode_ = BlendMode::kNormal;
-
-	std::string directoryPath_ = "resources/images";
-	std::string fullpath;
-	
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[2];
+	ShaderMode shaderMode_ = ShaderMode::kNone;
 };
 

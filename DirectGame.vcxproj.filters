@@ -315,8 +315,8 @@
     <ClCompile Include="OffScreen.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="myEngine\input\Mouse.cpp">
+      <Filter>ソース ファイル\myEngine\input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -330,7 +330,7 @@
     <None Include="resources\shaders\Sprite.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
-    <None Include="resources\shaders\CopyImage.hlsli">
+    <None Include="resources\shaders\FullScreen.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
@@ -509,8 +509,8 @@
     <ClInclude Include="OffScreen.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="myEngine\input\Mouse.h">
+      <Filter>ヘッダー ファイル\myEngine\input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -535,7 +535,10 @@
     <FxCompile Include="resources\shaders\CopyImage.PS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\CopyImage.VS.hlsl">
+    <FxCompile Include="resources\shaders\FullScreen.VS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Grayscale.PS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
   </ItemGroup>
