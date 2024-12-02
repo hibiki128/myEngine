@@ -618,22 +618,19 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> PipeLineManager::CreateRenderGraphic
 
 	IDxcBlob* vertexShaderBlob{};
 	IDxcBlob* pixelShaderBlob{};
+	vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
 	switch (shaderMode_)
 	{
 	case ShaderMode::kNone:
-		// Shaderをコンパイルする
-		vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
-		assert(vertexShaderBlob != nullptr);
-
 		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 		break;
 	case ShaderMode::kGray:
-		// Shaderをコンパイルする
-		vertexShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
-		assert(vertexShaderBlob != nullptr);
-
 		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
+		assert(pixelShaderBlob != nullptr);
+		break;
+	case ShaderMode::kVigneet:
+		pixelShaderBlob = dxCommon_->CompileShader(L"./resources/shaders/Vignette.PS.hlsl", L"ps_6_0");
 		assert(pixelShaderBlob != nullptr);
 		break;
 	default:

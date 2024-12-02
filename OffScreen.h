@@ -22,7 +22,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[2];
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[3];
 	ShaderMode shaderMode_ = ShaderMode::kNone;
 };
 

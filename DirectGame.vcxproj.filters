@@ -246,9 +246,6 @@
       <Filter>ソースファイル\myEngine\3d\camera</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
-      <Filter>ソースファイル\myEngine\light</Filter>
-    </ClCompile>
-    <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
       <Filter>ソース ファイル\myEngine\light</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\utility\scene\SceneTransition.cpp">
@@ -256,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="OffScreen.cpp">
       <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
+      <Filter>ソースファイル\myEngine\light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,6 +267,9 @@
       <Filter>リソース ファイル</Filter>
     </None>
     <None Include="resources\shaders\Sprite.hlsli">
+      <Filter>リソース ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\FullScreen.hlsli">
       <Filter>リソース ファイル</Filter>
     </None>
   </ItemGroup>
@@ -295,14 +298,8 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="math\Quaternion.h">
-      <Filter>ヘッダー ファイル\math</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\Frame\Frame.h">
       <Filter>ソースファイル\myEngine\Frame</Filter>
-    </ClInclude>
-    <ClInclude Include="myEngine\3d\light\LightGroup.h">
-      <Filter>ヘッダー ファイル\myEngine\light</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\2d\Sprite.h">
       <Filter>ソースファイル\myEngine\2d</Filter>
@@ -463,6 +460,8 @@
     <ClInclude Include="OffScreen.h">
       <Filter>ソースファイル</Filter>
     </ClInclude>
+    <ClInclude Include="myEngine\3d\light\LightGroup.h" />
+    <ClInclude Include="math\Quaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
@@ -481,6 +480,18 @@
       <Filter>リソース ファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Vignette.PS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\CopyImage.PS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\FullScreen.VS.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Grayscale.PS.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>
