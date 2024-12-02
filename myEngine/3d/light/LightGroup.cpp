@@ -266,7 +266,7 @@ void LightGroup::CreatePointLight()
 	// デフォルト値
 	pointLightData->color = { 1.0f,1.0f,1.0f,1.0f };
 	pointLightData->position = { -1.0f,4.0f,-3.0f };
-	pointLightData->intensity = 10.0f;
+	pointLightData->intensity = 1.0f;
 	pointLightData->decay = 1.0f;
 	pointLightData->radius = 2.0f;
 	pointLightData->active = false;
