@@ -117,7 +117,7 @@ void OffScreen::DrawCommonSetting()
 		break;
 	case ShaderMode::kGauss:
 		ImGui::DragInt("Kernel Size", &gaussianData->kernelSize, 2, 3, 7);
-		ImGui::DragFloat("sigma", &gaussianData->sigma, 0.01f,0.0f,10.0f);
+		ImGui::DragFloat("sigma", &gaussianData->sigma, 0.01f,0.01f,10.0f);
 		break;
 	case ShaderMode::kOutLine:
 		break;
