@@ -55,6 +55,8 @@ void Framework::Initialize()
 
 	// offscreenのSRV作成
 	dxCommon->CreateOffscreenSRV();
+	// depthのSRV作成
+	dxCommon->CreateDepthSRV();
 
 	///----------Input-----------
 	// 入力の初期化
@@ -151,7 +153,6 @@ void Framework::Update()
 	/// deltaTimeの更新
 	Frame::Update();
 #ifdef _DEBUG
-
 	ImGuiManager::GetInstance()->Begin();
 	GlobalVariables::GetInstance()->Update();
 #endif // _DEBUG

@@ -37,8 +37,19 @@ public: // メンバ関数
 	/// </summary>
 	void Initialize(WinApp* winApp);
 
+	/// <summary>
+	/// オフスクリーンのSRV作成
+	/// </summary>
 	void CreateOffscreenSRV();
 
+	/// <summary>
+	/// depthのSRV作成
+	/// </summary>
+	void CreateDepthSRV();
+
+	/// <summary>
+	/// 描画前処理(RenderTexture)
+	/// </summary>
 	void PreRenderTexture();
 
 	/// <summary>
@@ -128,6 +139,10 @@ public: // メンバ関数
 	D3D12_GPU_DESCRIPTOR_HANDLE GetOffScreenGPUHandle() { return offScreenSrvHandleGPU; }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetOffScreenCPUHandle() { return offScreenSrvHandleCPU; }
 	uint32_t GetOffScreenSrvIndex() { return offScreenSrvIndex; }
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDepthGPUHandle() { return depthSrvHandleGPU; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthCPUHandle() { return depthSrvHandleCPU; }
+	uint32_t GetDepthSrvIndex() { return depthSrvIndex; }
 #pragma endregion
 
 private: // メンバ関数
@@ -287,7 +302,8 @@ private:
 	D3D12_RECT scissorRect{};
 	// TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
-	D3D12_RESOURCE_BARRIER offbarrier{};
+	D3D12_RESOURCE_BARRIER offScreenBarrier{};
+	D3D12_RESOURCE_BARRIER depthBarrier{};
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
 	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
@@ -295,4 +311,8 @@ private:
 	uint32_t offScreenSrvIndex = 0;
 	D3D12_CPU_DESCRIPTOR_HANDLE offScreenSrvHandleCPU;        // SRV作成時に必要なCPUハンドル
 	D3D12_GPU_DESCRIPTOR_HANDLE offScreenSrvHandleGPU;        // 描画コマンドに必要なGPUハンドル
+
+	uint32_t depthSrvIndex = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE depthSrvHandleCPU;        // SRV作成時に必要なCPUハンドル
+	D3D12_GPU_DESCRIPTOR_HANDLE depthSrvHandleGPU;        // 描画コマンドに必要なGPUハンドル
 };

@@ -94,6 +94,18 @@ void SrvManager::CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pR
     dxCommon->GetDevice()->CreateShaderResourceView(pResource, &renderTextureSrvDesc, GetCPUDescriptorHandle(srvIndex));
 }
 
+void SrvManager::CreateSRVforDepth(uint32_t srvIndex, ID3D12Resource* pResource)
+{
+    D3D12_SHADER_RESOURCE_VIEW_DESC depthTextureSrvDesc{};
+    //DXGI_FORMAT_D24_UNORM_S8_UINTのDepthを読むときはDZGI_FORMAT_R24_UNORM_X8_TYPELESS
+    depthTextureSrvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    depthTextureSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+    depthTextureSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+    depthTextureSrvDesc.Texture2D.MipLevels = 1;
+
+    dxCommon->GetDevice()->CreateShaderResourceView(pResource, &depthTextureSrvDesc, GetCPUDescriptorHandle(srvIndex));
+}
+
 uint32_t SrvManager::Allocate()
 {
     // 空きインデックスがあれば、それを使用

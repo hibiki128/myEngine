@@ -245,9 +245,6 @@
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp">
       <Filter>ソースファイル\myEngine\3d\camera</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
-      <Filter>ソース ファイル\myEngine\light</Filter>
-    </ClCompile>
     <ClCompile Include="myEngine\utility\scene\SceneTransition.cpp">
       <Filter>ソースファイル\myEngine\utility\scene</Filter>
     </ClCompile>
@@ -256,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
       <Filter>ソースファイル\myEngine\light</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
+      <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,9 +367,6 @@
     <ClInclude Include="myEngine\input\Mouse.h">
       <Filter>ソースファイル\myEngine\input</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\3d\light\LightGroup.h">
-      <Filter>ソースファイル\myEngine\light</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\utility\collider\Collider.h">
       <Filter>ソースファイル\myEngine\utility\collider</Filter>
     </ClInclude>
@@ -442,9 +439,6 @@
     <ClInclude Include="math\myMath.h">
       <Filter>ソースファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="math\Quaternion.h">
-      <Filter>ソースファイル\math</Filter>
-    </ClInclude>
     <ClInclude Include="math\random.h">
       <Filter>ソースファイル\math</Filter>
     </ClInclude>
@@ -462,6 +456,12 @@
     </ClInclude>
     <ClInclude Include="myEngine\3d\light\LightGroup.h" />
     <ClInclude Include="math\Quaternion.h" />
+    <ClInclude Include="myEngine\3d\light\LightGroup.h">
+      <Filter>ソースファイル\myEngine\light</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Quaternion.h">
+      <Filter>ソースファイル\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

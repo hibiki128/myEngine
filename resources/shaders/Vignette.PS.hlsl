@@ -16,6 +16,7 @@ cbuffer VignetteParameter : register(b0)
     float vignetteStrength; // 明るさの強さ（中心部）
     float vignetteRadius; // フェードの範囲（周辺から中心に向けての影響範囲）
     float vignetteExponent; // 非線形調整（vignetteの強さを調整する）
+    float2 vignetteCenter;
 }
 
 PixelShaderOutput main(VertexShaderOutput input)
@@ -25,7 +26,7 @@ PixelShaderOutput main(VertexShaderOutput input)
     
     // テクスチャ座標から計算してvignette効果を強調
     // テクスチャ座標が(0, 0)から(1, 1)に正規化されているので、それに基づいて周囲から中心に向けて減衰
-    float2 center = float2(0.5f, 0.5f); // 画面の中心を基準に計算
+    float2 center = vignetteCenter; // 画面の中心を基準に計算
     float2 offset = input.texcoord - center;
 
     // vignetteRadiusを使用して、フェードの影響範囲を決定
