@@ -27,16 +27,15 @@ void Object3d::Initialize(const std::string& filePath)
 
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
-
-	animator = std::make_unique<Animator>();
-	if (model->IsGltf()) {
-		animator->Initialize(model, filePath);
-	}
-
 }
 
 void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
+
+	if (model) {
+		model->Update();
+	}
+
 	cameraForGPUData->worldPosition = viewProjection.translation_;
 	Matrix4x4 worldMatrix = MakeAffineMatrix(worldTransform.scale_, worldTransform.rotation_, worldTransform.translation_);
 
@@ -47,18 +46,10 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	const Matrix4x4& viewProjectionMatrix = viewProjection.matView_ * viewProjection.matProjection_;
 	worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
+	transformationMatrixData->WVP = worldViewProjectionMatrix;
+	transformationMatrixData->World = worldMatrix;
+	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
 
-	if (model->IsGltf() && !animator->IsNotAnimation()) {
-		animator->Update();
-		transformationMatrixData->WVP = animator->GetLocalMatrix() * worldViewProjectionMatrix;
-		transformationMatrixData->World = animator->GetLocalMatrix() * worldMatrix;
-	/*	transformationMatrixData->WorldInverseTranspose = animator->GetLocalMatrix() * Transpose(worldInverseMatrix);*/
-	}
-	else {
-		transformationMatrixData->WVP = model->GetModelData().rootNode.localMatrix * worldViewProjectionMatrix;
-		transformationMatrixData->World = model->GetModelData().rootNode.localMatrix * worldMatrix;
-		transformationMatrixData->WorldInverseTranspose = model->GetModelData().rootNode.localMatrix * Transpose(worldInverseMatrix);
-	}
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)
