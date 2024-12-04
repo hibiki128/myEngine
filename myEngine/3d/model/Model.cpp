@@ -110,21 +110,28 @@ Model::ModelData Model::LoadModelFile(const std::string& directoryPath, const st
 	}
 
 	Assimp::Importer importer;
-	std::string filPath = directoryPath + "/" + filename;
-	const aiScene* scene = importer.ReadFile(filPath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
-	assert(scene->HasMeshes()); // メッシュがないのは対応しない
+	std::string filePath = directoryPath + "/" + filename;
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 
+	// メッシュが存在しない場合
+	if (!scene || !scene->HasMeshes()) {
+		// デフォルトのテクスチャを設定
+		modelData.material.textureFilePath = directoryPath + "/white1x1.png";
+		return modelData;
+	}
+
+	// メッシュの処理
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
 		aiMesh* mesh = scene->mMeshes[meshIndex];
 		assert(mesh->HasNormals()); // 法線がないMeshは今回は非対応
-		assert(mesh->HasTextureCoords(0)); // TexcoorがないMeshは今回は非対応
+		assert(mesh->HasTextureCoords(0)); // TexcoordがないMeshは今回は非対応
 
-		// ここからMeshの中身(Face)の解析を行っていく
+		// メッシュの中身(Face)の解析
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3); // 三角形のみサポート
 
-			// ここからFaceの中身(vertex)の解析を行っていく
+			// Faceの中身(vertex)の解析
 			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
 				uint32_t vertexIndex = face.mIndices[element];
 				aiVector3D& position = mesh->mVertices[vertexIndex];
@@ -135,28 +142,34 @@ Model::ModelData Model::LoadModelFile(const std::string& directoryPath, const st
 				vertex.normal = { normal.x, normal.y, normal.z };
 				vertex.texcoord = { texcoord.x, texcoord.y };
 
-				// aiProcess_MakeLeftHandedはz*=-1で、右手->左手に変換するので手動で対処
+				// 右手座標系->左手座標系の変換
 				if (!isGltf) {
 					vertex.position.x *= -1.0f;
 				}
 				vertex.normal.x *= -1.0f;
 				modelData.vertices.push_back(vertex);
 			}
+		}
+	}
 
-			for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
-				aiMaterial* material = scene->mMaterials[materialIndex];
-				if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
-					aiString textureFilePath;
-					material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-					modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
-				}
-			}
+	// マテリアルの処理
+	for (uint32_t materialIndex = 0; materialIndex < scene->mNumMaterials; ++materialIndex) {
+		aiMaterial* material = scene->mMaterials[materialIndex];
+		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
+			aiString textureFilePath;
+			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
+			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+		}
+		else {
+			// テクスチャがない場合はデフォルトのテクスチャを設定
+			modelData.material.textureFilePath = directoryPath + "/white1x1.png";
 		}
 	}
 
 	modelData.rootNode = ReadNode(scene->mRootNode);
 	return modelData;
 }
+
 
 Model::Node Model::ReadNode(aiNode* node)
 {
