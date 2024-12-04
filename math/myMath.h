@@ -6,6 +6,7 @@
 #include"vector"
 #include"algorithm"
 #include <Vector3.h>
+#include <Quaternion.h>
 
 
 static const int kColumnWidth = 60;
@@ -66,6 +67,15 @@ Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vect
 Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
 
 Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles);
+
+// 任意軸回転を表すQuaternionの生成
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+
+// ベクトルをQuaternionで回転させた結果のベクトルを求める
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+
+// Quaternionから回転行列を求める
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);

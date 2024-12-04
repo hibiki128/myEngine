@@ -11,7 +11,7 @@
 #include"wrl.h"
 #include"ViewProjection.h"
 #include"ObjColor.h"
-
+#include"Animator.h"
 enum class LightType {
 	Directional,
 	Point,
@@ -98,6 +98,7 @@ private: // メンバ変数
 
 	Model* model = nullptr;
 	ModelCommon* modelCommon = nullptr;
+	std::unique_ptr<Animator> animator = nullptr;
 
 	// 移動させる用各SRT
 	Vector3 position = { 0.0f,0.0f,0.0f };

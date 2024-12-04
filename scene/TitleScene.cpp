@@ -14,7 +14,7 @@ void TitleScene::Initialize()
 	vp_.Initialize();
 
 	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("debug/sphere.obj");
+	obj_->Initialize("AnimatedCube.gltf");
 	wt_.Initialize();
 }
 

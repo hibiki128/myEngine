@@ -289,6 +289,76 @@ Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles)
 	return rotationZ * rotationY * rotationX;
 }
 
+// 任意軸回転を表すQuaternionの生成
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle) {
+	// 回転軸を正規化
+	float length = std::sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+	Vector3 normalizedAxis = { axis.x / length, axis.y / length, axis.z / length };
+
+	// 半角を計算
+	float halfAngle = angle * 0.5f;
+	float sinHalfAngle = std::sin(halfAngle);
+	float cosHalfAngle = std::cos(halfAngle);
+
+	// 回転クォータニオンを生成
+	return {
+		normalizedAxis.x * sinHalfAngle, // x
+		normalizedAxis.y * sinHalfAngle, // y
+		normalizedAxis.z * sinHalfAngle, // z
+		cosHalfAngle                     // w
+	};
+}
+
+// ベクトルをQuaternionで回転させた結果のベクトルを求める
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion) {
+	// 入力ベクトルをクォータニオン形式に変換（w成分は0）
+	Quaternion vectorQuaternion = { vector.x, vector.y, vector.z, 0.0f };
+
+	// クォータニオンの共役を計算
+	Quaternion conjugate = quaternion.Conjugate();
+
+	// 回転を適用: q * v * q^-1
+	Quaternion rotatedQuaternion = quaternion * vectorQuaternion * conjugate;
+
+	// 結果をベクトルとして返す（x, y, z成分）
+	return { rotatedQuaternion.x, rotatedQuaternion.y, rotatedQuaternion.z };
+}
+
+// Quaternionから回転行列を求める
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion) {
+	// クォータニオンを正規化
+	Quaternion q = quaternion.Normalize();
+
+	// クォータニオン成分を取得
+	float x = q.x, y = q.y, z = q.z, w = q.w;
+
+	// 回転行列を生成
+	Matrix4x4 matrix = {}; // 全要素を0で初期化
+
+	// 各成分を計算
+	matrix.m[0][0] = std::powf(w, 2) + std::powf(x, 2) - std::powf(y, 2) - std::powf(z, 2);
+	matrix.m[0][1] = 2.0f * (x * y + w * z);
+	matrix.m[0][2] = 2.0f * (x * z - w * y);
+	matrix.m[0][3] = 0.0f;
+
+	matrix.m[1][0] = 2.0f * (x * y - w * z);
+	matrix.m[1][1] = std::powf(w, 2) - std::powf(x, 2) + std::powf(y, 2) - std::powf(z, 2);
+	matrix.m[1][2] = 2.0f * (y * z + w * x);
+	matrix.m[1][3] = 0.0f;
+
+	matrix.m[2][0] = 2.0f * (x * z + w * y);
+	matrix.m[2][1] = 2.0f * (y * z - w * x);
+	matrix.m[2][2] = std::powf(w, 2) - std::powf(x, 2) - std::powf(y, 2) + std::powf(z, 2);
+	matrix.m[2][3] = 0.0f;
+
+	matrix.m[3][0] = 0.0f;
+	matrix.m[3][1] = 0.0f;
+	matrix.m[3][2] = 0.0f;
+	matrix.m[3][3] = 1.0f;
+
+	return matrix;
+}
+
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
 //	Novice::ScreenPrintf(x, y, "%.02f", vector.x);

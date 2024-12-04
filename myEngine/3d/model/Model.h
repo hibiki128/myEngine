@@ -51,7 +51,7 @@ private:
 	VertexData* vertexData = nullptr;
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
-	
+
 	bool isGltf = false;
 
 public:
@@ -74,6 +74,7 @@ public:
 	ModelData GetModelData() { return modelData; }
 	void SetSrv(SrvManager* srvManager) { srvManager_ = srvManager; }
 
+	bool IsGltf() {	return isGltf;}
 private:
 
 	/// <summary>
@@ -95,7 +96,7 @@ private:
 	/// <param name="directoryPath"></param>
 	/// <param name="filename"></param>
 	/// <returns></returns>
-    ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+	ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// ノード読み取り
