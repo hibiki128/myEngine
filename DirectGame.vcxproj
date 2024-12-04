@@ -107,7 +107,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -175,7 +174,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animator.h" />
     <ClInclude Include="myEngine\utility\collider\Collider.h" />
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
