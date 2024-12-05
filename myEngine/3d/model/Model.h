@@ -13,7 +13,7 @@
 
 class Model
 {
-private:
+public:
 
 	struct QuaternionTransform {
 		Vector3 scale;
@@ -44,6 +44,7 @@ private:
 	struct ModelData
 	{
 		std::vector<VertexData> vertices;
+		std::vector<uint32_t> indices;
 		MaterialData material;
 		Node rootNode;
 	};
@@ -102,6 +103,13 @@ private:
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 
+	// バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource = nullptr;
+	uint32_t* indexData;
+	// バッファリソースの使い道を補足するバッファビュー
+	D3D12_INDEX_BUFFER_VIEW indexBufferView;
+
+
 	bool isGltf = false;
 
 	Animation animation_;
@@ -129,6 +137,7 @@ public:
 	void Draw();
 
 	ModelData GetModelData() { return modelData; }
+	Skeleton GetSkeletonData() { return skeleton_; }
 	void SetSrv(SrvManager* srvManager) { srvManager_ = srvManager; }
 
 	bool IsGltf() {	return isGltf;}
@@ -143,6 +152,11 @@ private:
 	/// 頂点データ作成
 	/// </summary>
 	void CreateVartexData();
+
+	/// <summary>
+	/// indexの作成
+	/// </summary>
+	void CreateIndexResource();
 
 	/// <summary>
 	/// .mtlファイルの読み取り

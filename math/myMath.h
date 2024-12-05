@@ -50,6 +50,10 @@ Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
+Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q);
+
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
+
 // tanθの逆数
 float cotf(float theta);
 
@@ -76,6 +80,8 @@ Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 
 // Quaternionから回転行列を求める
 Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
+
+Quaternion Sleap(Quaternion q1, Quaternion q2, float t);
 
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);

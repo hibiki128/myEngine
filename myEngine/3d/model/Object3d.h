@@ -118,6 +118,7 @@ public: // メンバ関数
 	const Vector3& GetPosition()const { return position; }
 	const Vector3& GetRotation() const { return rotation; }
 	const Vector3& GetSize() const { return size; }
+	Model* GetModel() { return model; }
 
 	/// <summary>
 	/// setter

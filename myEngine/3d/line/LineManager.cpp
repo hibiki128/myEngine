@@ -58,7 +58,7 @@ void LineManager::Update(const ViewProjection& viewProjection, const std::vector
 			// スケールの計算（始点と終点の距離を求めてスケールに反映）
 			Vector3 lineVector = endPoint - startPoint;
 			float length = lineVector.Length(); // 2点間の距離
-			lineIterator->transform.scale_ = Vector3(length, 1.0f, 1.0f); // X方向に線の長さを反映、他の軸は0.2
+			lineIterator->transform.scale_ = Vector3(length, 0.002f, 0.002f); // X方向に線の長さを反映、他の軸は0.2
 
 			// クォータニオンで回転の計算（始点から終点への回転を計算）
 			Quaternion rotationQuat;

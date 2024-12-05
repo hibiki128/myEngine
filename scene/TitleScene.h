@@ -9,7 +9,7 @@
 #include"Object3d.h"
 #include"WorldTransform.h"
 #include"Sprite.h"
-#include"Object3d.h"
+#include <line/LineManager.h>
 
 class TitleScene :public BaseScene
 {
@@ -35,8 +35,11 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	void DrawSkeleton(Object3d* obj, int segmentCount);
+
 	ViewProjection* GetViewProjection()override { return &vp_; }
 
+	Vector3 ExtractTranslation(const Matrix4x4& matrix);
 private:
 	Audio* audio_;
 	Input* input_;
@@ -47,5 +50,6 @@ private:
 	ViewProjection vp_;
 
 	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<LineManager> line_;
 	WorldTransform wt_;
 };

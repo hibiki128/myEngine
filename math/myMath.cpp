@@ -185,6 +185,50 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return { (scaleMatrix * rotateMatrix) * translateMatrix };
 }
 
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate) {
+	Matrix4x4 result = MakeScaleMatrix(scale) * QuaternionToMatrix4x4(rotate) * MakeTranslateMatrix(translate);
+	return result;
+}
+
+Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q) {
+	Matrix4x4 mat;
+
+	// クォータニオンの各成分の積を計算
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	// 左手座標系用の回転行列を設定
+	mat.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	mat.m[0][1] = 2.0f * (xy + wz);
+	mat.m[0][2] = 2.0f * (xz - wy);
+	mat.m[0][3] = 0.0f;
+
+	mat.m[1][0] = 2.0f * (xy - wz);
+	mat.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	mat.m[1][2] = 2.0f * (yz + wx);
+	mat.m[1][3] = 0.0f;
+
+	mat.m[2][0] = 2.0f * (xz + wy);
+	mat.m[2][1] = 2.0f * (yz - wx);
+	mat.m[2][2] = 1.0f - 2.0f * (xx + yy);
+	mat.m[2][3] = 0.0f;
+
+	mat.m[3][0] = 0.0f;
+	mat.m[3][1] = 0.0f;
+	mat.m[3][2] = 0.0f;
+	mat.m[3][3] = 1.0f;
+
+	return mat;
+}
+
+
 float cotf(float theta) { return 1.0f / std::tanf(theta); }
 
 Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
@@ -358,6 +402,55 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion) {
 
 	return matrix;
 }
+
+Quaternion Sleap(Quaternion q1, Quaternion q2, float t)
+{
+	// クォータニオンの内積を計算
+	float dot = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+
+	// ドット積が負の場合、逆の方向に補間するために q2 を反転
+	if (dot < 0.0f) {
+		q2.x = -q2.x;
+		q2.y = -q2.y;
+		q2.z = -q2.z;
+		q2.w = -q2.w;
+		dot = -dot;
+	}
+
+	// 補間係数を使った係数の計算
+	const float threshold = 0.9995f;
+	if (dot > threshold) {
+		// ドット積が閾値を超えた場合、線形補間を実行（角度が小さいため）
+		Quaternion result = {
+			q1.x + t * (q2.x - q1.x),
+			q1.y + t * (q2.y - q1.y),
+			q1.z + t * (q2.z - q1.z),
+			q1.w + t * (q2.w - q1.w)
+		};
+		return result.Normalize(); // 結果を正規化
+	}
+
+	// 角度の計算
+	float theta_0 = std::acos(dot);        // θ0 = q1 と q2 間の角度
+	float theta = theta_0 * t;             // θ = t に対応する角度
+
+	// 係数の計算
+	float sin_theta = std::sin(theta);
+	float sin_theta_0 = std::sin(theta_0);
+
+	float s1 = std::cos(theta) - dot * sin_theta / sin_theta_0;
+	float s2 = sin_theta / sin_theta_0;
+
+	// 補間結果の計算
+	Quaternion result = {
+		s1 * q1.x + s2 * q2.x,
+		s1 * q1.y + s2 * q2.y,
+		s1 * q1.z + s2 * q2.z,
+		s1 * q1.w + s2 * q2.w
+	};
+	return result;
+}
+
 
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
