@@ -21,17 +21,17 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 
 	// 単位行列を書き込んでおく
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
-	isNotAnimation = false;
+	haveAnimation = false;
 	animation_ = LoadAnimationFile(directorypath_, filename_);
 
-	if (!isNotAnimation) {
+	if (haveAnimation) {
 		skeleton_ = CreateSkeleton(modelData.rootNode);
 	}
 }
 
 void Model::Update()
 {
-	if (!isNotAnimation) {
+	if (haveAnimation) {
 		animationTime += 1.0f / 60.0f;
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
@@ -206,8 +206,11 @@ Model::Animation Model::LoadAnimationFile(const std::string& directoryPath, cons
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), 0);
 	if (!scene || scene->mNumAnimations == 0) {
 		// アニメーションがない場合は何もせず、空のアニメーションを返す
-		isNotAnimation = true;
+		haveAnimation = false;
 		return animation;
+	}
+	else {
+		haveAnimation = true;
 	}
 	aiAnimation* animationAssimp = scene->mAnimations[0]; // 最初のanimationだけ採用。もちろん複数対応するに越したことはない
 	animation.duration = float(animationAssimp->mDuration / animationAssimp->mTicksPerSecond); // 時間の単位を秒に変換

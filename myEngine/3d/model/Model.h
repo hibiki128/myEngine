@@ -109,7 +109,7 @@ private:
 	float animationTime = 0.0f;
 	Model* model_ = nullptr;
 	Matrix4x4 localMatrix;
-	bool isNotAnimation = false;
+	bool haveAnimation = false;
 
 public:
 	/// <summary>
