@@ -81,7 +81,7 @@ Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
 // Quaternionから回転行列を求める
 Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
 
-Quaternion Sleap(Quaternion q1, Quaternion q2, float t);
+Quaternion Slerp(Quaternion q1, Quaternion q2, float t);
 
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);

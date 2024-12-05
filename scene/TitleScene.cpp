@@ -59,7 +59,7 @@ void TitleScene::Update()
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-	DrawSkeleton(obj_.get(),10);
+	DrawSkeleton(obj_.get(),50);
 	vp_.UpdateMatrix();
 	wt_.UpdateMatrix();
 }

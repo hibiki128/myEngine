@@ -403,7 +403,7 @@ Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion) {
 	return matrix;
 }
 
-Quaternion Sleap(Quaternion q1, Quaternion q2, float t)
+Quaternion Slerp(Quaternion q1, Quaternion q2, float t)
 {
 	// クォータニオンの内積を計算
 	float dot = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;

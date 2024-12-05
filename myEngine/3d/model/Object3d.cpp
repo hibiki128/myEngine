@@ -32,10 +32,6 @@ void Object3d::Initialize(const std::string& filePath)
 void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
 
-	if (model) {
-		model->Update();
-	}
-
 	cameraForGPUData->worldPosition = viewProjection.translation_;
 	Matrix4x4 worldMatrix = MakeAffineMatrix(worldTransform.scale_, worldTransform.rotation_, worldTransform.translation_);
 
@@ -49,6 +45,10 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->World = worldMatrix;
 	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+
+	if (model) {
+		model->Update();
+	}
 
 }
 

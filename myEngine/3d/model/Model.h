@@ -14,7 +14,6 @@
 class Model
 {
 public:
-
 	struct QuaternionTransform {
 		Vector3 scale;
 		Quaternion rotate;
@@ -86,6 +85,7 @@ public:
 		std::map<std::string, NodeAnimation>nodeAnimations;
 	};
 
+private:
 
 	ModelCommon* modelCommon_;
 

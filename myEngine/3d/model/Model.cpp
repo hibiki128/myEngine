@@ -33,7 +33,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 void Model::Update()
 {
 	if (haveAnimation) {
-		animationTime += 1.0f / 60.0f;
+		animationTime += 1.0f / 600.0f;
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
 		SkeletonUpdate(skeleton_);
@@ -205,7 +205,7 @@ Model::Node Model::ReadNode(aiNode* node)
 
 	result.name = node->mName.C_Str(); // node名を格納
 	result.children.resize(node->mNumChildren);// 子供の数だけ確保
-	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++) {
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
 		// 再帰的に読んで階層構造を作っていく
 		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
 	}
@@ -242,15 +242,6 @@ Model::Animation Model::LoadAnimationFile(const std::string& directoryPath, cons
 			nodeAnimation.translate.push_back(keyframe);
 		}
 
-		// Scale
-		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
-			aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
-			KeyframeVector3 keyframe;
-			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond); // 秒に変換
-			keyframe.value = { keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z }; // 右手->左手変換は不要
-			nodeAnimation.scale.push_back(keyframe);
-		}
-
 		// Rotation
 		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumRotationKeys; keyIndex++) {
 			aiQuatKey& keyAssimp = nodeAnimationAssimp->mRotationKeys[keyIndex];
@@ -258,6 +249,15 @@ Model::Animation Model::LoadAnimationFile(const std::string& directoryPath, cons
 			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond);
 			keyframe.value = { keyAssimp.mValue.x, -keyAssimp.mValue.y, -keyAssimp.mValue.z, keyAssimp.mValue.w };
 			nodeAnimation.rotate.push_back(keyframe);
+		}
+
+		// Scale
+		for (uint32_t keyIndex = 0; keyIndex < nodeAnimationAssimp->mNumScalingKeys; ++keyIndex) {
+			aiVectorKey& keyAssimp = nodeAnimationAssimp->mScalingKeys[keyIndex];
+			KeyframeVector3 keyframe;
+			keyframe.time = float(keyAssimp.mTime / animationAssimp->mTicksPerSecond); // 秒に変換
+			keyframe.value = { keyAssimp.mValue.x, keyAssimp.mValue.y, keyAssimp.mValue.z }; // 右手->左手変換は不要
+			nodeAnimation.scale.push_back(keyframe);
 		}
 	}
 	return animation;
@@ -297,7 +297,7 @@ Quaternion Model::CalculateValue(const std::vector<KeyframeQuaternion>& keyframe
 		if (keyframes[index].time <= time && time <= keyframes[nextIndex].time) {
 			// 時刻が範囲内の場合は補間を行う
 			float t = (time - keyframes[index].time) / (keyframes[nextIndex].time - keyframes[index].time);
-			return Sleap(keyframes[index].value, keyframes[nextIndex].value, t);
+			return Slerp(keyframes[index].value, keyframes[nextIndex].value, t);
 		}
 	}
 
@@ -317,14 +317,16 @@ Model::Skeleton Model::CreateSkeleton(const Node& rootNode)
 	return skeleton;
 }
 
-int32_t Model::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints)
+int32_t Model::CreateJoint(const Node& node,
+	const std::optional<int32_t>& parent, 
+	std::vector<Joint>& joints)
 {
 	Joint joint;
 	joint.name = node.name;
 	joint.localMatrix = node.localMatrix;
 	joint.skeltonSpaceMatrix = MakeIdentity4x4();
 	joint.transform = node.transform;
-	joint.index = int32_t(joints.size());
+	joint.index = static_cast<int32_t>(joints.size());
 	joint.parent = parent;
 	joints.push_back(joint);
 	for (const Node& child : node.children) {
