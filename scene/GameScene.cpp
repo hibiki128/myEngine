@@ -47,6 +47,13 @@ void GameScene::Update()
 	for (auto& meteor : meteors_) {
 		meteor->Update();
 	}
+
+	meteors_.erase(
+		std::remove_if(meteors_.begin(), meteors_.end(),
+			[](const std::unique_ptr<Meteor>& meteor) {
+				return meteor->IsAlive();
+			}),
+		meteors_.end());
 }
 
 void GameScene::Draw()
@@ -88,6 +95,10 @@ void GameScene::Debug()
 	ImGui::Begin("GameScene:Debug");
 	debugCamera_->imgui();
 	LightGroup::GetInstance()->imgui();
+	ImGui::End();
+
+	ImGui::Begin("操作説明");
+	ImGui::Text("Enterキーでインセキを落とします");
 	ImGui::End();
 }
 

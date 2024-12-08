@@ -23,6 +23,8 @@ public:
 	Vector3 GetCenterRotation() const override;
 	void OnCollisionEnter([[maybe_unused]] Collider* other)override;
 
+	bool IsAlive() { return isDeath_; }
+
 private:
 
 private:
@@ -30,8 +32,10 @@ private:
 	unique_ptr<Object3d> obj_;
 	WorldTransform wt_;
 	bool isAlive_;
+	bool isDeath_;
 
 	float counter_ = 0.0f;
+	float deathCounter_ = 0.0f;
 
 	// ランダム生成
 	std::random_device rd_;

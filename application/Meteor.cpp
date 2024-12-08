@@ -14,6 +14,7 @@ void Meteor::Initialize()
 	wt_.scale_ = { 7.5f,7.5f,7.5f };
 	Collider::SetAABBScale({ 4.5f, 4.5f, 4.5f });
 	isAlive_ = true;
+	isDeath_ = false;
 	counter_ = 0.0f;
 
 	fallEmitter_ = std::make_unique<ParticleEmitter>();
@@ -49,9 +50,13 @@ void Meteor::Update()
 	if (!isAlive_) {
 		Collider::SetCollisionEnabled(false);
 		fallEmitter_->SetCount(0);
+		deathCounter_ += Frame::DeltaTime();
 	}
 	else {
 		fallEmitter_->SetCount(5);
+	}
+	if (deathCounter_ > 2.0f) {
+		isDeath_ = true;
 	}
 }
 
