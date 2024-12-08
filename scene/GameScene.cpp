@@ -16,11 +16,23 @@ void GameScene::Initialize()
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 
+	vp_.Initialize();
+	vp_.translation_ = { 0.0f,50.0f,-300.0f };
+
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
+
+	//-----地面-----
+	ground_ = std::make_unique<Ground>();
+	ground_->Initialize();
+	//-------------
+
+	//-----隕石-----
+
+	//-------------
 }
 
-void GameScene::Update() 
+void GameScene::Update()
 {
 	// デバッグ
 	Debug();
@@ -30,6 +42,11 @@ void GameScene::Update()
 
 	// シーン切り替え
 	ChangeScene();
+	GenerateMeteor();
+	ground_->Update();
+	for (auto& meteor : meteors_) {
+		meteor->Update();
+	}
 }
 
 void GameScene::Draw()
@@ -39,13 +56,18 @@ void GameScene::Draw()
 	/// 3Dオブジェクトの描画準備
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-
+	ground_->Draw(vp_);
+	for (auto& meteor : meteors_) {
+		meteor->Draw(vp_);
+	}
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-
+	for (auto& meteor : meteors_) {
+		meteor->DrawParticle(vp_);
+	}
 	//-----------------------------
 
 	/// Spriteの描画準備
@@ -63,9 +85,9 @@ void GameScene::Draw()
 
 void GameScene::Debug()
 {
-	ImGui::Begin("TitleScene:Debug");
-	LightGroup::GetInstance()->imgui();
+	ImGui::Begin("GameScene:Debug");
 	debugCamera_->imgui();
+	LightGroup::GetInstance()->imgui();
 	ImGui::End();
 }
 
@@ -83,5 +105,16 @@ void GameScene::ChangeScene()
 {
 	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->NextSceneReservation("TITLE");
+	}
+}
+
+void GameScene::GenerateMeteor()
+{
+	if (input_->TriggerKey(DIK_RETURN)) {
+		std::unique_ptr<Meteor> newMeteor;
+		newMeteor = std::make_unique<Meteor>();
+		newMeteor->Initialize();
+
+		meteors_.push_back(std::move(newMeteor));
 	}
 }

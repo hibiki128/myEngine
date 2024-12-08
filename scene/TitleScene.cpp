@@ -19,16 +19,9 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	vp_.Initialize();
-	wt1_.Initialize();
-	wt2_.Initialize();
-
-	wt1_.translation_ = { -2.0f,0.0f,0.0f };
-	wt2_.translation_ = { 2.0f,0.0f,0.0f };
-
-	suzannu_ = std::make_unique<Object3d>();
-	suzannu_->Initialize("debug/suzannu.obj");
-	sphere_ = std::make_unique<Object3d>();
-	sphere_->Initialize("debug/sphere.obj");
+	
+	emitter_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize("Particle", "debug/sphere.obj");
 
 }
 
@@ -48,8 +41,8 @@ void TitleScene::Update()
 	// シーン切り替え
 	ChangeScene();
 
-	wt1_.UpdateMatrix();
-	wt2_.UpdateMatrix();
+	emitter_->Update(vp_);
+
 }
 
 void TitleScene::Draw()
@@ -64,14 +57,13 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	suzannu_->Draw(wt1_, vp_);
-	sphere_->Draw(wt2_, vp_);
+	emitter_->DrawEmitter(vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	
+	emitter_->Draw();
 	//-----------------------------
 
 
@@ -84,8 +76,9 @@ void TitleScene::Draw()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
-	LightGroup::GetInstance()->imgui();
+	emitter_->imgui();
 	debugCamera_->imgui();
+	LightGroup::GetInstance()->imgui();
 	ImGui::End();
 }
 

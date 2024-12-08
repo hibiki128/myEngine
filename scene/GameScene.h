@@ -7,6 +7,9 @@
 #include "ParticleCommon.h"
 #include"ViewProjection.h"
 #include"DebugCamera.h"
+#include"application/Ground.h"
+#include"application/Meteor.h"
+#include"vector"
 
 class GameScene : public BaseScene
 {
@@ -39,6 +42,8 @@ private:
 	void CameraUpdate();
 
 	void ChangeScene();
+
+	void GenerateMeteor();
 private:
 
 	Audio* audio_;
@@ -50,4 +55,8 @@ private:
 	// ビュープロジェクション
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
+
+	std::unique_ptr<Ground>ground_;
+
+	std::vector<std::unique_ptr<Meteor>>meteors_;
 };

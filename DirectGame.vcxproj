@@ -103,6 +103,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Ground.cpp" />
+    <ClCompile Include="application\Meteor.cpp" />
     <ClCompile Include="math\random.cpp" />
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp" />
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp" />
@@ -180,6 +182,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Ground.h" />
+    <ClInclude Include="application\Meteor.h" />
     <ClInclude Include="math\random.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
     <ClInclude Include="myEngine\3d\light\LightGroup.h" />

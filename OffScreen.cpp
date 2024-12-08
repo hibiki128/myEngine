@@ -91,7 +91,7 @@ void OffScreen::DrawCommonSetting()
 	ImGui::Begin("Offscreen");
 
 	// ShaderModeを文字列で表現
-	const char* shaderModeItems[] = { "None", "Gray", "Vignett", "Smooth", "Gauss", "OutLine","Depth" };
+	const char* shaderModeItems[] = { "None", "Gray", "Vignett", "Smooth", "Gauss", "OutLine" };
 	int currentShaderMode = static_cast<int>(shaderMode_);
 
 	// Comboを描画してユーザーが選択した場合に値を更新

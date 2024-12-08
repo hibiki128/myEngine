@@ -81,6 +81,9 @@
     <Filter Include="ソースファイル\scene">
       <UniqueIdentifier>{95837f6f-3d18-4d1a-8bca-710414435010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="application">
+      <UniqueIdentifier>{3cb71e17-4c0c-4b81-836f-57ef22e9ad6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -252,9 +255,15 @@
       <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
-      <Filter>ソースファイル\myEngine\light</Filter>
+      <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp">
+      <Filter>ソースファイル\myEngine\light</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Ground.cpp">
+      <Filter>application</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Meteor.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -462,6 +471,10 @@
     <ClInclude Include="math\Quaternion.h">
       <Filter>ソースファイル\math</Filter>
     </ClInclude>
+    <ClInclude Include="application\Ground.h">
+      <Filter>application</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Meteor.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

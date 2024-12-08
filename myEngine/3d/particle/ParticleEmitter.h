@@ -25,7 +25,7 @@ public:
 
     void DrawEmitter(const ViewProjection& vp_);
 
-    void RenderImGui(); // ImGui用の関数を追加
+    void imgui(); // ImGui用の関数を追加
 
     void SetPosition(const Vector3& position) { transform_.translation_ = position; }
     void SetScale(const Vector3& scale) { transform_.scale_ = scale; }
@@ -76,6 +76,7 @@ private:
     bool isBillBoard = true;
     bool isActive_ = false;
     bool isAcceMultiply = false;
+    bool isSinMove = false;
 
     std::unique_ptr<Object3d> emitterObj;
     std::unique_ptr<ParticleManager> Manager_;

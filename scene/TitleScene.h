@@ -8,6 +8,7 @@
 #include"DebugCamera.h"
 #include"Object3d.h"
 #include"WorldTransform.h"
+#include"ParticleEmitter.h"
 
 class TitleScene :public BaseScene
 {
@@ -50,10 +51,6 @@ private:
 
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
+	std::unique_ptr<ParticleEmitter>emitter_;
 
-	WorldTransform wt1_;
-	WorldTransform wt2_;
-
-	std::unique_ptr<Object3d> suzannu_;
-	std::unique_ptr<Object3d> sphere_;
 };

@@ -70,6 +70,7 @@ void ParticleEmitter::Draw()
 	Manager_->SetBillBorad(isBillBoard);
 	Manager_->SetRandomSize(isRandomScale);
 	Manager_->SetAllRandomSize(isAllRamdomScale);
+	Manager_->SetSinMove(isSinMove);
 	Manager_->Draw();
 }
 
@@ -144,6 +145,7 @@ void ParticleEmitter::ApplyGlobalVariables()
 	scaleMax = globalVariables->GetFloatValue(groupName, "Scale Max");
 	isRandomScale = globalVariables->GetBoolValue(groupName, "isRandomScale");
 	isAllRamdomScale = globalVariables->GetBoolValue(groupName, "isAllRamdomScale");
+	isSinMove = globalVariables->GetBoolValue(groupName, "isSinMove");
 }
 
 void ParticleEmitter::SetValue()
@@ -179,6 +181,7 @@ void ParticleEmitter::SetValue()
 	globalVariables->SetValue(groupName, "Scale Max", scaleMax);
 	globalVariables->SetValue(groupName, "isRandomScale", isRandomScale);
 	globalVariables->SetValue(groupName, "isAllRamdomScale", isAllRamdomScale);
+	globalVariables->SetValue(groupName, "isSinMove", isSinMove);
 }
 
 void ParticleEmitter::AddItem()
@@ -216,10 +219,11 @@ void ParticleEmitter::AddItem()
 	globalVariables->AddItem(groupName, "RotationVelo Max", rotateVelocityMax);
 	globalVariables->AddItem(groupName, "isRandomScale", isRandomScale);
 	globalVariables->AddItem(groupName, "isAllRamdomScale", isAllRamdomScale);
+	globalVariables->AddItem(groupName, "isSinMove", isSinMove);
 }
 
 // ImGuiで値を動かす関数
-void ParticleEmitter::RenderImGui() {
+void ParticleEmitter::imgui() {
 #ifdef _DEBUG
 	ImGui::Begin(name_.c_str());
 
@@ -311,12 +315,18 @@ void ParticleEmitter::RenderImGui() {
 				scaleMax = std::clamp(scaleMax, scaleMin, FLT_MAX);
 				scaleMin = std::clamp(scaleMin, 0.0f, scaleMax);
 			}
+			else if (isSinMove) {
+				ImGui::DragFloat3("最初", &startScale_.x, 0.1f, 0.0f);
+			}
 			else {
 				ImGui::DragFloat3("最初", &startScale_.x, 0.1f, 0.0f);
 			}
-			ImGui::DragFloat3("最後", &endScale_.x, 0.1f);
+			if (!isSinMove) {
+				ImGui::DragFloat3("最後", &endScale_.x, 0.1f);
+			}
 			ImGui::Checkbox("均等にランダムな大きさ", &isRandomScale);
 			ImGui::Checkbox("ばらばらにランダムな大きさ", &isAllRamdomScale);
+			ImGui::Checkbox("sin波の動き", &isSinMove);
 			ImGui::TreePop();
 		}
 
@@ -346,7 +356,6 @@ void ParticleEmitter::RenderImGui() {
 					endRote_.z = degreesToRadians(endRotationDegrees[2]);
 				}
 			}
-			ImGui::Checkbox("ランダムな回転", &isRandomRotate);
 			if (isRandomRotate) {
 				ImGui::DragFloat3("最大値", &rotateVelocityMax.x, 0.01f);
 				ImGui::DragFloat3("最小値", &rotateVelocityMin.x, 0.01f);
@@ -357,6 +366,7 @@ void ParticleEmitter::RenderImGui() {
 				rotateVelocityMin.z = std::clamp(rotateVelocityMin.z, -FLT_MAX, rotateVelocityMax.z);
 				rotateVelocityMax.z = std::clamp(rotateVelocityMax.z, rotateVelocityMin.z, FLT_MAX);
 			}
+			ImGui::Checkbox("ランダムな回転", &isRandomRotate);
 			ImGui::TreePop();
 		}
 
@@ -375,7 +385,7 @@ void ParticleEmitter::RenderImGui() {
 
 	// エミット設定セクション
 	if (ImGui::CollapsingHeader("パーティクルの数、間隔")) {
-		ImGui::DragFloat("間隔", &emitFrequency_, 0.1f, 0.1f);
+		ImGui::DragFloat("間隔", &emitFrequency_, 0.1f, 0.1f,100.0f);
 		ImGui::InputInt("数", &count_, 1, 100);
 		count_ = std::clamp(count_, 0, 10000);
 	}
