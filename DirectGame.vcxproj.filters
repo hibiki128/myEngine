@@ -267,9 +267,6 @@
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\edit\Liner.cpp">
-      <Filter>ソース ファイル\myEngine\utility\edit</Filter>
-    </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
@@ -294,9 +291,6 @@
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp">
       <Filter>ソース ファイル\myEngine\3d\particle</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\3d\line\LineManager.cpp">
-      <Filter>ソース ファイル\myEngine\3d\line</Filter>
-    </ClCompile>
     <ClCompile Include="math\Easing.cpp">
       <Filter>ソース ファイル\math</Filter>
     </ClCompile>
@@ -312,6 +306,9 @@
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp">
       <Filter>ソース ファイル\myEngine\utility\collider</Filter>
     </ClCompile>
+    <ClCompile Include="myEngine\3d\line\DrawLine3D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -322,6 +319,9 @@
       <Filter>シェーダー ファイル</Filter>
     </None>
     <None Include="resources\shaders\Sprite.hlsli">
+      <Filter>シェーダー ファイル</Filter>
+    </None>
+    <None Include="resources\shaders\Line3d.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
@@ -449,9 +449,6 @@
     <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h">
       <Filter>ヘッダー ファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\edit\Liner.h">
-      <Filter>ヘッダー ファイル\myEngine\utility\edit</Filter>
-    </ClInclude>
     <ClInclude Include="math\Quaternion.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
@@ -479,9 +476,6 @@
     <ClInclude Include="math\Quaternion.h">
       <Filter>ヘッダー ファイル\math</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\3d\line\LineManager.h">
-      <Filter>ヘッダー ファイル\myEngine\3d\line</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h">
       <Filter>ヘッダー ファイル\myEngine\3d\camera</Filter>
     </ClInclude>
@@ -496,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h">
       <Filter>ヘッダー ファイル\myEngine\utility\collider</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\3d\line\DrawLine3D.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -515,6 +512,12 @@
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Line3d.PS.hlsl">
+      <Filter>シェーダー ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Line3d.VS.hlsl">
       <Filter>シェーダー ファイル</Filter>
     </FxCompile>
   </ItemGroup>

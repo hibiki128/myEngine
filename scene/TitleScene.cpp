@@ -11,15 +11,13 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
+	liner_ = DrawLine3D::GetInstance();
 
 	vp_.Initialize();
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("sneakWalk.gltf");
 	wt_.Initialize();
-
-	line_ = std::make_unique<LineManager>();
-	line_->Initialize("debug/line.obj");
 }
 
 void TitleScene::Finalize()
@@ -59,7 +57,7 @@ void TitleScene::Update()
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-	DrawSkeleton(obj_.get(),50);
+	DrawSkeleton(obj_.get());
 	vp_.UpdateMatrix();
 	wt_.UpdateMatrix();
 }
@@ -67,6 +65,7 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	/// -------描画処理開始-------
+	liner_->Draw(vp_);
 
 	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
@@ -82,23 +81,20 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	line_->Draw();
+	
 	//-----------------------------
+
 
 	/// -------描画処理終了-------
 }
 
-void TitleScene::DrawSkeleton(Object3d* obj, int segmentCount)
+void TitleScene::DrawSkeleton(Object3d* obj)
 {
 	// モデルデータを取得
 	Model* model = obj->GetModel();
 
 	// スケルトンデータを取得
 	const Model::Skeleton& skeleton = model->GetSkeletonData();
-
-	// 描画用の開始点と終了点リスト
-	std::vector<Vector3> startPoints;
-	std::vector<Vector3> endPoints;
 
 	// 各ジョイントを巡回して親子関係の線を生成
 	for (const auto& joint : skeleton.joints) {
@@ -114,26 +110,13 @@ void TitleScene::DrawSkeleton(Object3d* obj, int segmentCount)
 		Vector3 parentPosition = ExtractTranslation(parentJoint.skeltonSpaceMatrix);
 		Vector3 childPosition = ExtractTranslation(joint.skeltonSpaceMatrix);
 
-		// 線を分割して中間点を計算
-		Vector3 step = (childPosition - parentPosition) / static_cast<float>(segmentCount);
-		Vector3 currentPoint = parentPosition;
+		// 線の色を設定（デフォルトで白色）
+		Vector4 lineColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		for (int i = 0; i < segmentCount; ++i) {
-			Vector3 nextPoint = currentPoint + step;
-
-			// 開始点と終了点をリストに追加
-			startPoints.push_back(currentPoint);
-			endPoints.push_back(nextPoint);
-
-			// 次の開始点を更新
-			currentPoint = nextPoint;
-		}
+		// LineManagerに現在の線分を登録
+		liner_->SetPoints(parentPosition, childPosition, lineColor);
 	}
-
-	// LineManagerに更新を適用
-	line_->Update(vp_, startPoints, endPoints);
 }
-
 
 Vector3 TitleScene::ExtractTranslation(const Matrix4x4& matrix)
 {

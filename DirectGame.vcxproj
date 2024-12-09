@@ -107,6 +107,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="myEngine\3d\line\DrawLine3D.cpp" />
     <ClCompile Include="myEngine\utility\collider\Collider.cpp" />
     <ClCompile Include="myEngine\utility\collider\CollisionManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -118,7 +119,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\utility\edit\LevelData.cpp" />
     <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="myEngine\3d\transform\ObjColor.cpp" />
-    <ClCompile Include="myEngine\utility\edit\Liner.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleEmitter.cpp" />
     <ClCompile Include="myEngine\3d\camera\ViewProjection.cpp" />
     <ClCompile Include="myEngine\3d\transform\WorldTransform.cpp" />
@@ -153,13 +153,16 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\utility\graphics\TextureManager.cpp" />
     <ClCompile Include="myEngine\base\WinApp.cpp" />
     <ClCompile Include="myEngine\core\MyGame.cpp" />
-    <ClCompile Include="myEngine\3d\line\LineManager.cpp" />
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="resources\shaders\Line3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="Resources\shaders\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -174,6 +177,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="myEngine\3d\line\DrawLine3D.h" />
     <ClInclude Include="myEngine\utility\collider\Collider.h" />
     <ClInclude Include="myEngine\utility\collider\CollisionManager.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
@@ -184,7 +188,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\utility\edit\LevelData.h" />
     <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="myEngine\3d\transform\ObjColor.h" />
-    <ClInclude Include="myEngine\utility\edit\Liner.h" />
     <ClInclude Include="myEngine\3d\particle\ParticleEmitter.h" />
     <ClInclude Include="myEngine\3d\camera\ViewProjection.h" />
     <ClInclude Include="myEngine\3d\transform\WorldTransform.h" />
@@ -226,12 +229,23 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\utility\graphics\TextureManager.h" />
     <ClInclude Include="myEngine\base\WinApp.h" />
     <ClInclude Include="myEngine\core\MyGame.h" />
-    <ClInclude Include="myEngine\3d\line\LineManager.h" />
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="resources\shaders\Line3d.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Line3d.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

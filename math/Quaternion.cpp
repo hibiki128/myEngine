@@ -62,13 +62,13 @@ Vector3 Quaternion::ToEulerAngles() const
 
 Quaternion Quaternion::Conjugate() const
 {
-	return Quaternion(w, -x, -y, -z);
+	return Quaternion(-x, -y, -z, w);
 }
 
 Quaternion Quaternion::Normalize() const
 {
-	float length = sqrt(w * w + x * x + y * y + z * z);
-	return Quaternion(w / length, x / length, y / length, z / length);
+	float length = sqrtf(x * x + y * y + z * z + w * w);
+	return Quaternion(x / length, y / length, z / length, w / length);
 }
 
 Quaternion Quaternion::FromLookRotation(const Vector3& direction, const Vector3& up)
@@ -112,6 +112,11 @@ Quaternion Quaternion::operator/(const Quaternion& other) const
 	return *this * inverse;
 }
 
+Quaternion Quaternion::operator*(const float& scalar) const
+{
+	return Quaternion(x * scalar, y * scalar, z * scalar, w * scalar);
+}
+
 Quaternion Quaternion::IdentityQuaternion()
 {
 	return { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -119,8 +124,14 @@ Quaternion Quaternion::IdentityQuaternion()
 
 float Quaternion::Norm() const
 {
-	return std::sqrt(x * x + y * y + z * z + w * w);
+	return sqrtf(x * x + y * y + z * z + w * w);
 }
+
+float Quaternion::Dot(const Quaternion& other) const
+{
+	return x * other.x + y * other.y + z * other.z + w * other.w;
+}
+
 
 Quaternion Quaternion::Inverse() const
 {

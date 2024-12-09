@@ -5,11 +5,11 @@
 
 class Quaternion final {
 public:
-    float w, x, y, z;
+    float x, y, z, w;
 
     // コンストラクタ
     Quaternion() : w(1.0f), x(0.0f), y(0.0f), z(0.0f) {}
-    Quaternion(float w, float x, float y, float z) : w(w), x(x), y(y), z(z) {}
+    Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 
     // クォータニオン同士の掛け算をオーバーロード
     Quaternion operator*(const Quaternion& q) const;
@@ -22,6 +22,8 @@ public:
 
     // クォータニオン同士の除算
     Quaternion operator/(const Quaternion& other) const;
+
+    Quaternion operator*(const float& scalar) const;
 
     // 2つのベクトルの間の回転を計算
     void SetFromTo(const Vector3& from, const Vector3& to);
@@ -43,6 +45,8 @@ public:
 
     // ノルム（長さ）を計算
     float Norm() const;
+
+    float Dot(const Quaternion& other)const;
 
     // 逆クォータニオンを返す
     Quaternion Inverse() const;

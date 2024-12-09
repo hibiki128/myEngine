@@ -20,6 +20,7 @@
 #include"AbstractSceneFactory.h"
 #include"ParticleCommon.h"
 #include"CollisionManager.h"
+#include"line/DrawLine3D.h"
 class Framework
 {
 public:// メンバ関数
@@ -67,7 +68,8 @@ protected:
 	ParticleCommon* particleCommon = nullptr;
 	DirectXCommon* dxCommon = nullptr;
 	WinApp* winApp;
-	SrvManager* srvManager=nullptr;
+	DrawLine3D* line3d_ = nullptr;
+	SrvManager* srvManager = nullptr;
 	bool endRequest_;
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

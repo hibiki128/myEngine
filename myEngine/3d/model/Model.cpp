@@ -33,7 +33,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 void Model::Update()
 {
 	if (haveAnimation) {
-		animationTime += 1.0f / 600.0f;
+		animationTime += 1.0f / 60.0f;
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
 		SkeletonUpdate(skeleton_);

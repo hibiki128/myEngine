@@ -90,8 +90,11 @@ void Framework::Initialize()
 	collisionManager_ = std::make_unique<CollisionManager>();
 	collisionManager_->Initialize();
 	///-------------------------------------
-
+	
 	sceneManager_ = SceneManager::GetInstance();
+
+	line3d_ = DrawLine3D::GetInstance();
+	line3d_->Initialize();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 	
@@ -115,6 +118,7 @@ void Framework::Finalize()
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
 #endif // _DEBUG
+	line3d_->Finalize();
 	srvManager->Finalize();
 	audio->Finalize();
 	input->Finalize();
