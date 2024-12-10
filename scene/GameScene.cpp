@@ -138,6 +138,7 @@ void GameScene::Debug()
 	ImGui::End();
 	player_->DebugTransform("プレイヤー ");
 	enemy_->DebugTransform("エネミー ");
+	followCamera_->imgui();
 }
 
 void GameScene::CameraUpdate()

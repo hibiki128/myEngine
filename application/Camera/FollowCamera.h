@@ -13,6 +13,8 @@ public:
 	/// </summary>
 	void Update();
 
+	void imgui();
+
 	/// <summary>
 	/// ターゲット設定
 	/// </summary>
@@ -23,6 +25,8 @@ public:
 private:
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	WorldTransform worldTransform_;
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
 };
