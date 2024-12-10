@@ -63,8 +63,8 @@ void Model::Draw()
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-		// srvManager_->SetGraphicsRootDescriptorTable(6, skinClusterSrvIndex_);
-		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(6, skinCluster_.paletteSrvHandle.second);
+		srvManager_->SetGraphicsRootDescriptorTable(6, skinClusterSrvIndex_);
+		//modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(6, skinCluster_.paletteSrvHandle.second);
 		// 描画！（DrawCall/ドローコール）
 		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
 	}
@@ -74,7 +74,7 @@ void Model::SkinClusterUpdate(SkinCluster& skinCluster, const Skeleton& skeleton
 {
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex) {
 		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = 
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix =
 			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeletonSpaceMatrix;
 		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
 			Transpose(Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
@@ -405,12 +405,12 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, const Mode
 	WellForGPU* mappedPalette = nullptr;
 	skinCluster.paletteResource->Map(0, nullptr, reinterpret_cast<void**>(&mappedPalette));
 	skinCluster.mappedPalette = { mappedPalette,skeleton.joints.size() };
-	skinClusterSrvIndex_ = srvManager_->Allocate();
+	skinClusterSrvIndex_ = srvManager_->Allocate() + 1;
 	skinCluster.paletteSrvHandle.first = srvManager_->GetCPUDescriptorHandle(skinClusterSrvIndex_);
 	skinCluster.paletteSrvHandle.second = srvManager_->GetGPUDescriptorHandle(skinClusterSrvIndex_);
 
 	// palette用のSRVを作成
-	srvManager_->CreateSRVforStructuredBuffer(skinClusterSrvIndex_, skinCluster_.paletteResource.Get(), UINT(skeleton_.joints.size()), sizeof(WellForGPU));
+	srvManager_->CreateSRVforStructuredBuffer(skinClusterSrvIndex_, skinCluster.paletteResource.Get(), UINT(skeleton_.joints.size()), sizeof(WellForGPU));
 
 
 	// influence用のResourceを確保
