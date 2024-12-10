@@ -41,6 +41,7 @@ void TitleScene::Update()
 	if (ImGui::BeginTabBar("transform")) {
 		if (ImGui::BeginTabItem("transform")) {
 			ImGui::DragFloat3("translation", &wt_.translation_.x, 0.1f);
+			ImGui::DragFloat3("scale", &wt_.scale_.x, 0.1f);
 			ImGui::SliderAngle("X", &wt_.rotation_.x);
 			ImGui::SliderAngle("Y", &wt_.rotation_.y);
 			ImGui::SliderAngle("Z", &wt_.rotation_.z);

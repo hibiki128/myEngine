@@ -63,7 +63,8 @@ void Model::Draw()
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-		srvManager_->SetGraphicsRootDescriptorTable(6, skinClusterSrvIndex_);
+		// srvManager_->SetGraphicsRootDescriptorTable(6, skinClusterSrvIndex_);
+		modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(6, skinCluster_.paletteSrvHandle.second);
 		// 描画！（DrawCall/ドローコール）
 		modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
 	}
@@ -73,8 +74,10 @@ void Model::SkinClusterUpdate(SkinCluster& skinCluster, const Skeleton& skeleton
 {
 	for (size_t jointIndex = 0; jointIndex < skeleton.joints.size(); ++jointIndex) {
 		assert(jointIndex < skinCluster.inverseBindPoseMatrices.size());
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeltonSpaceMatrix;
-		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix = Transpose(Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix = 
+			skinCluster.inverseBindPoseMatrices[jointIndex] * skeleton.joints[jointIndex].skeletonSpaceMatrix;
+		skinCluster.mappedPalette[jointIndex].skeletonSpaceInverseTransposeMatrix =
+			Transpose(Inverse(skinCluster.mappedPalette[jointIndex].skeletonSpaceMatrix));
 	}
 }
 
@@ -84,10 +87,10 @@ void Model::SkeletonUpdate(Skeleton& skeleton)
 	for (Joint& joint : skeleton.joints) {
 		joint.localMatrix = MakeAffineMatrix(joint.transform.scale, joint.transform.rotate, joint.transform.translate);
 		if (joint.parent) { // 親がいれば親の行列を掛ける
-			joint.skeltonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeltonSpaceMatrix;
+			joint.skeletonSpaceMatrix = joint.localMatrix * skeleton.joints[*joint.parent].skeletonSpaceMatrix;
 		}
 		else { // 親がいないのでlocalMatrixとskeletonSpaceMatrixは一致する
-			joint.skeltonSpaceMatrix = joint.localMatrix;
+			joint.skeletonSpaceMatrix = joint.localMatrix;
 		}
 	}
 }
@@ -368,7 +371,7 @@ int32_t Model::CreateJoint(const Node& node,
 	Joint joint;
 	joint.name = node.name;
 	joint.localMatrix = node.localMatrix;
-	joint.skeltonSpaceMatrix = MakeIdentity4x4();
+	joint.skeletonSpaceMatrix = MakeIdentity4x4();
 	joint.transform = node.transform;
 	joint.index = static_cast<int32_t>(joints.size());
 	joint.parent = parent;
@@ -409,6 +412,7 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, const Mode
 	// palette用のSRVを作成
 	srvManager_->CreateSRVforStructuredBuffer(skinClusterSrvIndex_, skinCluster_.paletteResource.Get(), UINT(skeleton_.joints.size()), sizeof(WellForGPU));
 
+
 	// influence用のResourceを確保
 	skinCluster.influenceResource = dxCommon->CreateBufferResource(sizeof(VertexInfluence) * modelData.vertices.size());
 	VertexInfluence* mappedInfluence = nullptr;
@@ -423,9 +427,7 @@ Model::SkinCluster Model::CreateSkinCluster(const Skeleton& skeleton, const Mode
 
 	// InverseBindPoseMatrixの保存領域を作成
 	skinCluster.inverseBindPoseMatrices.resize(skeleton.joints.size());
-	for (size_t i = 0; i < skeleton.joints.size(); ++i) {
-		skinCluster.inverseBindPoseMatrices[i] = MakeIdentity4x4();
-	}
+	std::generate(skinCluster.inverseBindPoseMatrices.begin(), skinCluster.inverseBindPoseMatrices.end(), []() { return MakeIdentity4x4(); });
 
 	// ModelDataのSkinCluster情報を解析してInfluenceの中身を埋める
 	for (const auto& jointWeight : modelData.skinClusterData) { // ModelのSkinClusterの情報を解析

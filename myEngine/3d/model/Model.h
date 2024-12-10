@@ -46,7 +46,7 @@ public:
 	struct Joint {
 		QuaternionTransform transform;
 		Matrix4x4 localMatrix;
-		Matrix4x4 skeltonSpaceMatrix;
+		Matrix4x4 skeletonSpaceMatrix;
 		std::string name;
 		std::vector<int32_t> children;
 		int32_t index;

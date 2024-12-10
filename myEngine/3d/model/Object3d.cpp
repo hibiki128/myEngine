@@ -104,8 +104,8 @@ void Object3d::DrawSkelton(const WorldTransform& worldTransform,const ViewProjec
 		const auto& parentJoint = skeleton.joints[*joint.parent];
 
 		// 親と子のスケルトン空間座標を取得
-		Vector3 parentPosition = ExtractTranslation(parentJoint.skeltonSpaceMatrix);
-		Vector3 childPosition = ExtractTranslation(joint.skeltonSpaceMatrix);
+		Vector3 parentPosition = ExtractTranslation(parentJoint.skeletonSpaceMatrix);
+		Vector3 childPosition = ExtractTranslation(joint.skeletonSpaceMatrix);
 
 		// 線の色を設定（デフォルトで白色）
 		Vector4 lineColor = { 1.0f, 1.0f, 1.0f, 1.0f };
