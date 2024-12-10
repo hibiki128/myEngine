@@ -1,5 +1,6 @@
 #include "Collider.h"
 #include"CollisionManager.h"
+#include <line/DrawLine3D.h>
 
 int Collider::counter = -1;  // 初期値を-1に変更
 
@@ -36,13 +37,12 @@ Collider::Collider() {
 	// グループがまだ存在しない場合のみ作成
 	if (!variables_->GroupExists(groupName)) {
 		variables_->CreateGroup(groupName);
-		variables_->AddItem(groupName, "Cube Translation", SphereOffset);
+		variables_->AddItem(groupName, "Sphere Translation", SphereOffset);
 		variables_->AddItem(groupName, "AABB Min", AABBOffset.min);
 		variables_->AddItem(groupName, "AABB Max", AABBOffset.max);
 		variables_->AddItem(groupName, "OBB center", OBBOffset.center);
 		variables_->AddItem(groupName, "OBB size", OBBOffset.size);
 	}
-	color_.SetColor({ 0.0f,0.0f,0.0f,1.0f });
 }
 
 Collider::~Collider()
@@ -63,7 +63,8 @@ void Collider::UpdateWorldTransform() {
 	Cubewt_.UpdateMatrix();
 
 	// AABBの現在の最小点と最大点を取得
-	aabb = GetAABB();
+	aabb.min = GetCenterPosition() - scale_;
+	aabb.max = GetCenterPosition() + scale_;
 	aabb.min = aabb.min + AABBOffset.min;
 	aabb.max = aabb.max + AABBOffset.max;
 
@@ -76,7 +77,7 @@ void Collider::UpdateWorldTransform() {
 	AABBwt_.scale_ = aabbScale;
 	AABBwt_.UpdateMatrix();
 
-	obb.center = GetCenterPos();
+	obb.center = GetCenterPosition();
 	obb.center = obb.center + OBBOffset.center;
 	MakeOBBOrientations(obb, GetCenterRotation());
 	obb.size = { 1.0f,1.0f,1.0f };
@@ -88,23 +89,135 @@ void Collider::UpdateWorldTransform() {
 	OBBwt_.UpdateMatrix();
 }
 
-void Collider::DrawSphere(const ViewProjection& viewProjection) {
-	sphere_->Draw(Cubewt_, viewProjection, &color_, true);
+void Collider::DrawSphere(const ViewProjection& viewProjection, bool isHit) {
+	const uint32_t kSubdivision = 10;                                        // 分割数
+	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / kSubdivision; // 経度分割1つ分の角度
+	const float kLatEvery = std::numbers::pi_v<float> / kSubdivision;        // 緯度分割1つ分の角度
+
+	// 緯度の方向に分割　-π/2 ～ π/2
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex; // 現在の緯度
+
+		// 経度の方向に分割 0 ～ 2π
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+			float lon = lonIndex * kLonEvery; // 現在の経度
+
+			// 現在の点を求める
+			Vector3 start = {
+				Cubewt_.translation_.x + Cubewt_.scale_.x * std::cosf(lat) * std::cosf(lon),
+				Cubewt_.translation_.y + Cubewt_.scale_.y * std::sinf(lat),
+				Cubewt_.translation_.z + Cubewt_.scale_.z * std::cosf(lat) * std::sinf(lon)
+			};
+
+			// 次の点を求める（経度方向）
+			Vector3 end1 = {
+				Cubewt_.translation_.x + Cubewt_.scale_.x * std::cosf(lat) * std::cosf(lon + kLonEvery),
+				Cubewt_.translation_.y + Cubewt_.scale_.y * std::sinf(lat),
+				Cubewt_.translation_.z + Cubewt_.scale_.z * std::cosf(lat) * std::sinf(lon + kLonEvery),
+			};
+
+			// 次の点を求める（緯度方向）
+			Vector3 end2 = {
+				Cubewt_.translation_.x + Cubewt_.scale_.x * std::cosf(lat + kLatEvery) * std::cosf(lon),
+				Cubewt_.translation_.y + Cubewt_.scale_.y * std::sinf(lat + kLatEvery),
+				Cubewt_.translation_.z + Cubewt_.scale_.z * std::cosf(lat + kLatEvery) * std::sinf(lon),
+			};
+
+			Vector4 color;
+			if (isHit) {
+				color = { 1.0f,0.0f,0.0f,1.0f };
+			}
+			else {
+				color = { 1.0f,1.0f,1.0f,1.0f };
+			}
+
+			// 線を描画（経度方向）
+			DrawLine3D::GetInstance()->SetPoints(start, end1, color);
+			// 線を描画（緯度方向）
+			DrawLine3D::GetInstance()->SetPoints(start, end2, color);
+		}
+	}
 }
 
-void Collider::DrawAABB(const ViewProjection& viewProjection)
+
+void Collider::DrawAABB(const ViewProjection& viewProjection, bool isHit)
 {
-	AABB_->Draw(AABBwt_, viewProjection, &color_, false);
+	// AABBの頂点リスト
+	std::array<Vector3, 8> vertices = {
+		aabb.min,
+		{ aabb.max.x, aabb.min.y, aabb.min.z },
+		{ aabb.min.x, aabb.max.y, aabb.min.z },
+		{ aabb.max.x, aabb.max.y, aabb.min.z },
+		{ aabb.min.x, aabb.min.y, aabb.max.z },
+		{ aabb.max.x, aabb.min.y, aabb.max.z },
+		{ aabb.min.x, aabb.max.y, aabb.max.z },
+		{ aabb.max.x, aabb.max.y, aabb.max.z }
+	};
+
+	// エッジ接続リスト
+	const std::array<std::pair<int, int>, 12> edges = {
+		std::make_pair(0, 1), std::make_pair(1, 3), std::make_pair(3, 2), std::make_pair(2, 0), // 前面
+		std::make_pair(4, 5), std::make_pair(5, 7), std::make_pair(7, 6), std::make_pair(6, 4), // 背面
+		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
+	};
+
+	Vector4 color;
+	if (isHit) {
+		color = { 1.0f,0.0f,0.0f,1.0f };
+	}
+	else {
+		color = { 1.0f,1.0f,1.0f,1.0f };
+	}
+
+	// 線を描画
+	for (const auto& edge : edges) {
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color);
+	}
 }
 
-void Collider::DrawOBB(const ViewProjection& viewProjection) {
-	// OBBの描画処理（AABBと似た形で描画）
-	OBB_->Draw(OBBwt_, viewProjection, &color_, false);
+void Collider::DrawOBB(const ViewProjection& viewProjection, bool isHit) {
+	// OBBの8つの頂点を計算
+	std::array<Vector3, 8> vertices;
+
+	Vector3 halfSize = obb.size * 0.5f;
+	for (int i = 0; i < 8; i++) {
+		Vector3 offset = Vector3(
+			(i & 1) ? halfSize.x : -halfSize.x,
+			(i & 2) ? halfSize.y : -halfSize.y,
+			(i & 4) ? halfSize.z : -halfSize.z
+		);
+
+		vertices[i] = obb.center +
+			obb.orientations[0] * offset.x +
+			obb.orientations[1] * offset.y +
+			obb.orientations[2] * offset.z;
+	}
+
+	// エッジ接続リスト
+	const std::array<std::pair<int, int>, 12> edges = {
+		std::make_pair(0, 1), std::make_pair(1, 3), std::make_pair(3, 2), std::make_pair(2, 0), // 前面
+		std::make_pair(4, 5), std::make_pair(5, 7), std::make_pair(7, 6), std::make_pair(6, 4), // 背面
+		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
+	};
+
+	Vector4 color;
+	if (isHit) {
+		color = { 1.0f,0.0f,0.0f,1.0f };
+	}
+	else {
+		color = { 1.0f,1.0f,1.0f,1.0f };
+	}
+
+	// 線を描画
+	for (const auto& edge : edges) {
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second],color);
+	}
 }
+
 
 void Collider::ApplyVariables()
 {
-	SphereOffset = variables_->GetVector3Value(groupName, "Cube Translation");
+	SphereOffset = variables_->GetVector3Value(groupName, "Sphere Translation");
 	AABBOffset.min = variables_->GetVector3Value(groupName, "AABB Min");
 	AABBOffset.max = variables_->GetVector3Value(groupName, "AABB Max");
 	OBBOffset.center = variables_->GetVector3Value(groupName, "OBB center");

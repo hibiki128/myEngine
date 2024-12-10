@@ -2,6 +2,7 @@
 #include <random>
 #include"TextureManager.h"
 #include"fstream"
+std::unordered_map<std::string, ParticleManager::ModelData> ParticleManager::modelCache;
 
 void ParticleManager::Initialize(SrvManager* srvManager)
 {
@@ -38,20 +39,52 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				particleIterator = particleGroup.particles.erase(particleIterator);
 				continue;
 			}
+			// パーティクルの生存時間に基づく進行度 t を計算
 			float t = (*particleIterator).currentTime / (*particleIterator).lifeTime;
 			t = std::clamp(t, 0.0f, 1.0f);
-			(*particleIterator).transform.scale_ = (1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
+
+			// 拡縮処理
+			// 拡縮処理
+			if (isSinMove_) {
+				// Sin波の周波数制御 (速度調整)
+				float waveScale = 0.5f * (sin(t * DirectX::XM_PI * 18.0f) + 1.0f);  // 0 ～ 1 の範囲
+
+				// 最大スケールが寿命に応じて縮小し、最終的に0になる
+				float maxScale = (1.0f - t);  // 1 -> 0 に線形に縮小
+
+				// Sin波スケールと最大スケールの積を適用
+				(*particleIterator).transform.scale_ =
+					(*particleIterator).startScale * waveScale * maxScale;
+			}
+
+			else {
+				// 通常の線形補間
+				(*particleIterator).transform.scale_ =
+					(1.0f - t) * (*particleIterator).startScale + t * (*particleIterator).endScale;
+				// アルファ値の計算
+				(*particleIterator).color.w = (*particleIterator).initialAlpha - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+			}
+
 			(*particleIterator).Acce = (1.0f - t) * (*particleIterator).startAcce + t * (*particleIterator).endAcce;
-			(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
-			(*particleIterator).velocity *= (*particleIterator).Acce;
+			if (isRandomRotate_) {
+				(*particleIterator).transform.rotation_ += (*particleIterator).rotateVelocity;
+			}
+			else {
+				(*particleIterator).transform.rotation_ = (1.0f - t) * (*particleIterator).startRote + t * (*particleIterator).endRote;
+			}
+			if (isAcceMultipy_) {
+				(*particleIterator).velocity *= (*particleIterator).Acce;
+			}
+			else {
+				(*particleIterator).velocity += (*particleIterator).Acce;
+			}
 			// パーティクルの移動
 			(*particleIterator).transform.translation_ +=
 				(*particleIterator).velocity * kDeltaTime;
 			(*particleIterator).currentTime += kDeltaTime;
 
 
-			// アルファ値の計算
-			float alpha = 1.0f - ((*particleIterator).currentTime / (*particleIterator).lifeTime);
+
 
 			// ワールド行列の計算
 			Matrix4x4 worldMatrix{};
@@ -67,7 +100,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 					(*particleIterator).transform.translation_);
 			}
 
-			
+
 			// パーティクルのワールド位置をチェック
 			WorldTransform particleWorldTransform;
 			particleWorldTransform.translation_ = (*particleIterator).transform.translation_;
@@ -87,7 +120,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 				particleGroup.instancingData[numInstance].WVP = worldViewProjectionMatrix;
 				particleGroup.instancingData[numInstance].World = worldMatrix;
 				particleGroup.instancingData[numInstance].color = (*particleIterator).color;
-				particleGroup.instancingData[numInstance].color.w = alpha;  // アルファ値の設定
+				particleGroup.instancingData[numInstance].color.w = (*particleIterator).color.w;  // アルファ値の設定
 				++numInstance;
 			}
 
@@ -158,54 +191,117 @@ void ParticleManager::CreateVartexData(const std::string& filename)
 ParticleManager::Particle ParticleManager::MakeNewParticle(
 	std::mt19937& randomEngine,
 	const Vector3& translate,
+	const Vector3& rotation,
 	const Vector3& scale, // スケールを引数として受け取る
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
 	const Vector3& startAcce, const Vector3& endAcce,
-	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値をVector3で受け取る
+	const Vector3& startRote, const Vector3& endRote,
+	bool isRamdomColor, float alphaMin, float alphaMax,
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+	const Vector3& allScaleMax, const Vector3& allScaleMin,
+	const float& scaleMin, const float& scaleMax
+)
 {
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 	std::uniform_real_distribution<float> distVelocityX(velocityMin.x, velocityMax.x);
 	std::uniform_real_distribution<float> distVelocityY(velocityMin.y, velocityMax.y);
 	std::uniform_real_distribution<float> distVelocityZ(velocityMin.z, velocityMax.z);
 	std::uniform_real_distribution<float> distLifeTime(lifeTimeMin, lifeTimeMax);
+	std::uniform_real_distribution<float> distAlpha(alphaMin, alphaMax);
 
 	Particle particle;
 
-	// スケールを考慮したランダムな位置を計算
+	// スケールを考慮したランダムな位置を生成
 	Vector3 randomTranslate = {
 		distribution(randomEngine) * scale.x,
 		distribution(randomEngine) * scale.y,
 		distribution(randomEngine) * scale.z
 	};
-	particle.transform.translation_ = translate + randomTranslate;
 
-	particle.startScale = particleStartScale;
+	// 回転行列を適用してランダムな位置を回転
+	Matrix4x4 rotationMatrix = MakeRotateXYZMatrix(rotation);
+
+	// ランダム位置を回転行列で変換
+	Vector3 rotatedPosition = {
+		randomTranslate.x * rotationMatrix.m[0][0] + randomTranslate.y * rotationMatrix.m[1][0] + randomTranslate.z * rotationMatrix.m[2][0],
+		randomTranslate.x * rotationMatrix.m[0][1] + randomTranslate.y * rotationMatrix.m[1][1] + randomTranslate.z * rotationMatrix.m[2][1],
+		randomTranslate.x * rotationMatrix.m[0][2] + randomTranslate.y * rotationMatrix.m[1][2] + randomTranslate.z * rotationMatrix.m[2][2]
+	};
+
+	// 回転されたランダムな位置をトランスレーションに加算
+	particle.transform.translation_ = translate + rotatedPosition;
+
+	if (isRandomAllSize_) {
+		std::uniform_real_distribution<float> distScaleX(allScaleMin.x, allScaleMax.x);
+		std::uniform_real_distribution<float> distScaleY(allScaleMin.y, allScaleMax.y);
+		std::uniform_real_distribution<float> distScaleZ(allScaleMin.z, allScaleMax.z);
+		particle.startScale = { distScaleX(randomEngine),distScaleY(randomEngine),distScaleZ(randomEngine) };
+	}
+	else if (isRandomSize_) {
+		std::uniform_real_distribution<float> distScale(scaleMin, scaleMax);
+		particle.startScale.x = distScale(randomEngine);
+		particle.startScale.y = particle.startScale.x;
+		particle.startScale.z = particle.startScale.x;
+	}
+	else {
+		particle.startScale = particleStartScale;
+	}
 	particle.endScale = particleEndScale;
+
 	particle.startAcce = startAcce;
 	particle.endAcce = endAcce;
-	particle.startRote = startRote;
-	particle.endRote = endRote;
 
-	// 速度をランダムに設定
-	particle.velocity = {
+	// パーティクルの速度をランダムに設定
+	Vector3 randomVelocity = {
 		distVelocityX(randomEngine),
 		distVelocityY(randomEngine),
 		distVelocityZ(randomEngine)
 	};
 
+	// エミッターの回転を速度ベクトルに適用
+	particle.velocity = {
+		randomVelocity.x * rotationMatrix.m[0][0] + randomVelocity.y * rotationMatrix.m[1][0] + randomVelocity.z * rotationMatrix.m[2][0],
+		randomVelocity.x * rotationMatrix.m[0][1] + randomVelocity.y * rotationMatrix.m[1][1] + randomVelocity.z * rotationMatrix.m[2][1],
+		randomVelocity.x * rotationMatrix.m[0][2] + randomVelocity.y * rotationMatrix.m[1][2] + randomVelocity.z * rotationMatrix.m[2][2]
+	};
 
 
-	// ランダムな色を設定
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-	particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f };
+	if (isRandomRotate_) {
+		// 回転速度をランダムに設定
+		std::uniform_real_distribution<float> distRotateXVelocity(rotateVelocityMin.x, rotateVelocityMax.x);
+		std::uniform_real_distribution<float> distRotateYVelocity(rotateVelocityMin.y, rotateVelocityMax.y);
+		std::uniform_real_distribution<float> distRotateZVelocity(rotateVelocityMin.z, rotateVelocityMax.z);
+		std::uniform_real_distribution<float> distRotateX(0.0f, 2.0f);
+		std::uniform_real_distribution<float> distRotateY(0.0f, 2.0f);
+		std::uniform_real_distribution<float> distRotateZ(0.0f, 2.0f);
+		particle.rotateVelocity.x = distRotateXVelocity(randomEngine);
+		particle.rotateVelocity.y = distRotateYVelocity(randomEngine);
+		particle.rotateVelocity.z = distRotateZVelocity(randomEngine);
+		particle.transform.rotation_.x = distRotateX(randomEngine);
+		particle.transform.rotation_.y = distRotateY(randomEngine);
+		particle.transform.rotation_.z = distRotateZ(randomEngine);
+	}
+	else {
+		particle.startRote = startRote;
+		particle.endRote = endRote;
+	}
 
+	if (isRamdomColor) {
+		// ランダムな色を設定
+		std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+		particle.color = { distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), distAlpha(randomEngine) };
+	}
+	else {
+		particle.color = { 1.0f,1.0f,1.0f, distAlpha(randomEngine) };
+	}
+	particle.initialAlpha = distAlpha(randomEngine);
 	// ライフタイムをランダムに設定
 	particle.lifeTime = distLifeTime(randomEngine);
 	particle.currentTime = 0.0f;
 
-	return std::move(particle);
+	return particle;
 }
 
 ParticleManager::MaterialData ParticleManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
@@ -237,8 +333,15 @@ ParticleManager::MaterialData ParticleManager::LoadMaterialTemplateFile(const st
 }
 
 
-ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& directoryPath, const std::string& filename)
-{
+ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+	std::string fullPath = directoryPath + filename;
+
+	// キャッシュを確認して、既に読み込まれている場合はそれを返す
+	auto it = modelCache.find(fullPath);
+	if (it != modelCache.end()) {
+		return it->second;
+	}
+
 	ModelData modelData;
 	std::vector<Vector4> positions; // 位置
 	std::vector<Vector2> texcoords; // テクスチャ座標
@@ -248,19 +351,17 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 	std::string folderPath;
 	size_t lastSlashPos = filename.find_last_of("/\\");
 	if (lastSlashPos != std::string::npos) {
-		// ファイル名の前にフォルダがある場合は、そのフォルダ部分を使用する
 		folderPath = filename.substr(0, lastSlashPos);
 	}
 
-	std::ifstream file(directoryPath + filename); // ファイルを開く
+	std::ifstream file(fullPath); // ファイルを開く
 	assert(file.is_open()); // ファイルが開けなかったら停止
 
 	while (std::getline(file, line)) {
 		std::string identifier;
 		std::istringstream s(line);
-		s >> identifier; // 先頭の識別子を読み込む
+		s >> identifier;
 
-		// identifierに応じた処理
 		if (identifier == "v") {
 			Vector4 position;
 			s >> position.x >> position.y >> position.z;
@@ -271,25 +372,21 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 		else if (identifier == "vt") {
 			Vector2 texcoord;
 			s >> texcoord.x >> texcoord.y;
-			texcoord.x = 1.0f - texcoord.x;
 			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 		}
 		else if (identifier == "f") {
 			VertexData triangle[3];
-			// 面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
 				s >> vertexDefinition;
-				// 頂点の要素へのIndexは「位置/UV/法線」で格納されているので、分解してIndexを取得する
 				std::istringstream v(vertexDefinition);
 				uint32_t elementIndices[3];
 				for (int32_t element = 0; element < 3; ++element) {
 					std::string index;
-					std::getline(v, index, '/'); // 区切りでインデックスを読んでいく
+					std::getline(v, index, '/');
 					elementIndices[element] = std::stoi(index);
 				}
-				// 要素へのIndexから、実際の要素の値を取得して、頂点を構築する
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				VertexData vertex = { position, texcoord };
@@ -298,20 +395,20 @@ ParticleManager::ModelData ParticleManager::LoadObjFile(const std::string& direc
 			}
 		}
 		else if (identifier == "mtllib") {
-			// materialTemplateLibraryファイルの名前を取得する
 			std::string materialFilename;
 			s >> materialFilename;
-
 			if (!folderPath.empty()) {
-				// ファイル名の前にフォルダがあればそれを追加する
 				modelData.material = LoadMaterialTemplateFile(directoryPath + folderPath, materialFilename);
 			}
 			else {
-				// ファイル名の前にフォルダがあればそれを追加する
 				modelData.material = LoadMaterialTemplateFile(directoryPath, materialFilename);
 			}
 		}
 	}
+
+	// キャッシュに保存
+	modelCache[fullPath] = modelData;
+
 	return modelData;
 }
 
@@ -335,9 +432,13 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 	const Vector3& scale, // スケールを引数として追加
 	const Vector3& velocityMin, const Vector3& velocityMax, // 速度の範囲を引数として追加
 	float lifeTimeMin, float lifeTimeMax,
-	const Vector3& particleStartScale, const Vector3& particleEndScale, 
-	const Vector3& startAcce, const Vector3& endAcce, 
-	const Vector3& startRote, const Vector3& endRote) // サイズの開始値と終了値を引数として追加
+	const Vector3& particleStartScale, const Vector3& particleEndScale,
+	const Vector3& startAcce, const Vector3& endAcce,
+	const Vector3& startRote, const Vector3& endRote,
+	bool isRandomColor, float alphaMin, float alphaMax,
+	const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+	const Vector3& allScaleMax, const Vector3& allScaleMin,
+	const float& scaleMin, const float& scaleMax, const Vector3& rotation)
 {
 	// パーティクルグループが存在するか確認
 	assert(particleGroups.find(name) != particleGroups.end() && "Error: パーティクルグループが存在しません。");
@@ -352,6 +453,7 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 		Particle particle = MakeNewParticle(
 			randomEngine,
 			position,
+			rotation,
 			scale,          // 追加されたスケール
 			velocityMin,
 			velocityMax,    // 追加された速度の範囲
@@ -362,7 +464,14 @@ std::list<ParticleManager::Particle> ParticleManager::Emit(
 			startAcce,
 			endAcce,
 			startRote,
-			endRote
+			endRote,
+			isRandomColor,
+			alphaMin,
+			alphaMax,
+			rotateVelocityMin,
+			rotateVelocityMax,
+			allScaleMax, allScaleMin,
+			scaleMin, scaleMax
 		);
 		newParticles.push_back(particle);
 	}

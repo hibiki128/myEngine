@@ -1,5 +1,6 @@
 #include"myMath.h"
-#include <cassert>
+#include <numbers>
+#include"ViewProjection.h"
 
 float Lerp(float _start, float _end, float _t)
 {
@@ -68,17 +69,6 @@ Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {
 		v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1],
 		v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2],
 	};
-
-	return result;
-}
-
-Vector3 TransformVector(const Vector3& vector, const Matrix4x4& matrix) {
-	Vector3 result;
-
-	// 行列による変換
-	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + matrix.m[3][0];
-	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + matrix.m[3][1];
-	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + matrix.m[3][2];
 
 	return result;
 }
@@ -174,6 +164,35 @@ Matrix4x4 MakeRotateZMatrix(float radian) { return { std::cosf(radian), std::sin
 
 Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian) { return { (MakeRotateXMatrix(radian.x) * MakeRotateYMatrix(radian.y) * MakeRotateZMatrix(radian.z)) }; }
 
+Matrix4x4 MakeRotateXYZMatrix(const Quaternion& quat)
+{
+	// クォータニオンから回転行列を計算
+	float x = quat.x, y = quat.y, z = quat.z, w = quat.w;
+
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.m[0][0] = 1.0f - 2.0f * (y * y + z * z);
+	rotationMatrix.m[0][1] = 2.0f * (x * y - z * w);
+	rotationMatrix.m[0][2] = 2.0f * (x * z + y * w);
+	rotationMatrix.m[0][3] = 0.0f;
+
+	rotationMatrix.m[1][0] = 2.0f * (x * y + z * w);
+	rotationMatrix.m[1][1] = 1.0f - 2.0f * (x * x + z * z);
+	rotationMatrix.m[1][2] = 2.0f * (y * z - x * w);
+	rotationMatrix.m[1][3] = 0.0f;
+
+	rotationMatrix.m[2][0] = 2.0f * (x * z - y * w);
+	rotationMatrix.m[2][1] = 2.0f * (y * z + x * w);
+	rotationMatrix.m[2][2] = 1.0f - 2.0f * (x * x + y * y);
+	rotationMatrix.m[2][3] = 0.0f;
+
+	rotationMatrix.m[3][0] = 0.0f;
+	rotationMatrix.m[3][1] = 0.0f;
+	rotationMatrix.m[3][2] = 0.0f;
+	rotationMatrix.m[3][3] = 1.0f;
+
+	return rotationMatrix;
+}
+
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
 	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
@@ -200,93 +219,129 @@ Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, f
 	return { width / 2.0f, 0, 0, 0, 0, -height / 2.0f, 0, 0, 0, 0, maxDepth - minDepth, 0, left + width / 2.0f, top + height / 2.0f, minDepth, 1.0f };
 }
 
-Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t) {
-	const float s = 0.5f;
-	float t2 = t * t;
-	float t3 = t2 * t;
-
-	Vector3 e3 = -p0 + 3 * p1 - 3 * p2 + p3;
-	Vector3 e2 = 2 * p0 - 5 * p1 + 4 * p2 - p3;
-	Vector3 e1 = -p0 + p2;
-	Vector3 e0 = 2 * p1;
-
-	return s * (e3 * t3 + e2 * t2 + e1 * t + e0);
-}
-
-Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t) {
-	assert(points.size() >= 4 && "制御点は4点以上必要です");
-
-	// 区間数は制御点の数-1
-	size_t division = points.size() - 1;
-	// 1区間の長さ（全体を1.0とした割合）
-	float areaWidth = 1.0f / division;
-
-	// 区間内の始点を0.0f、終点を1.0fとしたときの現在位置
-	float t_2 = std::fmod(t, areaWidth) * division;
-	// 下限(0.0f)と上限(1.0f)の範囲に収める
-	t_2 = std::clamp(t_2, 0.0f, 1.0f);
-
-	// 区間番号
-	size_t index = static_cast<size_t>(t / areaWidth);
-	// 区間番号が上限を超えないように収める
-	index = std::min(index, points.size() - 2);
-
-	// 4点分のインデックス
-	size_t index0 = index - 1;
-	size_t index1 = index;
-	size_t index2 = index + 1;
-	size_t index3 = index + 2;
-
-	// 最初の区間のp0はo1を重複使用する
-	if (index == 0) {
-		index0 = index1;
-	}
-
-	// 最後の区間のp3は重複使用する
-	if (index3 >= points.size()) {
-		index3 = index2;
-	}
-
-	// 4点の座標
-	const Vector3& p0 = points[index0];
-	const Vector3& p1 = points[index1];
-	const Vector3& p2 = points[index2];
-	const Vector3& p3 = points[index3];
-
-	// 4点を指定してCatmull-Rom補間
-	return CatmullRomInterpolation(p0, p1, p2, p3, t_2);
-}
-
-Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles)
+Vector3 QuaternionToAxis(const Quaternion& q)
 {
-	float pitch = eulerAngles.x;  // X軸周りの回転
-	float yaw = eulerAngles.y;    // Y軸周りの回転
-	float roll = eulerAngles.z;   // Z軸周りの回転
+	Quaternion normalizedQ = q.Normalize(); 
 
-	// 各軸周りの回転行列
-	Matrix4x4 rotationX = Matrix4x4{
-		1, 0, 0, 0,
-		0, cosf(pitch), -sinf(pitch), 0,
-		0, sinf(pitch), cosf(pitch), 0,
-		0, 0, 0, 1
-	};
+	// 回転軸の計算: ベクトル部分(x, y, z)が回転軸になる
+	Vector3 axis(normalizedQ.x, normalizedQ.y, normalizedQ.z);
 
-	Matrix4x4 rotationY = Matrix4x4{
-		cosf(yaw), 0, sinf(yaw), 0,
-		0, 1, 0, 0,
-		-sinf(yaw), 0, cosf(yaw), 0,
-		0, 0, 0, 1
-	};
+	// 回転軸を正規化して戻す（すでに正規化されたクォータニオンの場合はこの操作は不要）
+	return axis.Normalize();
+}
 
-	Matrix4x4 rotationZ = Matrix4x4{
-		cosf(roll), -sinf(roll), 0, 0,
-		sinf(roll), cosf(roll), 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	};
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate) {
+	Matrix4x4 result = MakeScaleMatrix(scale) * QuaternionToMatrix4x4(rotate) * MakeTranslateMatrix(translate);
+	return result;
+}
+Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q) {
+	Matrix4x4 mat;
 
-	// 回転行列を合成 (Z * Y * X の順に掛け合わせる)
-	return rotationZ * rotationY * rotationX;
+	// クォータニオンの各成分の積を計算
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	// 左手座標系用の回転行列を設定
+	mat.m[0][0] = 1.0f - 2.0f * (yy + zz);
+	mat.m[0][1] = 2.0f * (xy + wz);
+	mat.m[0][2] = 2.0f * (xz - wy);
+	mat.m[0][3] = 0.0f;
+
+	mat.m[1][0] = 2.0f * (xy - wz);
+	mat.m[1][1] = 1.0f - 2.0f * (xx + zz);
+	mat.m[1][2] = 2.0f * (yz + wx);
+	mat.m[1][3] = 0.0f;
+
+	mat.m[2][0] = 2.0f * (xz + wy);
+	mat.m[2][1] = 2.0f * (yz - wx);
+	mat.m[2][2] = 1.0f - 2.0f * (xx + yy);
+	mat.m[2][3] = 0.0f;
+
+	mat.m[3][0] = 0.0f;
+	mat.m[3][1] = 0.0f;
+	mat.m[3][2] = 0.0f;
+	mat.m[3][3] = 1.0f;
+
+	return mat;
+}
+
+
+float LerpShortAngle(float a, float b, float t) {
+	// 角度差分を求める
+	float diff = b - a;
+	float pi = 3.141592f;
+	// 角度を[-2PI,+2PI]に補正する
+	diff = std::fmodf(diff, 2.0f * pi);
+	// 角度を[-PI,PI]に補正する
+	if (diff > pi) {
+		diff -= 2.0f * pi;
+	}
+	else if (diff < -pi) {
+		diff += 2.0f * pi;
+	}
+	return a + diff * t;
+}
+
+// 行列から回転成分をオイラー角に変換して取得
+Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat) {
+	Vector3 eulerAngles;
+
+	// Gimbal lock を考慮しながらオイラー角を計算
+	if (std::abs(mat.m[2][0]) < 1.0f) {
+		// 通常の場合
+		eulerAngles.x = std::atan2(-mat.m[2][1], mat.m[2][2]); // Pitch (X軸回転)
+		eulerAngles.y = std::asin(mat.m[2][0]);                // Yaw (Y軸回転)
+		eulerAngles.z = std::atan2(-mat.m[1][0], mat.m[0][0]); // Roll (Z軸回転)
+	}
+	else {
+		// Gimbal lock の場合
+		eulerAngles.x = std::atan2(mat.m[1][2], mat.m[1][1]);
+		eulerAngles.y = (mat.m[2][0] > 0.0f) ? std::numbers::pi_v<float> / 2 : -std::numbers::pi_v<float> / 2;
+		eulerAngles.z = 0.0f; // 任意の値が取れるため0に設定
+	}
+
+	return eulerAngles;
+}
+
+float radiansToDegrees(float radians) {
+	return radians * (180.0f / std::numbers::pi_v<float>);
+}
+
+float degreesToRadians(float degrees) {
+	return degrees * (std::numbers::pi_v<float> / 180.0f);
+}
+
+Quaternion Slerp(Quaternion q0, Quaternion q1, float t)
+{
+	float dot = q0.Dot(q1);
+	if (dot < 0.0f) {
+		q0 = { -q0.x, -q0.y, -q0.z, -q0.w }; // 反対方向に補間
+		dot = -dot;
+	}
+
+	// なす角を求める
+	float theta = std::acos(dot);
+	float sinTheta = std::sin(theta);
+
+	// 補間係数を求める
+	if (sinTheta > 0.001f) { // 数値安定性のための閾値
+		float scale0 = std::sin((1 - t) * theta) / sinTheta;
+		float scale1 = std::sin(t * theta) / sinTheta;
+
+		// 補間後のQuaternionを計算
+		return q0 * scale0 + q1 * scale1;
+	}
+	else {
+		// ほぼ同じ方向の場合、線形補間
+		return q0 * (1 - t) + q1 * t;
+	}
 }
 
 //
@@ -305,3 +360,13 @@ Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles)
 //		}
 //	}
 //}
+
+Vector3 ScreenTransform(Vector3 worldPos, const ViewProjection& viewProjection) {
+	//ビューポート行列
+	Matrix4x4 matViewport = MakeViewPortMatrix(0, 0, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0, 1);
+	//ビュー行列とプロジェクション行列、ビューポート行列を合成する
+	Matrix4x4 matViewProjectionViewport = viewProjection.matView_ * viewProjection.matProjection_ * matViewport;
+	//ワールド→スクリーン変換
+	return Transformation(worldPos, matViewProjectionViewport);
+}
+

@@ -5,10 +5,10 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
-#include"ViewProjection.h"
+#include"DebugCamera.h"
 #include"Object3d.h"
 #include"WorldTransform.h"
-#include"Sprite.h"
+#include"ParticleEmitter.h"
 
 class TitleScene :public BaseScene
 {
@@ -34,7 +34,19 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-	ViewProjection* GetViewProjection()override { return &vP_; }
+	/// <summary>
+	/// オフスクリーン上に描画
+	/// </summary>
+	void DrawForOffScreen()override;
+
+	ViewProjection* GetViewProjection()override { return &vp_; }
+
+private:
+	void Debug();
+
+	void CameraUpdate();
+
+	void ChangeScene();
 
 private:
 	Audio* audio_;
@@ -43,7 +55,14 @@ private:
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
 
-	ViewProjection vP_;
+	ViewProjection vp_;
+	std::unique_ptr<DebugCamera> debugCamera_;
 
-	std::unique_ptr<Sprite> sprite_;
+	WorldTransform wt1_;
+	WorldTransform wt2_;
+
+	std::unique_ptr<Object3d> suzannu_;
+	std::unique_ptr<Object3d> sphere_;
+
+	std::unique_ptr<ParticleEmitter> emitter_;
 };

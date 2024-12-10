@@ -38,16 +38,16 @@ public:
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="viewProjection"></param>
-	void DrawSphere(const ViewProjection& viewProjection);
+	void DrawSphere(const ViewProjection& viewProjection,bool isHit);
 
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="model"></param>
 	/// <param name="viewProjection"></param>
-	void DrawAABB(const ViewProjection& viewProjection);
+	void DrawAABB(const ViewProjection& viewProjection, bool isHit);
 
-	void DrawOBB(const ViewProjection& viewProjection);
+	void DrawOBB(const ViewProjection& viewProjection, bool isHit);
 
 	/// <summary>
 	/// 当たってる間
@@ -68,20 +68,6 @@ public:
 	virtual void OnCollisionOut([[maybe_unused]] Collider* other) {};
 
 	/// <summary>
-	/// 当たったかどうか色で分かるようにしたいなら呼んでください
-	/// </summary>
-	void SetHitColor() {
-		color_.SetColor({ 1.0f,0.0f,0.0f,1.0f });
-	}
-
-	/// <summary>
-	/// 元の色
-	/// </summary>
-	void SetDefaultColor() {
-		color_.SetColor({ 0.0f,0.0f,0.0f,1.0f });
-	}
-
-	/// <summary>
 	/// getter
 	/// </summary>
 	/// <returns></returns>
@@ -91,15 +77,14 @@ public:
 	virtual Vector3 GetCenterPosition() const = 0;
 	virtual Vector3 GetCenterRotation() const = 0;
 
-	virtual AABB GetAABB()const = 0;
 	// 種別IDを取得
 	uint32_t GetTypeID() const { return typeID_; }
 	// 種別IDを設定
 	void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
 
-	Vector3 GetCenterPos() { return Cubewt_.translation_; }
-	AABB GetAABBPos() { return aabb; }
-	OBB GetOBBPos() { return obb; }
+	Vector3 GetCenter() { return Cubewt_.translation_; }
+	AABB GetAABB() { return aabb; }
+	OBB GetOBB() { return obb; }
 
 	/// <summary>
 	/// setter
@@ -108,6 +93,7 @@ public:
 	void SetRadius(float radius) { radius_ = radius; }
 	void SetIsColliding(bool colliding) { wasColliding = isColliding; isColliding = colliding; }
 	void SetCollisionEnabled(bool enabled) { isCollisionEnabled_ = enabled; }
+	void SetAABBScale(Vector3 scale) { scale_ = scale; }
 
 	bool IsCollisionEnabled() const { return isCollisionEnabled_; }
 	bool IsColliding() const { return isColliding; }
@@ -137,13 +123,15 @@ private:
 	OBB obb;
 	Vector3 aabbCenter;
 	Vector3 aabbScale;
+	Vector3 scale_ = { 1.0f,1.0f,1.0f };
 
 	static int counter; // 静的カウンタ
 	Vector3 SphereOffset = { 0.0f,0.0f,0.0f };
 	AABB AABBOffset;
 	OBB OBBOffset;
-
-	ObjColor color_;
+	Vector4 colorAABB;
+	Vector4 colorOBB;
+	Vector4 colorSphere;
 
 	bool isCollisionEnabled_ = true;  // デフォルトではコリジョンを有効化
 	bool isColliding = false;   // 現在のフレームの衝突状態

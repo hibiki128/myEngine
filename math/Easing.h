@@ -1,72 +1,402 @@
 #pragma once
-#include"Vector2.h"
+#include "Vector2.h"
+#include "Vector3.h"
 
-float easeInSine(float x);
-float easeOutSine(float x);
-float easeInOutSine(float x);
-float easeInQuad(float x);
-float easeOutQuad(float x);
-float easeInOutQuad(float x);
-float easeInCubic(float x);
-float easeOutCubic(float x);
-float easeInOutCubic(float x);
-float easeInQuart(float x);
-float easeOutQuart(float x);
-float easeInOutQuart(float x);
-float easeInQuint(float x);
-float easeOutQuint(float x);
-float easeInOutQuint(float x);
-float easeInExpo(float x);
-float easeOutExpo(float x);
-float easeInOutExpo(float x);
-float easeInCirc(float x);
-float easeOutCirc(float x);
-float easeInOutCirc(float x);
-float easeInBack(float x);
-float easeOutBack(float x);
-float easeInOutBack(float x);
-float easeInElastic(float x);
-float easeOutElastic(float x);
-float easeInOutElastic(float x);
-float easeOutBounce(float x);
-float easeInBounce(float x);
-float easeInOutBounce(float x);
-enum easename {
-	InSine,
-	OutSine,
-	InOutSine,
-	InQuad,
-	OutQuad,
-	InOutQuad,
-	InCubic,
-	OutCubic,
-	InOutCubic,
-	InQuart,
-	OutQuart,
-	InOutQuart,
-	InQuint,
-	OutQuint,
-	InOutQuint,
-	InExpo,
-	OutExpo,
-	InOutExpo,
-	InCirc,
-	OutCirc,
-	InOutCirc,
-	InBack,
-	OutBack,
-	InOutBack,
-	InElastic,
-	OutElastic,
-	InOutElastic,
-	InBounce,
-	OutBounce,
-	InOutBounce,
+struct Easing {
+	float time;
+	float maxTime;
+	float incrementTime_;
+	float amplitude;
+	float period;
 };
 
-// イージング関数の型定義
-typedef float (*EaseFunc)(float);
+float LerpE(const float& start, const float& end, float t);
 
-float Easing(easename EaseName, const float& StartPos, const float& EndPos, float& t);
+Vector3 LerpE(const Vector3& start, const Vector3& end, float t);
 
-Vector2 EasingVec2(easename EaseName, const Vector2& StartPos, const Vector2& EndPos, float x);
+Vector2 LerpE(const Vector2& start, const Vector2& end, float t);
+
+Vector3 SLerp(const Vector3& start, const Vector3& end, float t);
+
+float EaseInElasticAmplitude(float t, const float& totaltime, const float& amplitude, const float& period);
+
+float EaseOutElasticAmplitude(float t, float totaltime, float amplitude, float period);
+
+float EaseInOutElasticAmplitude(float t, float totaltime, float amplitude, float period);
+
+template<typename T> T EaseAmplitudeScale(const T& initScale, const float& easeT, const float& totalTime, const float& amplitude, const float& period);
+
+//*******************************************************************************************************************************************************************
+// Sine**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+
+/// <summary>
+/// EaseInSine
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInSine(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseOutSine
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutSine(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseInOutSine
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutSine(const T& start, const T& end, float x, float totalX);
+//*******************************************************************************************************************************************************************
+// back**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+
+/// <summary>
+/// EaseInBack
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInBack(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseOutBack
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutBack(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseInOutBack
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutBack(const T& start, const T& end, float x, float totalX);
+
+//*******************************************************************************************************************************************************************
+// Quint**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+
+/// <summary>
+/// EaseInQuint
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInQuint(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseOutQint
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutQuint(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseInOutQint
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutQuint(const T& start, const T& end, float x, float totalX);
+
+//*******************************************************************************************************************************************************************
+// Circ**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+/// <summary>
+/// EaseInCirc
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInCirc(const T& start, const T& end, float x, float totalX);
+/// <summary>
+/// EaseOutCirc
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutCirc(const T& start, const T& end, float x, float totalX);
+/// <summary>
+/// EaseInOutCirc
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutCirc(const T& start, const T& end, float x, float totalX);
+
+//*******************************************************************************************************************************************************************
+// Expo**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+/// <summary>
+/// EaseInExpo
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInExpo(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseOutExpo
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutExpo(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseInOutExpo
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutExpo(const T& start, const T& end, float x, float totalX);
+
+//*******************************************************************************************************************************************************************
+// Cubic**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+/// <summary>
+/// EaseOutCubic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutCubic(const T& start, const T& end, float x, float totalx);
+
+/// <summary>
+/// EaseInCubic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInCubic(const T& start, const T& end, float x, float totalx);
+
+/// <summary>
+/// EaseInOutCubic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutCubic(const T& start, const T& end, float x, float totalx);
+
+//*******************************************************************************************************************************************************************
+// Quad**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+/// <summary>
+/// EaseInQuad
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInQuad(const T& start, const T& end, float x, float totalx);
+
+/// <summary>
+/// EaseOutQuad
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutQuad(const T& start, const T& end, float x, float totalx);
+
+/// <summary>
+/// EaseInOutQuad
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutQuad(const T& start, const T& end, float x, float totalx);
+
+//*******************************************************************************************************************************************************************
+// Quart**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+/// <summary>
+/// EaseInQuart
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInQuart(const T& start, const T& end, float x, float totalx);
+
+/// <summary>
+/// EaseOutQuart
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutQuart(const T& start, const T& end, float x, float totalx);
+
+//*******************************************************************************************************************************************************************
+// Bounce**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+
+// バウンス補助関数
+float BounceEaseOut(float x);
+/// <summary>
+/// EaseInBounce
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInBounce(const T& start, const T& end, float x, float totalX);
+/// <summary>
+/// EaseOutBounce
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseOutBounce(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseInOutBounce
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalx"></param>
+/// <returns></returns>
+template<typename T> T EaseInOutBounce(const T& start, const T& end, float x, float totalX);
+
+///// <summary>
+///// EaseTimeControl
+///// </summary>
+///// <typeparam name="T"></typeparam>
+///// <param name="t"></param>
+///// <param name="totalTime"></param>
+///// <param name="start"></param>
+///// <param name="end"></param>
+// template<typename T> T EaseTimeControl(float& t, const float& totalTime, const T& start, const T& end);
+
+//*******************************************************************************************************************************************************************
+// Elastic**************************************************************************************************************************************************************
+//*******************************************************************************************************************************************************************
+
+
+/// <summary>
+/// EaseInElastic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalX"></param>
+/// <returns></returns>
+template<typename T>
+T EaseInElastic(const T& start, const T& end, float x, float totalX);
+
+/// <summary>
+/// EaseOutElastic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalX"></param>
+/// <returns></returns>
+template<typename T>
+T EaseOutElastic(const T& start, const T& end, float x, float totalX);
+/// <summary>
+/// EaseInOutElastic
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="start"></param>
+/// <param name="end"></param>
+/// <param name="x"></param>
+/// <param name="totalX"></param>
+/// <returns></returns>
+template<typename T>
+T EaseInOutElastic(const T& start, const T& end, float x, float totalX);
+
+///// <summary>
+///// EaseTimeControl
+///// </summary>
+///// <typeparam name="T"></typeparam>
+///// <param name="t"></param>
+///// <param name="totalTime"></param>
+///// <param name="start"></param>
+///// <param name="end"></param>
+// template<typename T> T EaseTimeControl(float& t, const float& totalTime, const T& start, const T& end);

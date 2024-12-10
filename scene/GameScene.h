@@ -1,19 +1,12 @@
 #pragma once
 #include "Audio.h"
-#include"BaseScene.h"
+#include "BaseScene.h"
 #include "Input.h"
-#include"Object3dCommon.h"
+#include "Object3dCommon.h"
 #include "SpriteCommon.h"
-#include"ParticleCommon.h"
+#include "ParticleCommon.h"
 #include"ViewProjection.h"
-#include"memory"
-#include"application/map/rail.h"
-#include"application/camera/RailCamera.h"
-#include"application/char/player.h"
-#include"application/char/enemy.h"
-#include"application/map/skyDome.h"
-#include"application/ScoreManager.h"
-#include"Sprite.h"
+#include"DebugCamera.h"
 
 class GameScene : public BaseScene
 {
@@ -39,28 +32,27 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	/// <summary>
+	/// オフスクリーン上に描画
+	/// </summary>
+	void DrawForOffScreen()override;
+
 	ViewProjection* GetViewProjection()override { return &vp_; }
-
-	// ImGuiのボタンで敵を追加
-	void AddEnemyByButton();
-
 private:
+	void Debug();
+
+	void CameraUpdate();
+
+	void ChangeScene();
+private:
+
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+
+	// ビュープロジェクション
 	ViewProjection vp_;
-
-	std::unique_ptr<rail> rail_;
-	std::unique_ptr<RailCamera> railCamera_;
-	std::unique_ptr<Player> player_;
-	std::unique_ptr<skyDome> skydome_;
-	std::unique_ptr<ScoreManager>scoreManager_;
-	std::unique_ptr<Sprite>score_;
-
-	std::list<std::unique_ptr<Enemy>> enemies_;
-	int currentScore_ = 0;
-
-	WorldTransform cameraT_;
+	std::unique_ptr<DebugCamera> debugCamera_;
 };

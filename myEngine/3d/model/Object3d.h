@@ -11,11 +11,7 @@
 #include"wrl.h"
 #include"ViewProjection.h"
 #include"ObjColor.h"
-
-enum class LightType {
-	Directional,
-	Point,
-};
+#include"light/LightGroup.h"
 
 class ModelCommon;
 class Object3dCommon;
@@ -36,14 +32,6 @@ private: // メンバ変数
 		Matrix4x4 WorldInverseTranspose;
 	};
 
-	// 平行光源データ
-	struct DirectionLight {
-		Vector4 color; //!< ライトの色
-		Vector3 direction; //!< ライトの向き
-		float intensity;//!< 輝度
-		int32_t active;
-	};
-
 	// マテリアルデータ
 	struct Material {
 		Vector4 color;
@@ -51,19 +39,6 @@ private: // メンバ変数
 		float padding[3];
 		Matrix4x4 uvTransform;
 		float shininess;
-	};
-
-	struct CameraForGPU {
-		Vector3 worldPosition;
-	};
-
-	struct PointLight {
-		Vector4 color;
-		Vector3 position;
-		float intensity;
-		int32_t active;
-		float radius;
-		float decay;
 	};
 
 	Object3dCommon* obj3dCommon = nullptr;
@@ -74,30 +49,15 @@ private: // メンバ変数
 	TransformationMatrix* transformationMatrixData = nullptr;
 
 	// バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource;
-	// バッファリソース内のデータを指すポインタ
-	DirectionLight* directionalLightData = nullptr;
-
-	// バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource;
-	// バッファリソース内のデータを指すポインタ
-	PointLight* pointLightData = nullptr;
-
-	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
 	// バッファリソース内のデータを指すポインタ
 	Material* materialData = nullptr;
 
-	// バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource;
-	// バッファリソース内のデータを指すポインタ
-	CameraForGPU* cameraForGPUData = nullptr;
-
 	Transform transform;
-	//Transform cameraTransform;
 
 	Model* model = nullptr;
 	ModelCommon* modelCommon = nullptr;
+	LightGroup* lightGroup = nullptr;
 
 	// 移動させる用各SRT
 	Vector3 position = { 0.0f,0.0f,0.0f };
@@ -122,6 +82,11 @@ public: // メンバ関数
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
 
 	/// <summary>
+	/// スケルトン描画
+	/// </summary>
+	void DrawSkelton(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
+
+	/// <summary>
 	/// getter
 	/// </summary>
 	/// <returns></returns>
@@ -140,29 +105,6 @@ public: // メンバ関数
 	void SetModel(const std::string& filePath);
 
 	/// <summary>
-	/// 平行光源の設定
-	/// </summary>
-	/// <param name="color">ライトの色</param>
-	/// <param name="direction">ライトの向き</param>
-	/// <param name="intensity">ライトの輝度</param>
-	void SetDirectionalLight
-	(Vector3 direction = { 0.0f,-1.0f,0.0f }, float intensity = { 1.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f });
-
-	/// <summary>
-	/// 点光源の設定
-	/// </summary>
-	/// <param name="position"></param>
-	/// <param name="intensity"></param>
-	/// <param name="color"></param>
-	void SetPointLight(Vector3 position = { 0.0f,-1.0f,0.0f }, float intensity = { 1.0f }, Vector4 color = { 1.0f,1.0f,1.0f,1.0f },float decay = 1.0f,float radius = 2.0f);
-
-	/// <summary>
-	/// ライトの種類設定
-	/// </summary>
-	/// <param name="lightType"></param>
-	void SetLightType(LightType lightType = LightType::Directional);
-
-	/// <summary>
 	/// 光沢度の設定
 	/// </summary>
 	/// <param name="shininess">マテリアルの光沢度</param>
@@ -176,23 +118,14 @@ private: // メンバ関数
 	void CreateTransformationMatrix();
 
 	/// <summary>
-	/// 平行光源データ作成
-	/// </summary>
-	void CreateDirectionLight();
-
-	/// <summary>
 	/// マテリアルデータ作成
 	/// </summary>
 	void CreateMaterial();
 
-	/// <summary>
-	/// カメラ作成
-	/// </summary>
-	void CreateCamera();
 
-	/// <summary>
-	/// 点光源データ作成
-	/// </summary>
-	void CreatePointLight();
+	Vector3 ExtractTranslation(const Matrix4x4& matrix)
+	{
+		return Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]);
+	}
 };
 

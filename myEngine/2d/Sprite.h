@@ -21,12 +21,7 @@ public: // メンバ関数
 	/// <param name="anchorpoint">アンカーポイント</param>
 	/// <param name="isFlipX">左右反転</param>
 	/// <param name="isFlipY">上下反転</param>
-	void Initialize(const std::string& textureFilePath,Vector2 position,Vector4 color={1,1,1,1},Vector2 anchorpoint={0.0f,0.0f},bool isFlipX = false,bool isFlipY = false);
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+	void Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color = { 1,1,1,1 }, Vector2 anchorpoint = { 0.0f,0.0f }, bool isFlipX = false, bool isFlipY = false);
 
 	/// <summary>
 	/// 描画
@@ -46,8 +41,6 @@ public: // メンバ関数
 	const bool GetFilpY()const { return isFlipY_; }
 	const Vector2& GetTexLeftTop()const { return textureLeftTop; }
 	const Vector2& GetTexSize()const { return textureSize; }
-	const uint32_t GetTextureHandle();
-	const std::string GetFilePath() { return texturePath_; }
 
 	/// <summary>
 	/// setter
@@ -56,7 +49,8 @@ public: // メンバ関数
 	void SetPosition(const Vector2& position) { this->position_ = position; }
 	void SetRotation(float rotation) { this->rotation = rotation; }
 	void SetSize(const Vector2& size) { this->size = size; }
-	void SetColor(const Vector4& color) { materialData->color = color; }
+	void SetColor(const Vector3& color) { materialData->color.x = color.x, materialData->color.y = color.y, materialData->color.z = color.z; }
+	void SetAlpha(const float& alpha) { materialData->color.w = alpha; }
 	void SetTexturePath(std::string textureFilePath);
 	void SetAnchorPoint(const Vector2& anchorPoint) { this->anchorPoint_ = anchorPoint; }
 	void SetFlipX(bool isFlipX) { isFlipX_ = isFlipX; }
@@ -65,6 +59,11 @@ public: // メンバ関数
 	void SetTexSize(const Vector2& textureSize) { this->textureSize = textureSize; }
 
 private: // メンバ関数
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// 頂点データ作成
@@ -142,7 +141,6 @@ private:
 
 	std::string directoryPath_ = "resources/images";
 	std::string fullpath;
-	std::string texturePath_;
 	Vector2 anchorPoint_ = { 0.0f,0.0f };
 
 	// 左右フリップ

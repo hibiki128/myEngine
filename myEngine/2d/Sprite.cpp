@@ -8,7 +8,6 @@ void Sprite::Initialize(const std::string& textureFilePath, Vector2 position, Ve
 	// 引数で受け取ってメンバ変数に記録する
 	spriteCommon_ = SpriteCommon::GetInstance();
 
-	texturePath_ = textureFilePath;
 	fullpath = directoryPath_ + "/" + textureFilePath;
 
 	TextureManager::GetInstance()->LoadTexture(fullpath);
@@ -79,7 +78,7 @@ void Sprite::Update()
 
 	transform.translate = { position_.x,position_.y,0.0f };
 	transform.rotate = { 0.0f,0.0f,rotation };
-	transform.scale = { size.x ,size.y,1.0f };
+	transform.scale = { size.x,size.y,1.0f };
 
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	Matrix4x4 viewMatrix = MakeIdentity4x4();
@@ -107,11 +106,6 @@ void Sprite::Draw()
 	srvManager_->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath));
 	// 描画！(DrawCall/ドローコール)
 	spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
-}
-
-const uint32_t Sprite::GetTextureHandle()
-{
-	return TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath);
 }
 
 void Sprite::SetTexturePath(std::string textureFilePath)

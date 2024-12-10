@@ -7,6 +7,7 @@
 #include "string"
 #include"chrono"
 #include "externals/DirectXTex/DirectXTex.h"
+#include <Vector4.h>
 
 // DirectX基盤
 class DirectXCommon {
@@ -21,9 +22,9 @@ private:
 public: // メンバ関数
 
 	/// <summary>
-    /// シングルトンインスタンスの取得
-    /// </summary>
-    /// <returns></returns>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns></returns>
 	static DirectXCommon* GetInstance();
 
 	/// <summary>
@@ -35,6 +36,21 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize(WinApp* winApp);
+
+	/// <summary>
+	/// オフスクリーンのSRV作成
+	/// </summary>
+	void CreateOffscreenSRV();
+
+	/// <summary>
+	/// depthのSRV作成
+	/// </summary>
+	void CreateDepthSRV();
+
+	/// <summary>
+	/// 描画前処理(RenderTexture)
+	/// </summary>
+	void PreRenderTexture();
 
 	/// <summary>
 	/// 描画前処理
@@ -58,6 +74,9 @@ public: // メンバ関数
 
 	// DirectX12のTextureResourceを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, D3D12_CLEAR_VALUE color);
+
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
@@ -110,12 +129,20 @@ public: // メンバ関数
 	/// <param name="shaderVisible"></param>
 	/// <returns></returns>
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
+	ID3D12Resource* GetOffScreenResource() { return offScreenResource.Get(); }
 	IDxcUtils* GetDxcUtils() { return dxcUtils; }
 	IDxcCompiler3* GetDxcCompiler() { return dxcCompiler; }
 
 	// バックバッファの数を取得
 	size_t GetBackBufferCount()const { return backBuffers.size(); }
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetOffScreenGPUHandle() { return offScreenSrvHandleGPU; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetOffScreenCPUHandle() { return offScreenSrvHandleCPU; }
+	uint32_t GetOffScreenSrvIndex() { return offScreenSrvIndex; }
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDepthGPUHandle() { return depthSrvHandleGPU; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDepthCPUHandle() { return depthSrvHandleCPU; }
+	uint32_t GetDepthSrvIndex() { return depthSrvIndex; }
 #pragma endregion
 
 private: // メンバ関数
@@ -218,7 +245,13 @@ private: // メンバ関数
 	/// <returns></returns>
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap, uint32_t descriptorSize, uint32_t index); // GPU
 
-
+	/// <summary>
+	/// バリアを貼る
+	/// </summary>
+	/// <param name="pResource"></param>
+	/// <param name="Before"></param>
+	/// <param name="After"></param>
+	void BarrierTransition(ID3D12Resource* pResource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
 
 private:
 
@@ -239,6 +272,8 @@ private:
 	// スワップチェーン
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
 	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> backBuffers;
+	Microsoft::WRL::ComPtr<ID3D12Resource> offScreenResource;
+	D3D12_CLEAR_VALUE clearColorValue{};
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 
@@ -253,7 +288,7 @@ private:
 	IDxcCompiler3* dxcCompiler;
 
 	// RTVを2つ作るのでディスクリプタを2つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[3];
 	// RTV
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	// スワップチェーン
@@ -267,6 +302,17 @@ private:
 	D3D12_RECT scissorRect{};
 	// TransitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
+	D3D12_RESOURCE_BARRIER offScreenBarrier{};
+	D3D12_RESOURCE_BARRIER depthBarrier{};
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
+	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
+
+	uint32_t offScreenSrvIndex = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE offScreenSrvHandleCPU;        // SRV作成時に必要なCPUハンドル
+	D3D12_GPU_DESCRIPTOR_HANDLE offScreenSrvHandleGPU;        // 描画コマンドに必要なGPUハンドル
+
+	uint32_t depthSrvIndex = 0;
+	D3D12_CPU_DESCRIPTOR_HANDLE depthSrvHandleCPU;        // SRV作成時に必要なCPUハンドル
+	D3D12_GPU_DESCRIPTOR_HANDLE depthSrvHandleGPU;        // 描画コマンドに必要なGPUハンドル
 };

@@ -11,11 +11,13 @@ private:
 
 	bool visible = true;
 
-	bool sphereCollision = true;
+	bool sphereCollision = true; 
 
-	bool aabbCollision = true;
-
+	bool aabbCollision = true; 
+	
 	bool obbCollision = true;
+
+	bool isCollidingNow = false;
 
 public:
 	/// <summary>

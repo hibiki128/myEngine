@@ -1,43 +1,41 @@
 #pragma once
-#include "ViewProjection.h"
-#include "Input.h"
-#include "Matrix4x4.h"
-#include <Vector2.h>
-#include <Windows.h>  // GetCursorPosを使用するために追加
-
+#include"ViewProjection.h"
+#include"Vector3.h"
+#include"Vector2.h"
+#include"Matrix4x4.h"
 class DebugCamera
 {
 public:
-    DebugCamera(int windowWidth, int windowHeight);
+	// X,Y,Z軸回りのローカル回転角
+	Vector3 rotation_ = { 0.0f, 0.0f, 0.0f };
+	// ローカル座標
+	Vector3 translation_ = { 0.0f, 0.0f, -50.0f };
+	Matrix4x4 matRot_;
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize(ViewProjection* viewProjection);
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    void Initialize();
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
 
-    /// <summary>
-    /// 更新
-    /// </summary>
-    void Update();
+	void imgui();
 
-    void SetFarZ(float farZ) { vP_.farZ = farZ; }
-
-    /// <summary>
-    /// ビュープロジェクションを取得
-    /// </summary>
-    /// <returns>ビュープロジェクション</returns>
-    const ViewProjection& GetViewProjection() { return vP_; }
+	bool GetActive() { return isActive_; }
 
 private:
-    // ビュープロジェクション行列
-    ViewProjection vP_;
-    // 入力クラスのポインタ
-    Input* input_;
-    // 回転行列
-    Matrix4x4 matRot_;
-
-    int wheelData = 0;
-    float rotateX = 0.0f;       // X軸の回転角度
-    float rotateY = 0.0f;       // Y軸の回転角度
-    float sensitivity = 0.1f;    // マウスの動きに対する感度
+	void CameraMove(Vector3& cameraRotate, Vector3& cameraTranslate, Vector2& clickPosition);
+private:
+	ViewProjection* viewProjection_;
+	Vector2 mouse;
+	bool useMouse = true;
+	float mouseSensitivity = 0.003f;
+	// カメラの移動速度
+	float moveZspeed = 0.005f;
+	Matrix4x4 matRotDelta;
+	Matrix4x4 rotateXYZMatrix;
+	bool isActive_ = false;
 };
+

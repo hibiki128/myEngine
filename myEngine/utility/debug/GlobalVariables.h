@@ -126,7 +126,9 @@ public:
 	Vector2 GetVector2Value(const std::string& groupName, const std::string& key) const;
 	Vector3 GetVector3Value(const std::string& groupName, const std::string& key) const;
 	bool GetBoolValue(const std::string& groupName, const std::string& key) const;
+
 	bool GroupExists(const std::string& groupName) const;
+
 
 private:
 	// 項目

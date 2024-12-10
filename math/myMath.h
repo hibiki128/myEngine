@@ -3,10 +3,11 @@
 #include "Vector4.h"
 #include "assert.h"
 #include "cmath"
-#include"vector"
-#include"algorithm"
 #include <Vector3.h>
+#include <Quaternion.h>
 
+
+class ViewProjection;
 
 static const int kColumnWidth = 60;
 static const int kRowHeight = 20;
@@ -15,6 +16,10 @@ float Lerp(float _start, float _end, float _t);
 Vector3 Lerp(const Vector3& _start, const Vector3& _end, float _t);
 Vector4 Lerp(const Vector4& _start, const Vector4& _end, float _t);
 
+
+//float Lerp(float _start, float _end, float _t);
+//Vector3 Lerp(const Vector3& _start, const Vector3& _end, float _t);
+//Vector4 Lerp(const Vector4& _start, const Vector4& _end, float _t);
 // 平行移動行列
 Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
 
@@ -26,8 +31,6 @@ Vector3 Transformation(const Vector3& vector, const Matrix4x4& matrix);
 Vector4 Transformation(const Vector4& vector, const Matrix4x4& matrix);
 
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
-
-Vector3 TransformVector(const Vector3& vector, const Matrix4x4& matrix);
 
 // 逆行列
 Matrix4x4 Inverse(const Matrix4x4& m);
@@ -47,6 +50,8 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 // X,Y,Z軸回転行列を合成した行列
 Matrix4x4 MakeRotateXYZMatrix(const Vector3& radian);
 
+Matrix4x4 MakeRotateXYZMatrix(const Quaternion& quat);
+
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
 // tanθの逆数
@@ -61,11 +66,27 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 // ビューポート変換行列
 Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
-Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+// クォータニオンから回転軸(Vector3)を計算する関数
+Vector3 QuaternionToAxis(const Quaternion& q);
 
-Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
+Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
 
-Matrix4x4 CreateRotationMatrix(const Vector3& eulerAngles);
+Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q);
+
+float LerpShortAngle(float a, float b, float t);
+
+// 行列から回転成分をオイラー角に変換して取得
+Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat);
+
+
+Vector3 ScreenTransform(Vector3 worldPos, const ViewProjection& viewProjection);
+
+
+float radiansToDegrees(float radians);
+
+float degreesToRadians(float degrees);
+
+Quaternion Slerp(Quaternion q0, Quaternion q1, float t);
 
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
