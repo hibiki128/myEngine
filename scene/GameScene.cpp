@@ -26,6 +26,8 @@ void GameScene::Initialize()
 	player_ = std::make_unique<Player>();
 	enemy_ = std::make_unique<Enemy>();
 	followCamera_ = std::make_unique<FollowCamera>();
+	skyDome_ = std::make_unique<SkyDome>();
+	ground_ = std::make_unique<Ground>();
 
 	/// ===================================================
 	/// 初期化
@@ -33,6 +35,8 @@ void GameScene::Initialize()
 	player_->Init();
 	enemy_->Init();
 	followCamera_->Init();
+	skyDome_->Init();
+	ground_->Init();
 
 	/// ===================================================
 	/// セット
@@ -57,6 +61,8 @@ void GameScene::Update()
 	/// ===================================================
 	player_->Update();
 	enemy_->Update();
+	skyDome_->Update();
+	ground_->Update();
 
 }
 
@@ -80,6 +86,8 @@ void GameScene::Draw()
 	//-----3DObjectの描画開始-----
 	player_->Draw(vp_);
 	enemy_->Draw(vp_);
+	skyDome_->Draw(vp_);
+	ground_->Draw(vp_);
 	//--------------------------
 
 	/// Particleの描画準備

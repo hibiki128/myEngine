@@ -7,7 +7,7 @@
 //std
 #include<string>
 
-class BaseObject:public Collider {
+class BaseObject {
 protected:
 
 	/// ===================================================
@@ -39,9 +39,6 @@ public:
 	// 中心座標取得
 	virtual Vector3 GetWorldPosition() const;
 	virtual const WorldTransform& GetWorldTransform() const { return transform_; }
-
-	Vector3 GetCenterPosition()const override;
-	Vector3 GetCenterRotation()const override;
 
 	/// ===================================================
 	///getter 

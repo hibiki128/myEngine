@@ -200,9 +200,6 @@
     <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="myEngine\utility\edit\Liner.cpp">
       <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClCompile>
@@ -285,6 +282,15 @@
       <Filter>ソースファイル\application\Player</Filter>
     </ClCompile>
     <ClCompile Include="application\Camera\FollowCamera.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Field\Ground\Ground.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -512,6 +518,8 @@
       <Filter>ソースファイル\application\Player</Filter>
     </ClInclude>
     <ClInclude Include="application\Camera\FollowCamera.h" />
+    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
+    <ClInclude Include="application\Field\Ground\Ground.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

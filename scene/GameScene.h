@@ -10,6 +10,8 @@
 #include"application/Player/Player.h"
 #include"application/Enemy/Enemy.h"
 #include"application/Camera/FollowCamera.h"
+#include"application/Field/SkyDome/SkyDome.h"
+#include"application/Field/Ground/Ground.h"
 
 class GameScene : public BaseScene
 {
@@ -71,5 +73,11 @@ private:
 
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
+
+	// 天球
+	std::unique_ptr<SkyDome>skyDome_;
+
+	// 地面
+	std::unique_ptr<Ground>ground_;
 
 };

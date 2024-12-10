@@ -4,6 +4,7 @@ void Enemy::Init()
 {
 	BaseObject::Init();
 	BaseObject::CreateModel("debug/sphere.obj");
+	transform_.translation_ += transform_.scale_.y;
 }
 
 void Enemy::Update()
@@ -19,4 +20,14 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::DebugTransform(const std::string className)
 {
 	BaseObject::DebugTransform(className);
+}
+
+Vector3 Enemy::GetCenterPosition() const
+{
+	return transform_.translation_;
+}
+
+Vector3 Enemy::GetCenterRotation() const
+{
+	return transform_.rotation_;
 }
