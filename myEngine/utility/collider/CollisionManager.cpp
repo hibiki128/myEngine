@@ -76,6 +76,7 @@ void CollisionManager::Update()
 }
 
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	isCollidingNow = false;
 	// コリジョンが無効化されている場合はチェックをスキップ
 	if (!colliderA->IsCollisionEnabled() || !colliderB->IsCollisionEnabled()) {
 		return;

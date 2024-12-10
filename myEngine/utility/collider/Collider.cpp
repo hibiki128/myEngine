@@ -179,7 +179,7 @@ void Collider::DrawOBB(const ViewProjection& viewProjection, bool isHit) {
 	// OBBの8つの頂点を計算
 	std::array<Vector3, 8> vertices;
 
-	Vector3 halfSize = obb.size * 0.5f;
+	Vector3 halfSize = obb.size;
 	for (int i = 0; i < 8; i++) {
 		Vector3 offset = Vector3(
 			(i & 1) ? halfSize.x : -halfSize.x,

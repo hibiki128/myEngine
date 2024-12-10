@@ -7,6 +7,9 @@
 #include "ParticleCommon.h"
 #include"ViewProjection.h"
 #include"DebugCamera.h"
+#include"application/Player/Player.h"
+#include"application/Enemy/Enemy.h"
+#include"application/Camera/FollowCamera.h"
 
 class GameScene : public BaseScene
 {
@@ -55,4 +58,18 @@ private:
 	// ビュープロジェクション
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
+
+	/// ===================================================
+	/// オブジェクト
+	/// ===================================================
+
+	// プレイヤー
+	std::unique_ptr<Player> player_;
+
+	// 敵
+	std::unique_ptr<Enemy> enemy_;
+
+	// 追従カメラ
+	std::unique_ptr<FollowCamera> followCamera_;
+
 };

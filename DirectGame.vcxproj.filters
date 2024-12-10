@@ -87,11 +87,17 @@
     <Filter Include="ソースファイル\application">
       <UniqueIdentifier>{ca298d3a-6a09-4beb-b1fc-25b93b845b9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソースファイル\application\Base">
+      <UniqueIdentifier>{faf8b8dc-bf7d-4fc7-ad07-1dd625a6b9a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Enemy">
+      <UniqueIdentifier>{32ba6256-ee5b-4975-ae3e-781d3b7990ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Player">
+      <UniqueIdentifier>{dae765fd-e716-4d3a-9fc2-05644cadc6dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
     <ClCompile Include="externals\imgui\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -265,6 +271,21 @@
     </ClCompile>
     <ClCompile Include="myEngine\offscreen\OffScreen.cpp">
       <Filter>ソースファイル\myEngine\offscreen</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Base\BaseObject.cpp">
+      <Filter>ソースファイル\application\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Enemy\Enemy.cpp">
+      <Filter>ソースファイル\application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Player\Player.cpp">
+      <Filter>ソースファイル\application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Camera\FollowCamera.cpp">
+      <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -481,6 +502,16 @@
     <ClInclude Include="myEngine\offscreen\OffScreen.h">
       <Filter>ソースファイル\myEngine\offscreen</Filter>
     </ClInclude>
+    <ClInclude Include="application\Base\BaseObject.h">
+      <Filter>ソースファイル\application\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Enemy\Enemy.h">
+      <Filter>ソースファイル\application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Player\Player.h">
+      <Filter>ソースファイル\application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Camera\FollowCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

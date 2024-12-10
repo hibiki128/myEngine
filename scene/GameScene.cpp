@@ -19,9 +19,29 @@ void GameScene::Initialize()
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
+
+	/// ===================================================
+	/// 生成
+	/// ===================================================
+	player_ = std::make_unique<Player>();
+	enemy_ = std::make_unique<Enemy>();
+	followCamera_ = std::make_unique<FollowCamera>();
+
+	/// ===================================================
+	/// 初期化
+	/// ===================================================
+	player_->Init();
+	enemy_->Init();
+	followCamera_->Init();
+
+	/// ===================================================
+	/// セット
+	/// ===================================================
+
+	followCamera_->SetTarget(&player_->GetWorldTransform());
 }
 
-void GameScene::Update() 
+void GameScene::Update()
 {
 	// デバッグ
 	Debug();
@@ -31,6 +51,13 @@ void GameScene::Update()
 
 	// シーン切り替え
 	ChangeScene();
+
+	/// ===================================================
+	/// 更新
+	/// ===================================================
+	player_->Update();
+	enemy_->Update();
+
 }
 
 void GameScene::Draw()
@@ -51,7 +78,8 @@ void GameScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-
+	player_->Draw(vp_);
+	enemy_->Draw(vp_);
 	//--------------------------
 
 	/// Particleの描画準備
@@ -108,6 +136,8 @@ void GameScene::Debug()
 	debugCamera_->imgui();
 	LightGroup::GetInstance()->imgui();
 	ImGui::End();
+	player_->DebugTransform("プレイヤー ");
+	enemy_->DebugTransform("エネミー ");
 }
 
 void GameScene::CameraUpdate()
@@ -116,6 +146,10 @@ void GameScene::CameraUpdate()
 		debugCamera_->Update();
 	}
 	else {
+		followCamera_->Update();
+		vp_.matWorld_ = followCamera_->GetViewProjection().matWorld_;
+		vp_.matView_ = followCamera_->GetViewProjection().matView_;
+		vp_.matProjection_ = followCamera_->GetViewProjection().matProjection_;
 		vp_.UpdateMatrix();
 	}
 }

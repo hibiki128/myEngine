@@ -107,6 +107,9 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Base\BaseObject.cpp" />
+    <ClCompile Include="application\Enemy\Enemy.cpp" />
+    <ClCompile Include="application\Camera\FollowCamera.cpp" />
     <ClCompile Include="math\random.cpp" />
     <ClCompile Include="myEngine\3d\camera\DebugCamera.cpp" />
     <ClCompile Include="myEngine\3d\light\LightGroup.cpp" />
@@ -161,6 +164,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\3d\line\LineManager.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneTransition.cpp" />
     <ClCompile Include="myEngine\offscreen\OffScreen.cpp" />
+    <ClCompile Include="application\Player\Player.cpp" />
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
@@ -189,6 +193,9 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Base\BaseObject.h" />
+    <ClInclude Include="application\Enemy\Enemy.h" />
+    <ClInclude Include="application\Camera\FollowCamera.h" />
     <ClInclude Include="math\random.h" />
     <ClInclude Include="myEngine\3d\camera\DebugCamera.h" />
     <ClInclude Include="myEngine\3d\light\LightGroup.h" />
@@ -249,6 +256,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\3d\line\LineManager.h" />
     <ClInclude Include="myEngine\utility\scene\SceneTransition.h" />
     <ClInclude Include="myEngine\offscreen\OffScreen.h" />
+    <ClInclude Include="application\Player\Player.h" />
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
