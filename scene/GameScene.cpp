@@ -151,7 +151,7 @@ void GameScene::CameraUpdate()
 		vp_.matWorld_ = followCamera_->GetViewProjection().matWorld_;
 		vp_.matView_ = followCamera_->GetViewProjection().matView_;
 		vp_.matProjection_ = followCamera_->GetViewProjection().matProjection_;
-		vp_.UpdateMatrix();
+		//vp_.UpdateMatrix();
 	}
 }
 
