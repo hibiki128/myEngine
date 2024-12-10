@@ -11,7 +11,6 @@ void TitleScene::Initialize()
 	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
-	liner_ = DrawLine3D::GetInstance();
 
 	vp_.Initialize();
 
@@ -57,7 +56,6 @@ void TitleScene::Update()
 		sceneManager_->ChangeScene("GAME");
 	}
 	//----------------------
-	DrawSkeleton(obj_.get());
 	vp_.UpdateMatrix();
 	wt_.UpdateMatrix();
 }
@@ -65,17 +63,19 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	/// -------描画処理開始-------
-	liner_->Draw(vp_);
-
+	
 	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
 	
 	//------------------------
 
+	objCommon_->skinningDrawCommonSetting();
+	obj_->Draw(wt_, vp_);
+
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	obj_->Draw(wt_, vp_);
+	obj_->DrawSkelton(wt_,vp_);
 	//--------------------------
 
 	/// Particleの描画準備
@@ -86,39 +86,4 @@ void TitleScene::Draw()
 
 
 	/// -------描画処理終了-------
-}
-
-void TitleScene::DrawSkeleton(Object3d* obj)
-{
-	// モデルデータを取得
-	Model* model = obj->GetModel();
-
-	// スケルトンデータを取得
-	const Model::Skeleton& skeleton = model->GetSkeletonData();
-
-	// 各ジョイントを巡回して親子関係の線を生成
-	for (const auto& joint : skeleton.joints) {
-		// 親がいない場合、このジョイントはルートなのでスキップ
-		if (!joint.parent.has_value()) {
-			continue;
-		}
-
-		// 親ジョイントを取得
-		const auto& parentJoint = skeleton.joints[*joint.parent];
-
-		// 親と子のスケルトン空間座標を取得
-		Vector3 parentPosition = ExtractTranslation(parentJoint.skeltonSpaceMatrix);
-		Vector3 childPosition = ExtractTranslation(joint.skeltonSpaceMatrix);
-
-		// 線の色を設定（デフォルトで白色）
-		Vector4 lineColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-		// LineManagerに現在の線分を登録
-		liner_->SetPoints(parentPosition, childPosition, lineColor);
-	}
-}
-
-Vector3 TitleScene::ExtractTranslation(const Matrix4x4& matrix)
-{
-	return Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]);
 }

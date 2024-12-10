@@ -3,6 +3,7 @@
 #include "myMath.h"
 #include "Object3d.h"
 #include"Object3dCommon.h"
+#include <line/DrawLine3D.h>
 
 
 
@@ -84,6 +85,36 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	if (model) {
 		model->Draw();
 	}
+}
+
+void Object3d::DrawSkelton(const WorldTransform& worldTransform,const ViewProjection& viewProjection)
+{
+	Update(worldTransform, viewProjection);
+	// スケルトンデータを取得
+	const Model::Skeleton& skeleton = model->GetSkeletonData();
+
+	// 各ジョイントを巡回して親子関係の線を生成
+	for (const auto& joint : skeleton.joints) {
+		// 親がいない場合、このジョイントはルートなのでスキップ
+		if (!joint.parent.has_value()) {
+			continue;
+		}
+
+		// 親ジョイントを取得
+		const auto& parentJoint = skeleton.joints[*joint.parent];
+
+		// 親と子のスケルトン空間座標を取得
+		Vector3 parentPosition = ExtractTranslation(parentJoint.skeltonSpaceMatrix);
+		Vector3 childPosition = ExtractTranslation(joint.skeltonSpaceMatrix);
+
+		// 線の色を設定（デフォルトで白色）
+		Vector4 lineColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+		// LineManagerに現在の線分を登録
+		DrawLine3D::GetInstance()->SetPoints(parentPosition, childPosition, lineColor);
+	}
+
+	DrawLine3D::GetInstance()->Draw(viewProjection);
 }
 
 void Object3d::SetModel(const std::string& filePath)

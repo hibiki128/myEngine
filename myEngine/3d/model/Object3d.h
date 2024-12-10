@@ -112,6 +112,11 @@ public: // メンバ関数
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
 
 	/// <summary>
+	/// スケルトン描画
+	/// </summary>
+	void DrawSkelton(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
+
+	/// <summary>
 	/// getter
 	/// </summary>
 	/// <returns></returns>
@@ -185,5 +190,10 @@ private: // メンバ関数
 	/// 点光源データ作成
 	/// </summary>
 	void CreatePointLight();
+
+	Vector3 ExtractTranslation(const Matrix4x4& matrix)
+	{
+		return Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]);
+	}
 };
 

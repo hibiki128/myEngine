@@ -35,11 +35,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
-	void DrawSkeleton(Object3d* obj);
-
 	ViewProjection* GetViewProjection()override { return &vp_; }
-
-	Vector3 ExtractTranslation(const Matrix4x4& matrix);
 private:
 	Audio* audio_;
 	Input* input_;
@@ -51,6 +47,4 @@ private:
 
 	std::unique_ptr<Object3d> obj_;
 	WorldTransform wt_;
-
-	DrawLine3D* liner_;
 };

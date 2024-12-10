@@ -25,12 +25,22 @@ void Object3dCommon::Initialize()
 	psoManager_->Initialize(dxCommon_);
 	rootSignature = psoManager_->CreateRootSignature(rootSignature);
 	graphicsPipelineState = psoManager_->CreateGraphicsPipeLine(graphicsPipelineState,rootSignature, blendMode_);
+
+	skinningRootSignature = psoManager_->CreateSkinningRootSignature(skinningRootSignature);
+	skinningGraphicsPipelineState = psoManager_->CreateSkinningGraphicsPipeLine(skinningGraphicsPipelineState, skinningRootSignature);
 }
 
 void Object3dCommon::DrawCommonSetting()
 {
 	psoManager_->DrawCommonSetting(graphicsPipelineState,rootSignature);
 }
+
+void Object3dCommon::skinningDrawCommonSetting()
+{
+	psoManager_->DrawCommonSetting(skinningGraphicsPipelineState, skinningRootSignature);
+}
+
+
 
 void Object3dCommon::SetBlendMode(BlendMode blendMode)
 {

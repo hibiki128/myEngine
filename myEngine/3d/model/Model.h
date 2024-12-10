@@ -8,8 +8,11 @@
 #include"assimp/Importer.hpp"
 #include"assimp/scene.h"
 #include"assimp/postprocess.h"
-#include <map>
+#include "map"
 #include"Quaternion.h"
+#include "span"
+#include"array"
+#include <PipeLineManager.h>
 
 class Model
 {
@@ -38,14 +41,6 @@ public:
 		Matrix4x4 localMatrix;
 		std::string name;
 		std::vector<Node>children;
-	};
-
-	struct ModelData
-	{
-		std::vector<VertexData> vertices;
-		std::vector<uint32_t> indices;
-		MaterialData material;
-		Node rootNode;
 	};
 
 	struct Joint {
@@ -85,6 +80,46 @@ public:
 		std::map<std::string, NodeAnimation>nodeAnimations;
 	};
 
+	struct VertexWeightData {
+		float weight;
+		uint32_t vertexIndex;
+	};
+
+	struct JointWeightData {
+		Matrix4x4 inverseBindPoseMatrix;
+		std::vector<VertexWeightData>vertexWeights;
+	};
+
+	struct ModelData
+	{
+		std::map<std::string, JointWeightData>skinClusterData;
+		std::vector<VertexData> vertices;
+		std::vector<uint32_t> indices;
+		MaterialData material;
+		Node rootNode;
+	};
+
+	static const uint32_t kNumMaxInfluence = 4;
+	struct VertexInfluence {
+		std::array<float, kNumMaxInfluence> weights;
+		std::array<int32_t, kNumMaxInfluence> jointIndices;
+	};
+
+	struct WellForGPU {
+		Matrix4x4 skeletonSpaceMatrix;
+		Matrix4x4 skeletonSpaceInverseTransposeMatrix;
+	};
+
+	struct SkinCluster {
+		std::vector<Matrix4x4>inverseBindPoseMatrices;
+		Microsoft::WRL::ComPtr<ID3D12Resource>influenceResource;
+		D3D12_VERTEX_BUFFER_VIEW influenceBufferView;
+		std::span<VertexInfluence>mappedInfluence;
+		Microsoft::WRL::ComPtr<ID3D12Resource> paletteResource;
+		std::span<WellForGPU> mappedPalette;
+		std::pair<D3D12_CPU_DESCRIPTOR_HANDLE, D3D12_GPU_DESCRIPTOR_HANDLE>paletteSrvHandle;
+	};
+	uint32_t skinClusterSrvIndex_ = 0;
 private:
 
 	ModelCommon* modelCommon_;
@@ -109,11 +144,11 @@ private:
 	// バッファリソースの使い道を補足するバッファビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
-
 	bool isGltf = false;
 
 	Animation animation_;
 	Skeleton skeleton_;
+	SkinCluster skinCluster_;
 	float animationTime = 0.0f;
 	Model* model_ = nullptr;
 	Matrix4x4 localMatrix;
@@ -136,11 +171,13 @@ public:
 	/// </summary>
 	void Draw();
 
+	void SkinClusterUpdate(SkinCluster& skinCluster,const Skeleton& skeleton);
+
 	ModelData GetModelData() { return modelData; }
 	Skeleton GetSkeletonData() { return skeleton_; }
 	void SetSrv(SrvManager* srvManager) { srvManager_ = srvManager; }
 
-	bool IsGltf() {	return isGltf;}
+	bool IsGltf() { return isGltf; }
 
 	/// <summary>
 	/// 骨の更新
@@ -228,5 +265,16 @@ private:
 	/// <param name="animation"></param>
 	/// <param name="animtionTime"></param>
 	void ApplyAnimation(Skeleton& skeleton, const Animation& animation, float animtionTime);
+
+	/// <summary>
+	/// SkinClusterの生成
+	/// </summary>
+	/// <param name="device"></param>
+	/// <param name="skeleton"></param>
+	/// <param name="modelData"></param>
+	/// <param name="descriptorHeap"></param>
+	/// <param name="descriptorSize"></param>
+	/// <returns></returns>
+	SkinCluster CreateSkinCluster(const Skeleton& skeleton, const ModelData& modelData);
 };
 
