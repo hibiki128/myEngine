@@ -1,4 +1,0 @@
-C:\Users\hagiw\授業課題\2年後期\TD2\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
-C:\Users\hagiw\OneDrive\デスクトップ\まっさら\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
-C:\Users\hagiw\授業課題\2年後期\TD2\TD2-2\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
-C:\Users\hagiw\授業課題\2年後期\myEngine\project\externals\DirectXTex\Bin\Desktop_2022_Win10\x64\Debug\DirectXTex.lib
