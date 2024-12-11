@@ -27,8 +27,6 @@ void OffScreen::Initialize()
 	CreateDepth();
 }
 
-
-
 void OffScreen::Draw()
 {
 	// 選択されたShaderModeに基づいて描画設定を実行
@@ -132,8 +130,6 @@ void OffScreen::DrawCommonSetting()
 
 	ImGui::End();
 }
-
-
 
 void OffScreen::CreateSmooth()
 {

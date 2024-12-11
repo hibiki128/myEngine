@@ -76,7 +76,8 @@ void CollisionManager::Update()
 }
 
 void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
-	isCollidingNow = false;
+	bool isCollidingNow = false;
+
 	// コリジョンが無効化されている場合はチェックをスキップ
 	if (!colliderA->IsCollisionEnabled() || !colliderB->IsCollisionEnabled()) {
 		return;
@@ -104,11 +105,13 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	// 衝突状態の変化に応じたコールバックの呼び出し
 	if (isCollidingNow) {
+		// 衝突していなかった場合に発生
 		if (!colliderA->WasColliding() && !colliderB->WasColliding()) {
 			colliderA->OnCollisionEnter(colliderB);
 			colliderB->OnCollisionEnter(colliderA);
 		}
 		else {
+			// 既に衝突している場合
 			colliderA->OnCollision(colliderB);
 			colliderB->OnCollision(colliderA);
 		}
@@ -116,6 +119,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		colliderB->SetHitColor();
 	}
 	else {
+		// 衝突が終わった場合
 		if (colliderA->WasColliding() || colliderB->WasColliding()) {
 			colliderA->OnCollisionOut(colliderB);
 			colliderB->OnCollisionOut(colliderA);
@@ -124,6 +128,7 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		colliderB->SetDefaultColor();
 	}
 
+	// 衝突状態の更新
 	colliderA->SetIsColliding(isCollidingNow);
 	colliderB->SetIsColliding(isCollidingNow);
 }

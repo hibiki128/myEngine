@@ -134,8 +134,11 @@ void TitleScene::DrawForOffScreen()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
+	if (ImGui::BeginTabBar("1")) {
 	debugCamera_->imgui();
 	LightGroup::GetInstance()->imgui();
+	ImGui::EndTabBar();
+	}
 	ImGui::End();
 	emitter_->imgui();
 }

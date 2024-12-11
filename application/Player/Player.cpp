@@ -1,5 +1,7 @@
 #include "Player.h"
 #include"myEngine/Frame/Frame.h"
+#include"application/Camera/FollowCamera.h"
+#include"application/Enemy/Enemy.h"
 
 void Player::Init()
 {
@@ -31,13 +33,19 @@ void Player::DebugTransform(const std::string className)
 	weapon_->DebugTransform("ウェポン ");
 }
 
+void Player::imgui()
+{
+	if (ImGui::BeginTabItem("プレイヤー")) {
+		ImGui::DragFloat("動く速度", &kMoveSpeed, 0.01f);
+		ImGui::DragFloat("ダッシュ速度", &kDashSpeed, 0.01f);
+		ImGui::DragFloat("ダッシュ減衰率", &kDashDecay, 0.01f);
+		ImGui::EndTabItem();
+	}
+}
+
 void Player::Move()
 {
-	const float kMoveSpeed = 0.3f;
-	const float kDashSpeed = 1.5f;
-	const float kDashDecay = 0.95f;
 	const float diagonalSpeedFactor = 1.0f / sqrt(2.0f);
-
 	// クールタイム処理
 	if (dashCoolTime_ > 0.0f) {
 		dashCoolTime_ -= Frame::DeltaTime(); // フレーム間隔を想定
@@ -46,18 +54,32 @@ void Player::Move()
 	// 移動ベクトルの初期化
 	move = Vector3(0.0f, 0.0f, 0.0f);
 
-	// 移動処理
-	if (Input::GetInstance()->PushKey(DIK_W)) {
-		move.z += 1.0f;  // 前進
-	}
-	if (Input::GetInstance()->PushKey(DIK_S)) {
-		move.z -= 1.0f;  // 後退
-	}
-	if (Input::GetInstance()->PushKey(DIK_A)) {
-		move.x -= 1.0f;  // 左移動
-	}
-	if (Input::GetInstance()->PushKey(DIK_D)) {
-		move.x += 1.0f;  // 右移動
+	// カメラの向きに基づいて進行方向を決定
+	if (camera_) {
+		float cameraYaw = camera_->GetYaw(); // カメラのyawを取得
+
+		// Wキーで進む方向を決定（カメラの向きに基づく）
+		if (Input::GetInstance()->PushKey(DIK_W)) {
+			move.x += std::sin(cameraYaw);  // カメラの向きに基づいてX軸方向に進む
+			move.z += std::cos(cameraYaw);  // カメラの向きに基づいてZ軸方向に進む
+		}
+		// Sキーで後退
+		if (Input::GetInstance()->PushKey(DIK_S)) {
+			move.x -= std::sin(cameraYaw);  // カメラの向きに基づいてX軸方向に後退
+			move.z -= std::cos(cameraYaw);  // カメラの向きに基づいてZ軸方向に後退
+		}
+
+		// Aキーで左移動（カメラの向きに基づく）
+		if (Input::GetInstance()->PushKey(DIK_A)) {
+			move.x -= std::cos(cameraYaw);  // カメラの向きに基づいて左移動
+			move.z += std::sin(cameraYaw);  // カメラの向きに基づいてZ軸方向に進む
+		}
+
+		// Dキーで右移動（カメラの向きに基づく）
+		if (Input::GetInstance()->PushKey(DIK_D)) {
+			move.x += std::cos(cameraYaw);  // カメラの向きに基づいて右移動
+			move.z -= std::sin(cameraYaw);  // カメラの向きに基づいてZ軸方向に進む
+		}
 	}
 
 	// ダッシュ処理
@@ -81,6 +103,7 @@ void Player::Move()
 		transform_.translation_ += move * dashSpeed_;  // ダッシュ速度を適用
 	}
 }
+
 
 void Player::Rotation()
 {
@@ -110,4 +133,11 @@ Vector3 Player::GetCenterPosition() const
 Vector3 Player::GetCenterRotation() const
 {
 	return transform_.rotation_;
+}
+
+void Player::OnCollision(Collider* other)
+{
+	if (dynamic_cast<Enemy*>(other)) {
+
+	}
 }

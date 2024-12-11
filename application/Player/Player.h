@@ -21,10 +21,14 @@ public:
 
 	void DebugTransform(const std::string className)override;
 
+	void imgui();
+
 	void SetCamera(FollowCamera* camera) { camera_ = camera; }
 
 	Vector3 GetCenterPosition()const override;
 	Vector3 GetCenterRotation()const override;
+
+	void OnCollision([[maybe_unused]] Collider* other)override;
 
 private:
 
@@ -45,5 +49,9 @@ private:
 
 	float dashCoolTime_;
 	float dashSpeed_;
+	float kMoveSpeed = 0.3f;
+	float kDashSpeed = 1.75f;
+	float kDashDecay = 0.97f;
+
 };
 

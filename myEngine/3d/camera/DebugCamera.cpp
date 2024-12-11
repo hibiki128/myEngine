@@ -45,28 +45,25 @@ void DebugCamera::Update()
 void DebugCamera::imgui()
 {
 #ifdef _DEBUG
-	if (ImGui::BeginTabBar("debugCamera")) {
-		if (ImGui::BeginTabItem("debugCamera")) {
-			ImGui::Checkbox("CameraActive", &isActive_);
-			if (isActive_) {
-				ImGui::DragFloat3("translation", &translation_.x, 0.01f);
-				Vector3 rotate = GetEulerAnglesFromMatrix(matRot_);
-				ImGui::DragFloat3("rotation", &rotate.x, 0.01f);
-				ImGui::DragFloat("ZSpeed", &moveZspeed, 0.001f);
-				ImGui::DragFloat("mouseSensitivity", &mouseSensitivity, 0.001f);
-				if (ImGui::Button("Camera Reset")) {
-					translation_ = { 0.0f,0.0f,-50.0f };
-					matRot_ = MakeIdentity4x4();
-				}
-				if (ImGui::Button("Speed Reset")) {
-					mouseSensitivity = 0.003f;
-					moveZspeed = 0.005f;
-				}
-				ImGui::Checkbox("useMouse", &useMouse);
+	if (ImGui::BeginTabItem("debugCamera")) {
+		ImGui::Checkbox("CameraActive", &isActive_);
+		if (isActive_) {
+			ImGui::DragFloat3("translation", &translation_.x, 0.01f);
+			Vector3 rotate = GetEulerAnglesFromMatrix(matRot_);
+			ImGui::DragFloat3("rotation", &rotate.x, 0.01f);
+			ImGui::DragFloat("ZSpeed", &moveZspeed, 0.001f);
+			ImGui::DragFloat("mouseSensitivity", &mouseSensitivity, 0.001f);
+			if (ImGui::Button("Camera Reset")) {
+				translation_ = { 0.0f,0.0f,-50.0f };
+				matRot_ = MakeIdentity4x4();
 			}
-			ImGui::EndTabItem();
+			if (ImGui::Button("Speed Reset")) {
+				mouseSensitivity = 0.003f;
+				moveZspeed = 0.005f;
+			}
+			ImGui::Checkbox("useMouse", &useMouse);
 		}
-		ImGui::EndTabBar();
+		ImGui::EndTabItem();
 	}
 #endif // _DEBUG
 }

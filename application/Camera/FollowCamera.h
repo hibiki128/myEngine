@@ -12,6 +12,8 @@ public:
 
 	void imgui();
 
+	float GetYaw() { return yaw_; }
+
 	void SetTarget(const WorldTransform* target) { target_ = target; }
 	const ViewProjection& GetViewProjection() const { return viewProjection_; }
 

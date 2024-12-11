@@ -43,6 +43,7 @@ void GameScene::Initialize()
 	/// ===================================================
 
 	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetCamera(followCamera_.get());
 }
 
 void GameScene::Update()
@@ -86,7 +87,6 @@ void GameScene::Draw()
 	//-----3DObjectの描画開始-----
 	player_->Draw(vp_);
 	enemy_->Draw(vp_);
-	
 	//--------------------------
 
 	/// Particleの描画準備
@@ -141,9 +141,23 @@ void GameScene::DrawForOffScreen()
 void GameScene::Debug()
 {
 	ImGui::Begin("GameScene:Debug");
-	debugCamera_->imgui();
-	LightGroup::GetInstance()->imgui();
-	ImGui::End();
+
+	// 最初のタブバー
+	if (ImGui::BeginTabBar("1")) {
+		debugCamera_->imgui();
+		LightGroup::GetInstance()->imgui();
+		ImGui::EndTabBar();
+	}
+
+	// 2つ目のタブバー
+	if (ImGui::BeginTabBar("2")) {
+		player_->imgui();
+		ImGui::EndTabBar();
+	}
+
+	ImGui::End(); // ダイアログの終了
+
+	// その他のデバッグ情報
 	player_->DebugTransform("プレイヤー ");
 	enemy_->DebugTransform("エネミー ");
 	followCamera_->imgui();
