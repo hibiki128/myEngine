@@ -88,19 +88,8 @@ void DirectXCommon::CreateDepthSRV()
 
 void DirectXCommon::PreRenderTexture()
 {
-	//depthBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//depthBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//depthBarrier.Transition.pResource = depthStencilResource.Get();
-	//depthBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	//depthBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 深度書き込み状態に遷移
-	//commandList->ResourceBarrier(1, &depthBarrier);
-
-	offScreenBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	offScreenBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	offScreenBarrier.Transition.pResource = offScreenResource.Get();
-	offScreenBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_GENERIC_READ;
-	offScreenBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	commandList->ResourceBarrier(1, &offScreenBarrier);
+	BarrierTransition(offScreenResource.Get(),
+		D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// 描画先のRTVとDSVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetDSVCPUDescriptorHandle(0);
@@ -116,20 +105,11 @@ void DirectXCommon::PreRenderTexture()
 
 void DirectXCommon::PreDraw()
 {
-	//// 深度リソースをピクセルシェーダーリソースとして読み取る準備
-	//depthBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//depthBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//depthBarrier.Transition.pResource = depthStencilResource.Get();
-	//depthBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	//depthBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // ピクセルシェーダーリソースに遷移
-	//commandList->ResourceBarrier(1, &depthBarrier);
-
-	offScreenBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	offScreenBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	offScreenBarrier.Transition.pResource = offScreenResource.Get();
-	offScreenBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	offScreenBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
-	commandList->ResourceBarrier(1, &offScreenBarrier);
+	// 深度リソースをピクセルシェーダーリソースとして読み取る準備
+	BarrierTransition(depthStencilResource.Get(),
+		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	BarrierTransition(offScreenResource.Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	// ゲームの処理
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
@@ -144,6 +124,11 @@ void DirectXCommon::PreDraw()
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
+void DirectXCommon::TransitionDepthBarrier()
+{
+	BarrierTransition(depthStencilResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+}
+
 
 void DirectXCommon::PostDraw()
 {
@@ -152,17 +137,7 @@ void DirectXCommon::PostDraw()
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 	// 画面に各処理はすべて終わり、画面に映すので、状態を遷移
-	// 今回はRenderTargetからPresentにする
-
-	//// 深度ステンシルリソースを再度書き込み可能状態に戻す
-	//depthBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//depthBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//depthBarrier.Transition.pResource = depthStencilResource.Get();
-	//depthBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	//depthBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 深度書き込み状態に戻す
-	//commandList->ResourceBarrier(1, &depthBarrier);
-
-	//// バリアを貼る
+	// バリアを貼る
 	BarrierTransition(backBuffers[backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	// コマンドリストの内容を確定させる。すべてのコマンドを包んでからCloseすること
 	hr = commandList->Close();

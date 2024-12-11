@@ -55,6 +55,7 @@ private:
 	struct Material
 	{
 		Matrix4x4 projectionInverse;
+		int kernelSize;
 	};
 
 	// バッファリソース

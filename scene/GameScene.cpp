@@ -86,8 +86,7 @@ void GameScene::Draw()
 	//-----3DObjectの描画開始-----
 	player_->Draw(vp_);
 	enemy_->Draw(vp_);
-	skyDome_->Draw(vp_);
-	ground_->Draw(vp_);
+	
 	//--------------------------
 
 	/// Particleの描画準備
@@ -123,7 +122,8 @@ void GameScene::DrawForOffScreen()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-
+	skyDome_->Draw(vp_);
+	ground_->Draw(vp_);
 	//--------------------------
 
 	/// Particleの描画準備

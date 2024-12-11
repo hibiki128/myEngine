@@ -76,8 +76,9 @@ void OffScreen::Draw()
 	case ShaderMode::kDepth:
 		psoManager_->DrawCommonSetting(graphicsPipelineState[6], rootSignature[4]);
 		srvManager_ = SrvManager::GetInstance();
+		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(0, dxCommon->GetOffScreenGPUHandle());
 		dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, depthResouce->GetGPUVirtualAddress());
-		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(0, dxCommon->GetDepthGPUHandle());
+		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, dxCommon->GetDepthGPUHandle());
 		dxCommon->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 		break;
 	default:
@@ -123,6 +124,7 @@ void OffScreen::DrawCommonSetting()
 		break;
 	case ShaderMode::kDepth:
 		depthData->projectionInverse = Inverse(projectionInverse_);
+		ImGui::DragInt("Kernel Size", &depthData->kernelSize, 2, 3, 7);
 		break;
 	default:
 		break;
@@ -163,6 +165,7 @@ void OffScreen::CreateDepth()
 	depthResouce = dxCommon->CreateBufferResource(sizeof(Material));
 	depthResouce->Map(0, nullptr, reinterpret_cast<void**>(&depthData));
 	depthData->projectionInverse = MakeIdentity4x4();
+	depthData->kernelSize = 3;
 }
 
 
