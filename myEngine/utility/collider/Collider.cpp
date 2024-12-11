@@ -89,7 +89,7 @@ void Collider::UpdateWorldTransform() {
 	OBBwt_.UpdateMatrix();
 }
 
-void Collider::DrawSphere(const ViewProjection& viewProjection, bool isHit) {
+void Collider::DrawSphere(const ViewProjection& viewProjection) {
 	const uint32_t kSubdivision = 10;                                        // 分割数
 	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / kSubdivision; // 経度分割1つ分の角度
 	const float kLatEvery = std::numbers::pi_v<float> / kSubdivision;        // 緯度分割1つ分の角度
@@ -123,24 +123,16 @@ void Collider::DrawSphere(const ViewProjection& viewProjection, bool isHit) {
 				Cubewt_.translation_.z + Cubewt_.scale_.z * std::cosf(lat + kLatEvery) * std::sinf(lon),
 			};
 
-			Vector4 color;
-			if (isHit) {
-				color = { 1.0f,0.0f,0.0f,1.0f };
-			}
-			else {
-				color = { 1.0f,1.0f,1.0f,1.0f };
-			}
-
 			// 線を描画（経度方向）
-			DrawLine3D::GetInstance()->SetPoints(start, end1, color);
+			DrawLine3D::GetInstance()->SetPoints(start, end1, color_);
 			// 線を描画（緯度方向）
-			DrawLine3D::GetInstance()->SetPoints(start, end2, color);
+			DrawLine3D::GetInstance()->SetPoints(start, end2, color_);
 		}
 	}
 }
 
 
-void Collider::DrawAABB(const ViewProjection& viewProjection, bool isHit)
+void Collider::DrawAABB(const ViewProjection& viewProjection)
 {
 	// AABBの頂点リスト
 	std::array<Vector3, 8> vertices = {
@@ -161,21 +153,13 @@ void Collider::DrawAABB(const ViewProjection& viewProjection, bool isHit)
 		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
 	};
 
-	Vector4 color;
-	if (isHit) {
-		color = { 1.0f,0.0f,0.0f,1.0f };
-	}
-	else {
-		color = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
 	// 線を描画
 	for (const auto& edge : edges) {
-		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color);
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second],color_);
 	}
 }
 
-void Collider::DrawOBB(const ViewProjection& viewProjection, bool isHit) {
+void Collider::DrawOBB(const ViewProjection& viewProjection) {
 	// OBBの8つの頂点を計算
 	std::array<Vector3, 8> vertices;
 
@@ -200,17 +184,9 @@ void Collider::DrawOBB(const ViewProjection& viewProjection, bool isHit) {
 		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
 	};
 
-	Vector4 color;
-	if (isHit) {
-		color = { 1.0f,0.0f,0.0f,1.0f };
-	}
-	else {
-		color = { 1.0f,1.0f,1.0f,1.0f };
-	}
-
 	// 線を描画
 	for (const auto& edge : edges) {
-		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second],color);
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
 	}
 }
 

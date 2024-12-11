@@ -96,6 +96,21 @@
     <Filter Include="ソースファイル\application\Player">
       <UniqueIdentifier>{dae765fd-e716-4d3a-9fc2-05644cadc6dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソースファイル\application\Field">
+      <UniqueIdentifier>{799216ac-bf77-4ef7-be6d-6eea94a4a444}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Field\SkyDome">
+      <UniqueIdentifier>{5ab14482-16d8-4365-80da-a2c6e513e621}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Field\Ground">
+      <UniqueIdentifier>{c884266f-728c-48a9-a28c-44f3cfb79296}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Player\Weapon">
+      <UniqueIdentifier>{d218ca74-d743-4924-8ca3-80ca20a76059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソースファイル\application\Camera">
+      <UniqueIdentifier>{e1887d26-0300-4a50-baa8-8a41296b6a59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="externals\imgui\imgui.cpp">
@@ -281,17 +296,20 @@
     <ClCompile Include="application\Player\Player.cpp">
       <Filter>ソースファイル\application\Player</Filter>
     </ClCompile>
-    <ClCompile Include="application\Camera\FollowCamera.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
     <ClCompile Include="application\Field\Ground\Ground.cpp">
-      <Filter>ソースファイル</Filter>
+      <Filter>ソースファイル\application\Field\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
+      <Filter>ソースファイル\application\Field\SkyDome</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Player\Weapon\Weapon.cpp">
+      <Filter>ソースファイル\application\Player\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Camera\FollowCamera.cpp">
+      <Filter>ソースファイル\application\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -517,9 +535,18 @@
     <ClInclude Include="application\Player\Player.h">
       <Filter>ソースファイル\application\Player</Filter>
     </ClInclude>
-    <ClInclude Include="application\Camera\FollowCamera.h" />
-    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
-    <ClInclude Include="application\Field\Ground\Ground.h" />
+    <ClInclude Include="application\Field\Ground\Ground.h">
+      <Filter>ソースファイル\application\Field\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Field\SkyDome\SkyDome.h">
+      <Filter>ソースファイル\application\Field\SkyDome</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Player\Weapon\Weapon.h">
+      <Filter>ソースファイル\application\Player\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="application\Camera\FollowCamera.h">
+      <Filter>ソースファイル\application\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">

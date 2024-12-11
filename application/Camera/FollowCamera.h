@@ -3,24 +3,24 @@
 #include "ViewProjection.h"
 class FollowCamera {
 public:
-	/// <summary>
-	/// 初期化
-	/// </summary>
+	/// ===================================================
+	///public method
+	/// ===================================================
 	void Init();
 
-	/// <summary>
-	/// 更新
-	/// </summary>
 	void Update();
 
 	void imgui();
 
-	/// <summary>
-	/// ターゲット設定
-	/// </summary>
-	/// <param name="target"></param>
 	void SetTarget(const WorldTransform* target) { target_ = target; }
 	const ViewProjection& GetViewProjection() const { return viewProjection_; }
+
+private:
+	/// ===================================================
+	///private method
+	/// ===================================================
+
+	void Move();
 
 private:
 	// ビュープロジェクション
@@ -29,4 +29,8 @@ private:
 	WorldTransform worldTransform_;
 	// 追従対象
 	const WorldTransform* target_ = nullptr;
+
+	float yaw_;
+	float distanceFromTarget_;
+	float heightOffset_;
 };

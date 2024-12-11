@@ -170,6 +170,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
     <ClCompile Include="application\Field\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="application\Player\Weapon\Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -264,6 +265,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
     <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
+    <ClInclude Include="application\Player\Weapon\Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\BoxFilter.PS.hlsl">

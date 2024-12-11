@@ -58,13 +58,13 @@ void CollisionManager::Draw(const ViewProjection& viewProjection) {
 		}
 		if (sphereCollision) {
 			// 描画
-			collider->DrawSphere(viewProjection,isCollidingNow);
+			collider->DrawSphere(viewProjection);
 		}
 		if (aabbCollision) {
-			collider->DrawAABB(viewProjection,isCollidingNow);
+			collider->DrawAABB(viewProjection);
 		}
 		if (obbCollision) {
-			collider->DrawOBB(viewProjection,isCollidingNow);
+			collider->DrawOBB(viewProjection);
 		}
 	}
 }
@@ -112,12 +112,16 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			colliderA->OnCollision(colliderB);
 			colliderB->OnCollision(colliderA);
 		}
+		colliderA->SetHitColor();
+		colliderB->SetHitColor();
 	}
 	else {
 		if (colliderA->WasColliding() || colliderB->WasColliding()) {
 			colliderA->OnCollisionOut(colliderB);
 			colliderB->OnCollisionOut(colliderA);
 		}
+		colliderA->SetDefaultColor();
+		colliderB->SetDefaultColor();
 	}
 
 	colliderA->SetIsColliding(isCollidingNow);

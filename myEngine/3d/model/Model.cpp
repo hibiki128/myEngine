@@ -3,6 +3,7 @@
 #include"fstream"
 #include"sstream"
 #include "TextureManager.h"
+#include"myEngine/Frame/Frame.h"
 
 bool Model::isGltf = false;
 
@@ -61,7 +62,7 @@ void Model::Draw()
 void Model::Update()
 {
 	if (haveAnimation) {
-		animationTime += 1.0f / 60.0f;
+		animationTime += Frame::DeltaTime();
 		animationTime = std::fmod(animationTime, animation_.duration);
 		ApplyAnimation(skeleton_, animation_, animationTime);
 		SkeletonUpdate(skeleton_);
