@@ -83,6 +83,18 @@ public:
 	bool IsColliding() const { return isColliding; }
 	bool WasColliding() const { return wasColliding; }
 
+	void SetIsCollidingInCurrentFrame(bool isColliding) {
+		isCollidingInCurrentFrame_ = isColliding;
+	}
+
+	bool IsCollidingInCurrentFrame() const {
+		return isCollidingInCurrentFrame_;
+	}
+
+	void ResetCollisionFlag() {
+		isCollidingInCurrentFrame_ = false;
+	}
+
 	/// <summary>
 	/// setter
 	/// </summary>
@@ -128,4 +140,5 @@ private:
 	bool isCollisionEnabled_ = true;  // デフォルトではコリジョンを有効化
 	bool isColliding = false;   // 現在のフレームの衝突状態
 	bool wasColliding = false;  // 前フレームの衝突状態
+	bool isCollidingInCurrentFrame_ = false; // 現フレームで衝突しているか
 };

@@ -5,7 +5,7 @@
 #include"Weapon/Weapon.h"
 
 class FollowCamera;
-class Player : public BaseObject, public Collider
+class Player : public BaseObject
 {
 public:
 

@@ -7,7 +7,7 @@
 //std
 #include<string>
 
-class BaseObject {
+class BaseObject : public Collider{
 protected:
 
 	/// ===================================================
@@ -35,6 +35,9 @@ public:
 	virtual void CreateModel(const std::string modelname);
 
 	virtual void DebugTransform(const std::string className);
+
+	Vector3 GetCenterPosition()const override;
+	Vector3 GetCenterRotation()const override;
 
 	// 中心座標取得
 	virtual Vector3 GetWorldPosition() const;

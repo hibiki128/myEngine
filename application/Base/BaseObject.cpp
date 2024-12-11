@@ -56,4 +56,14 @@ void BaseObject::DebugTransform(const std::string className)
 	ImGui::End();
 }
 
+Vector3 BaseObject::GetCenterPosition() const
+{
+	return transform_.translation_;
+}
+
+Vector3 BaseObject::GetCenterRotation() const
+{
+	return transform_.rotation_;
+}
+
 

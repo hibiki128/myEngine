@@ -127,12 +127,12 @@ void Player::Rotation()
 
 Vector3 Player::GetCenterPosition() const
 {
-	return transform_.translation_;
+	return BaseObject::GetCenterPosition();
 }
 
 Vector3 Player::GetCenterRotation() const
 {
-	return transform_.rotation_;
+	return BaseObject::GetCenterRotation();
 }
 
 void Player::OnCollision(Collider* other)

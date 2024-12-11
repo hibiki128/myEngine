@@ -35,15 +35,19 @@ void CollisionManager::Initialize() {
 
 void CollisionManager::UpdateWorldTransform() {
 	ApplyGlobalVariables();
-	//// 非表示なら抜ける
-	//if (!visible) {
-	//	return;
-	//}
 	// 全てのコライダーについて
 	for (Collider* collider : colliders_) {
 		// 更新
 		collider->UpdateWorldTransform();
+		if (collider->IsCollidingInCurrentFrame()) {
+			collider->SetHitColor();
+		}
+		else {
+			collider->SetDefaultColor();
+		}
+		collider->ResetCollisionFlag(); // フラグをリセット
 	}
+
 }
 
 void CollisionManager::Draw(const ViewProjection& viewProjection) {
@@ -103,6 +107,11 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		isCollidingNow = IsCollision(obbA, obbB);
 	}
 
+	if (isCollidingNow) {
+		colliderA->SetIsCollidingInCurrentFrame(true);
+		colliderB->SetIsCollidingInCurrentFrame(true);
+	}
+
 	// 衝突状態の変化に応じたコールバックの呼び出し
 	if (isCollidingNow) {
 		// 衝突していなかった場合に発生
@@ -115,8 +124,6 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			colliderA->OnCollision(colliderB);
 			colliderB->OnCollision(colliderA);
 		}
-		colliderA->SetHitColor();
-		colliderB->SetHitColor();
 	}
 	else {
 		// 衝突が終わった場合
@@ -124,8 +131,6 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			colliderA->OnCollisionOut(colliderB);
 			colliderB->OnCollisionOut(colliderA);
 		}
-		colliderA->SetDefaultColor();
-		colliderB->SetDefaultColor();
 	}
 
 	// 衝突状態の更新

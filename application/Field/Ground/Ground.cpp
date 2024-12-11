@@ -4,6 +4,7 @@ void Ground::Init()
 {
 	BaseObject::Init();
 	BaseObject::CreateModel("debug/Ground.obj");
+	Collider::SetCollisionEnabled(false);
 }
 
 void Ground::Update()

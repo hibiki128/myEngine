@@ -1,6 +1,6 @@
 #pragma once
 #include"application/Base/BaseObject.h"
-class Weapon : public BaseObject,public Collider
+class Weapon : public BaseObject
 {
 public:
 	/// ===================================================

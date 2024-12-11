@@ -1,6 +1,6 @@
 #pragma once
 #include"application/Base/BaseObject.h"
-class Enemy:public BaseObject,public Collider
+class Enemy:public BaseObject
 {
 public:
 	/// ===================================================

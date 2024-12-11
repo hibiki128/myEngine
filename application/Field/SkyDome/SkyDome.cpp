@@ -4,6 +4,7 @@ void SkyDome::Init()
 {
 	BaseObject::Init();
 	BaseObject::CreateModel("debug/skyDome.obj");
+	Collider::SetCollisionEnabled(false);
 }
 
 void SkyDome::Update()

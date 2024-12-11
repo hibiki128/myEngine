@@ -24,10 +24,10 @@ void Enemy::DebugTransform(const std::string className)
 
 Vector3 Enemy::GetCenterPosition() const
 {
-	return transform_.translation_;
+	return BaseObject::GetCenterPosition();
 }
 
 Vector3 Enemy::GetCenterRotation() const
 {
-	return transform_.rotation_;
+	return BaseObject::GetCenterRotation();
 }
