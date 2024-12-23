@@ -6,7 +6,6 @@
 #ifdef _DEBUG
 #include "imgui.h" // ImGuiのインクルード
 #endif // _DEBUG
-#include "Object3d.h"
 #include"GlobalVariables.h"
 
 class ParticleEmitter {
@@ -78,7 +77,6 @@ private:
     bool isAcceMultiply = false;
     bool isSinMove = false;
 
-    std::unique_ptr<Object3d> emitterObj;
     std::unique_ptr<ParticleManager> Manager_;
 
     GlobalVariables* globalVariables = nullptr;

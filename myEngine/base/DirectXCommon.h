@@ -58,14 +58,14 @@ public: // メンバ関数
 	void PreDraw();
 
 	/// <summary>
+	/// 深度のバリア
+	/// </summary>
+	void TransitionDepthBarrier();
+
+	/// <summary>
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
-
-	/// <summary>
-    /// 深度のバリア
-    /// </summary>
-	void TransitionDepthBarrier();
 
 	IDxcBlob* CompileShader(
 		// CompilerするShaderファイルへのパス
@@ -309,7 +309,6 @@ private:
 	D3D12_RESOURCE_BARRIER barrier{};
 	// 現時点ではincludeはしないが、includeに対応するための設定を行っておく
 	IDxcIncludeHandler* includeHandler;
-	const Vector4 kRenderTargetClearValue{ 1.0f,0.0f,0.0f,1.0f };
 
 	uint32_t offScreenSrvIndex = 0;
 	D3D12_CPU_DESCRIPTOR_HANDLE offScreenSrvHandleCPU;        // SRV作成時に必要なCPUハンドル

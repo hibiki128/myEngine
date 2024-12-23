@@ -48,8 +48,10 @@ void GameScene::Initialize()
 
 void GameScene::Update()
 {
+#ifdef _DEBUG
 	// デバッグ
 	Debug();
+#endif // _DEBUG
 
 	// カメラ更新
 	CameraUpdate();
@@ -64,7 +66,6 @@ void GameScene::Update()
 	enemy_->Update();
 	skyDome_->Update();
 	ground_->Update();
-
 }
 
 void GameScene::Draw()

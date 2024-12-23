@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include"Object3dCommon.h"
 #include <line/DrawLine3D.h>
+#include"AnimationManager.h"
 
 
 
@@ -21,6 +22,14 @@ void Object3d::Initialize(const std::string& filePath)
 
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
+
+	modelAnimation_ = std::make_unique<ModelAnimation>();
+	modelAnimation_->SetModelData(model->GetModelData());
+	modelAnimation_->Initialize("resources/models/", filePath);
+
+	model->SetAnimator(modelAnimation_->GetAnimator());
+	model->SetBone(modelAnimation_->GetBone());
+	model->SetSkin(modelAnimation_->GetSkin());
 }
 
 void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
@@ -41,10 +50,24 @@ void Object3d::Update(const WorldTransform& worldTransform, const ViewProjection
 	transformationMatrixData->World = worldTransform.matWorld_;
 	Matrix4x4 worldInverseMatrix = Inverse(worldMatrix);
 	transformationMatrixData->WorldInverseTranspose = Transpose(worldInverseMatrix);
+}
 
-	if (model) {
-		model->Update();
+void Object3d::AnimationUpdate(bool roop)
+{
+	if (modelAnimation_) {
+		modelAnimation_->Update(roop);
 	}
+}
+
+void Object3d::SetAnimation(const std::string& fileName)
+{
+	modelAnimation_ = std::make_unique<ModelAnimation>();
+	modelAnimation_->SetModelData(model->GetModelData());
+	modelAnimation_->Initialize("resources/models/", fileName);
+	modelAnimation_->GetAnimator()->SetAnimationTime(0.0f);
+	model->SetAnimator(modelAnimation_->GetAnimator());
+	model->SetBone(modelAnimation_->GetBone());
+	model->SetSkin(modelAnimation_->GetSkin());
 }
 
 void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color, bool Lighting)
@@ -72,11 +95,11 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	}
 }
 
-void Object3d::DrawSkelton(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
+void Object3d::DrawSkeleton(const WorldTransform& worldTransform, const ViewProjection& viewProjection)
 {
 	Update(worldTransform, viewProjection);
 	// スケルトンデータを取得
-	const Model::Skeleton& skeleton = model->GetSkeletonData();
+	const Skeleton& skeleton = modelAnimation_->GetSkeletonData();
 
 	// 各ジョイントを巡回して親子関係の線を生成
 	for (const auto& joint : skeleton.joints) {

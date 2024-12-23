@@ -23,15 +23,16 @@ private:
 	void CreateGauss();
 	void CreateVignette();
 	void CreateDepth();
+	void CreateRadial();
 private:
 	DirectXCommon* dxCommon;
 	SrvManager* srvManager_;
 	std::unique_ptr<PipeLineManager> psoManager_ = nullptr;
 	// ルートシグネチャ
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature[5];
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature[6];
 
 	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[7];
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[8];
 	ShaderMode shaderMode_ = ShaderMode::kNone;
 
 
@@ -52,10 +53,15 @@ private:
 		Vector2 vignetteCenter;
 	};
 
-	struct Material
+	struct Depth
 	{
 		Matrix4x4 projectionInverse;
 		int kernelSize;
+	};
+
+	struct RadialBlur {
+		Vector2 kCenter;
+		float kBlurWidth;
 	};
 
 	// バッファリソース
@@ -76,8 +82,13 @@ private:
 	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthResouce;
 	// バッファリソース内のデータを指すポインタ
-	Material* depthData = nullptr;
+	Depth* depthData = nullptr;
 
 	Matrix4x4 projectionInverse_;
+
+	// バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> radialResource;
+	// バッファリソース内のデータを指すポインタ
+	RadialBlur* radialData = nullptr;
 };
 

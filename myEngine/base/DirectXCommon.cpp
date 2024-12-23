@@ -81,7 +81,7 @@ void DirectXCommon::CreateOffscreenSRV()
 void DirectXCommon::CreateDepthSRV()
 {
 	depthSrvIndex = SrvManager::GetInstance()->Allocate();
-	SrvManager::GetInstance()->CreateSRVforDepth(depthSrvIndex,depthStencilResource.Get());
+	SrvManager::GetInstance()->CreateSRVforDepth(depthSrvIndex, depthStencilResource.Get());
 	depthSrvHandleCPU = SrvManager::GetInstance()->GetCPUDescriptorHandle(depthSrvIndex);
 	depthSrvHandleGPU = SrvManager::GetInstance()->GetGPUDescriptorHandle(depthSrvIndex);
 }
@@ -117,8 +117,7 @@ void DirectXCommon::PreDraw()
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = GetDSVCPUDescriptorHandle(0);
 	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
-	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f };
-	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColorValue.Color, 0, nullptr);
 
 	commandList->RSSetViewports(1, &viewport);
 	commandList->RSSetScissorRects(1, &scissorRect);
@@ -357,10 +356,16 @@ void DirectXCommon::RenderTargetViewInitialize()
 	//=================RenderTextureResource用のRTVの設定======================
 	// RenderTextureResourceの作成
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	clearColorValue.Color[0] = 0.1f;
-	clearColorValue.Color[1] = 0.25f;
-	clearColorValue.Color[2] = 0.5f;
-	clearColorValue.Color[3] = 1.0f;
+	//clearColorValue.Color[0] = 0.6f;  // 赤 (R)
+	//clearColorValue.Color[1] = 0.5f;  // 緑 (G)
+	//clearColorValue.Color[2] = 0.1f;  // 青 (B)
+	//clearColorValue.Color[3] = 1.0f;  // アルファ (A)
+	// 背景色をさらに暗めのブルーグレーに設定
+	clearColorValue.Color[0] = 0.02f;  // 赤成分 (非常に暗い)
+	clearColorValue.Color[1] = 0.02f;  // 緑成分 (非常に暗い)
+	clearColorValue.Color[2] = 0.05f;  // 青成分 (少し強め)
+	clearColorValue.Color[3] = 1.0f;   // アルファ値 (完全な不透明)
+
 	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, clearColorValue.Format, clearColorValue);
 
 	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);

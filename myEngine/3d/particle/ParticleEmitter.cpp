@@ -6,15 +6,12 @@ ParticleEmitter::ParticleEmitter() {}
 
 void ParticleEmitter::Initialize(const std::string& name, const std::string& fileName)
 {
-	emitterObj = std::make_unique<Object3d>();
-	emitterObj->Initialize("debug/OBB.obj");
 	name_ = name;
 	transform_.Initialize();
 	Manager_ = std::make_unique<ParticleManager>();
 	Manager_->Initialize(SrvManager::GetInstance());
 	Manager_->CreateParticleGroup(name_, fileName);
 	emitFrequency_ = 0.1f;
-	//transform_.UpdateMatrix();
 	velocityMin_ = { -1.0f, -1.0f, -1.0f };
 	velocityMax_ = { 1.0f, 1.0f, 1.0f };
 	lifeTimeMin_ = { 1.0f };
@@ -80,27 +77,27 @@ void ParticleEmitter::DrawEmitter()
 	// isVisibleがtrueのときだけ描画
 	if (!isVisible) return;
 
-	// 立方体のローカル座標での基本頂点
+	// 立方体のローカル座標での基本頂点（スケーリング済み）
 	std::array<Vector3, 8> localVertices = {
-		Vector3{-0.5f, -0.5f, -0.5f}, // 左下手前
-		Vector3{ 0.5f, -0.5f, -0.5f}, // 右下手前
-		Vector3{-0.5f,  0.5f, -0.5f}, // 左上手前
-		Vector3{ 0.5f,  0.5f, -0.5f}, // 右上手前
-		Vector3{-0.5f, -0.5f,  0.5f}, // 左下奥
-		Vector3{ 0.5f, -0.5f,  0.5f}, // 右下奥
-		Vector3{-0.5f,  0.5f,  0.5f}, // 左上奥
-		Vector3{ 0.5f,  0.5f,  0.5f}  // 右上奥
+		Vector3{-1.0f, -1.0f, -1.0f}, // 左下手前
+		Vector3{ 1.0f, -1.0f, -1.0f}, // 右下手前
+		Vector3{-1.0f,  1.0f, -1.0f}, // 左上手前
+		Vector3{ 1.0f,  1.0f, -1.0f}, // 右上手前
+		Vector3{-1.0f, -1.0f,  1.0f}, // 左下奥
+		Vector3{ 1.0f, -1.0f,  1.0f}, // 右下奥
+		Vector3{-1.0f,  1.0f,  1.0f}, // 左上奥
+		Vector3{ 1.0f,  1.0f,  1.0f}  // 右上奥
 	};
 
 	// ワールド変換結果を格納する配列
 	std::array<Vector3, 8> worldVertices;
 
-	// 全体のワールド行列
+	// ワールド行列の計算
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform_.scale_, transform_.rotation_, transform_.translation_);
 
 	// 頂点のワールド変換
 	for (size_t i = 0; i < localVertices.size(); i++) {
-		worldVertices[i] = Transformation(localVertices[i], transform_.matWorld_);
+		worldVertices[i] = Transformation(localVertices[i], worldMatrix);
 	}
 
 	// エッジリスト（線の接続順）
@@ -115,7 +112,6 @@ void ParticleEmitter::DrawEmitter()
 		DrawLine3D::GetInstance()->SetPoints(worldVertices[edge.first], worldVertices[edge.second]);
 	}
 }
-
 
 
 // Emit関数

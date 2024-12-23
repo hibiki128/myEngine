@@ -11,6 +11,9 @@ void Player::Init()
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Init();
 	weapon_->SetParent(transform_);
+
+	afterImageEmitter_ = std::make_unique<ParticleEmitter>();
+	afterImageEmitter_->Initialize("afterImage","debug/Cube.obj");
 }
 
 void Player::Update()

@@ -58,61 +58,72 @@ void LightGroup::Draw()
 }
 
 void LightGroup::imgui() {
-	if (ImGui::BeginTabItem("Direction")) {
-		ImGui::Checkbox("directionalLight", &isDirectionalLight);
-		if (directionalLightData->active) {
-			ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.1f);
-			directionalLightData->direction = directionalLightData->direction.Normalize();
-			ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
-			ImGui::ColorEdit3("Color", &directionalLightData->color.x);
-			// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
-			const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
+	
 
-			int selectedLightingType = directionalLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+	if (ImGui::BeginTabBar("Direction")) {
+		if (ImGui::BeginTabItem("Direction")) {
+			ImGui::Checkbox("directionalLight", &isDirectionalLight);
+			if (directionalLightData->active) {
+				ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.1f);
+				directionalLightData->direction = directionalLightData->direction.Normalize();
+				ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
+				ImGui::ColorEdit3("Color", &directionalLightData->color.x);
+				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
+				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
 
-			// Comboで選択されたインデックスに基づいてフラグを設定
-			if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
-			{
-				// フラグの設定
-				directionalLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
-				directionalLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				int selectedLightingType = directionalLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+
+				// Comboで選択されたインデックスに基づいてフラグを設定
+				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
+				{
+					// フラグの設定
+					directionalLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
+					directionalLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				}
+			}
+			ImGui::EndTabItem();
+			if (ImGui::Button("Save")) {
+				SaveDirectionalLight();
+				std::string message = std::format("DirectionalLight saved.");
+				MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
 			}
 		}
-		if (ImGui::Button("Save")) {
-			SaveDirectionalLight();
-			std::string message = std::format("DirectionalLight saved.");
-			MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
-		}
-		ImGui::EndTabItem();
+		ImGui::EndTabBar();
 	}
-	if (ImGui::BeginTabItem("Point")) {
-		ImGui::Checkbox("pointLight", &isPointLight);
-		if (pointLightData->active) {
-			ImGui::DragFloat3("Position", &pointLightData->position.x, 0.1f);
-			ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f);
-			ImGui::DragFloat("Decay", &pointLightData->decay, 0.1f);
-			ImGui::DragFloat("Radius", &pointLightData->radius, 0.1f);
-			ImGui::ColorEdit3("Color", &pointLightData->color.x);
-			// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
-			const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
 
-			int selectedLightingType = pointLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+	if (ImGui::BeginTabBar("Point")) {
+		if (ImGui::BeginTabItem("Point")) {
+			ImGui::Checkbox("pointLight", &isPointLight);
+			if (pointLightData->active) {
+				ImGui::DragFloat3("Position", &pointLightData->position.x, 0.1f);
+				ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f);
+				ImGui::DragFloat("Decay", &pointLightData->decay, 0.1f);
+				ImGui::DragFloat("Radius", &pointLightData->radius, 0.1f);
+				ImGui::ColorEdit3("Color", &pointLightData->color.x);
+				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
+				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
 
-			// Comboで選択されたインデックスに基づいてフラグを設定
-			if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
-			{
-				// フラグの設定
-				pointLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
-				pointLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				int selectedLightingType = pointLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
+
+				// Comboで選択されたインデックスに基づいてフラグを設定
+				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
+				{
+					// フラグの設定
+					pointLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
+					pointLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
+				}
 			}
+			if (ImGui::Button("Save")) {
+				SavePointLight();
+				std::string message = std::format("PointLight saved.");
+				MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
+			}
+			ImGui::EndTabItem();
 		}
-		if (ImGui::Button("Save")) {
-			SavePointLight();
-			std::string message = std::format("PointLight saved.");
-			MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
-		}
-		ImGui::EndTabItem();
+		ImGui::EndTabBar();
 	}
+
+	
 }
 
 void LightGroup::SaveDirectionalLight() {

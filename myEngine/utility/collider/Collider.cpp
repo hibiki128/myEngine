@@ -155,7 +155,7 @@ void Collider::DrawAABB(const ViewProjection& viewProjection)
 
 	// 線を描画
 	for (const auto& edge : edges) {
-		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second],color_);
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
 	}
 }
 

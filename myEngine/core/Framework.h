@@ -13,6 +13,7 @@
 #include"CollisionManager.h"
 #include"ModelManager.h"
 #include"TextureManager.h"
+#include"AnimationManager.h"
 #include"myEngine/offscreen/OffScreen.h"
 #include <line/DrawLine3D.h>
 
@@ -80,6 +81,7 @@ protected:
 	SrvManager* srvManager = nullptr;
 	TextureManager* textureManager_ = nullptr;
 	ModelManager* modelManager_ = nullptr;
+	AnimationManager* animationManager_ = nullptr;
 
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;

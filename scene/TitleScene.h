@@ -61,8 +61,10 @@ private:
 	WorldTransform wt1_;
 	WorldTransform wt2_;
 
-	std::unique_ptr<Object3d> suzannu_;
+	std::unique_ptr<Object3d> walk_;
 	std::unique_ptr<Object3d> sphere_;
 
 	std::unique_ptr<ParticleEmitter> emitter_;
+
+	bool roop = true;
 };

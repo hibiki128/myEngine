@@ -86,6 +86,12 @@ void Framework::Initialize()
 	object3dCommon->Initialize();
 	///-----------------------------------
 
+	///----------AnimationManager-----------
+	// 3Dオブジェクト共通部の初期化
+	animationManager_ = AnimationManager::GetInstance();
+	animationManager_->Initialize();
+	///-----------------------------------
+
 	///----------ParticleCommon------------
 	particleCommon = ParticleCommon::GetInstance();
 	particleCommon->Initialize(dxCommon);
@@ -135,6 +141,10 @@ void Framework::Finalize()
 	/// -------TextureManager-------
 	textureManager_->Finalize();
 	///-----------------------------
+
+	/// -------ModelCommon-------
+	animationManager_->Finalize();
+	///---------------------------
 
 	/// -------ModelCommon-------
 	modelManager_->Finalize();
@@ -216,7 +226,7 @@ void Framework::DisplayFPS()
 	);
 
 	// 文字色を緑に設定
-	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(100, 255, 100, 255));
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(50, 255, 50, 255));
 	ImGui::Text("%.1f", io.Framerate);
 	ImGui::PopStyleColor();
 

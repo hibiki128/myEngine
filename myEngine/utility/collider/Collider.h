@@ -105,7 +105,7 @@ public:
 	void SetAABBScale(Vector3 scale) { scale_ = scale; }
 	void SetHitColor() { color_ = { 1.0f,0.0f,0.0f,1.0f }; }
 	void SetDefaultColor() { color_ = { 1.0f,1.0f,1.0f,1.0f }; }
-	
+
 private:
 	void ApplyVariables();
 	void MakeOBBOrientations(OBB& obb, const Vector3& rotate);

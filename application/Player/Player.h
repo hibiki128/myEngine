@@ -3,6 +3,7 @@
 #include"Input.h"
 #include"Vector3.h"
 #include"Weapon/Weapon.h"
+#include"ParticleEmitter.h"
 
 class FollowCamera;
 class Player : public BaseObject
@@ -43,6 +44,7 @@ private:
 private:
 	FollowCamera* camera_;
 	std::unique_ptr<Weapon>weapon_;
+	std::unique_ptr<ParticleEmitter> afterImageEmitter_;
 
 	Vector3 move = { 0.0f,0.0f,0.0f };
 	Vector3 acce = { 0.1f,0.0f,0.1f };

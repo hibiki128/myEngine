@@ -12,6 +12,7 @@
 #include"ViewProjection.h"
 #include"ObjColor.h"
 #include"light/LightGroup.h"
+#include"animation/ModelAnimation.h"
 
 class ModelCommon;
 class Object3dCommon;
@@ -56,6 +57,7 @@ private: // メンバ変数
 	Transform transform;
 
 	Model* model = nullptr;
+	std::unique_ptr<ModelAnimation> modelAnimation_ = nullptr;
 	ModelCommon* modelCommon = nullptr;
 	LightGroup* lightGroup = nullptr;
 
@@ -77,6 +79,23 @@ public: // メンバ関数
 	void Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
+	/// アニメーションの更新
+	/// </summary>
+	void AnimationUpdate(bool roop);
+
+	/// <summary>
+	/// アニメーションの有無
+	/// </summary>
+	/// <param name="anime"></param>
+	void SetStopAnimation(bool anime) { modelAnimation_->SetIsAnimation(anime); }
+
+	/// <summary>
+	/// アニメーションのセット
+	/// </summary>
+	/// <param name="fileName"></param>
+	void SetAnimation(const std::string& fileName);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
@@ -84,7 +103,7 @@ public: // メンバ関数
 	/// <summary>
 	/// スケルトン描画
 	/// </summary>
-	void DrawSkelton(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
+	void DrawSkeleton(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// getter

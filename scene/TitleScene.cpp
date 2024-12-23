@@ -28,14 +28,14 @@ void TitleScene::Initialize()
 	wt1_.translation_ = { -2.0f,0.0f,0.0f };
 	wt2_.translation_ = { 2.0f,0.0f,0.0f };
 
-	suzannu_ = std::make_unique<Object3d>();
-	suzannu_->Initialize("walk.gltf");
+	walk_ = std::make_unique<Object3d>();
+	walk_->Initialize("walk.gltf");
 	sphere_ = std::make_unique<Object3d>();
-	sphere_->Initialize("debug/sphere.obj");
+	sphere_->Initialize("walk.gltf");
+	sphere_->SetAnimation("sneakWalk.gltf");
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("test", "debug/cube.obj");
-
+	emitter_->Initialize("test", "debug/plane.obj");
 }
 
 void TitleScene::Finalize()
@@ -45,8 +45,10 @@ void TitleScene::Finalize()
 
 void TitleScene::Update()
 {
+#ifdef _DEBUG
 	// デバッグ
 	Debug();
+#endif // _DEBUG
 
 	// カメラ更新
 	CameraUpdate();
@@ -55,6 +57,8 @@ void TitleScene::Update()
 	ChangeScene();
 
 	emitter_->Update(vp_);
+	walk_->AnimationUpdate(roop);
+	sphere_->AnimationUpdate(roop);
 
 	wt1_.UpdateMatrix();
 	wt2_.UpdateMatrix();
@@ -74,13 +78,15 @@ void TitleScene::Draw()
 
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
-	suzannu_->Draw(wt1_, vp_);
-	suzannu_->DrawSkelton(wt1_, vp_);
+	walk_->Draw(wt1_, vp_);
+	walk_->DrawSkeleton(wt1_, vp_);
+	sphere_->Draw(wt2_, vp_);
+	sphere_->DrawSkeleton(wt2_, vp_);
 	//------------------------------
 
-	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	sphere_->Draw(wt2_, vp_);
+	objCommon_->DrawCommonSetting();
+	//sphere_->Draw(wt2_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
@@ -102,7 +108,7 @@ void TitleScene::DrawForOffScreen()
 {
 	/// -------描画処理開始-------
 
-    /// Spriteの描画準備
+	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
 
@@ -110,12 +116,12 @@ void TitleScene::DrawForOffScreen()
 
 	objCommon_->skinningDrawCommonSetting();
 	//-----アニメーションの描画開始-----
-	
+
 	//------------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	
+	//sphere_->Draw(wt2_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
@@ -134,11 +140,25 @@ void TitleScene::DrawForOffScreen()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
-	if (ImGui::BeginTabBar("1")) {
 	debugCamera_->imgui();
 	LightGroup::GetInstance()->imgui();
-	ImGui::EndTabBar();
+	ImGui::Checkbox("roop", &roop);
+
+	if (ImGui::Button("walk")) {
+		walk_->SetAnimation("walk.gltf");
 	}
+	if (ImGui::Button("sneakWalk")) {
+		walk_->SetAnimation("sneakWalk.gltf");
+	}
+	if (ImGui::Button("Jump")) {
+		walk_->SetAnimation("test.gltf");
+	}
+
+	ImGui::End();
+	ImGui::Begin("wt");
+	ImGui::DragFloat3("pos", &wt1_.translation_.x, 0.1f);
+	ImGui::DragFloat3("rote", &wt1_.rotation_.x, 0.1f);
+	ImGui::DragFloat3("scale", &wt1_.scale_.x, 0.1f);
 	ImGui::End();
 	emitter_->imgui();
 }
