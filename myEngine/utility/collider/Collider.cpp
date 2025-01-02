@@ -9,12 +9,6 @@ Collider::Collider() {
 	AABBwt_.Initialize();
 	OBBwt_.Initialize();
 	CollisionManager::AddCollider(this);
-	sphere_ = std::make_unique<Object3d>();
-	sphere_->Initialize("debug/Collider.obj");
-	AABB_ = std::make_unique<Object3d>();
-	AABB_->Initialize("debug/AABB.obj");
-	OBB_ = std::make_unique<Object3d>();
-	OBB_->Initialize("debug/OBB.obj");
 	variables_ = GlobalVariables::GetInstance();
 
 	// 派生クラス名を取得して整形

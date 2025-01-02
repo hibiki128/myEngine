@@ -417,7 +417,7 @@ void ParticleEmitter::imgui() {
 
 	// エミット設定セクション
 	if (ImGui::CollapsingHeader("パーティクルの数、間隔")) {
-		ImGui::DragFloat("間隔", &emitFrequency_, 0.1f, 0.1f, 100.0f);
+		ImGui::DragFloat("間隔", &emitFrequency_, 0.01f, 0.01f, 100.0f);
 		ImGui::InputInt("数", &count_, 1, 100);
 		count_ = std::clamp(count_, 0, 10000);
 	}

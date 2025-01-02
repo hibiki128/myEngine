@@ -3,7 +3,7 @@
 void Weapon::Init()
 {
 	BaseObject::Init();
-	BaseObject::CreateModel("debug/ICO.obj");
+	BaseObject::CreateModel("Player/Weapon/Weapon.obj");
 	transform_.translation_ = { 2.5f,2.5f,0.0f };
 }
 

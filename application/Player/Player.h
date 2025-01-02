@@ -20,6 +20,8 @@ public:
 
 	void Draw(const ViewProjection& viewProjection)override;
 
+	void DrawParticle(const ViewProjection& viewProjection);
+
 	void DebugTransform(const std::string className)override;
 
 	void imgui();
@@ -41,6 +43,8 @@ private:
 
 	void Rotation();
 
+	void AffterEffect();
+
 private:
 	FollowCamera* camera_;
 	std::unique_ptr<Weapon>weapon_;
@@ -48,6 +52,7 @@ private:
 
 	Vector3 move = { 0.0f,0.0f,0.0f };
 	Vector3 acce = { 0.1f,0.0f,0.1f };
+	Vector3 speed = { 0.0f,0.0f,0.0f };
 
 	float dashCoolTime_;
 	float dashSpeed_;

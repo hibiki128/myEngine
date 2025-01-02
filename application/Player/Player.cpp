@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Player.h"
 #include"myEngine/Frame/Frame.h"
 #include"application/Camera/FollowCamera.h"
@@ -13,13 +14,14 @@ void Player::Init()
 	weapon_->SetParent(transform_);
 
 	afterImageEmitter_ = std::make_unique<ParticleEmitter>();
-	afterImageEmitter_->Initialize("afterImage","debug/Cube.obj");
+	afterImageEmitter_->Initialize("afterImage", "debug/Cube.obj");
 }
 
 void Player::Update()
 {
 	Move();
 	Rotation();
+	AffterEffect();
 	BaseObject::Update();
 	weapon_->Update();
 }
@@ -30,6 +32,12 @@ void Player::Draw(const ViewProjection& viewProjection)
 	weapon_->Draw(viewProjection);
 }
 
+void Player::DrawParticle(const ViewProjection& viewProjection)
+{
+	afterImageEmitter_->Update(viewProjection);
+	afterImageEmitter_->Draw();
+}
+
 void Player::DebugTransform(const std::string className)
 {
 	BaseObject::DebugTransform(className);
@@ -38,12 +46,17 @@ void Player::DebugTransform(const std::string className)
 
 void Player::imgui()
 {
-	if (ImGui::BeginTabItem("プレイヤー")) {
-		ImGui::DragFloat("動く速度", &kMoveSpeed, 0.01f);
-		ImGui::DragFloat("ダッシュ速度", &kDashSpeed, 0.01f);
-		ImGui::DragFloat("ダッシュ減衰率", &kDashDecay, 0.01f);
-		ImGui::EndTabItem();
+	if (ImGui::BeginTabBar("player")) {
+		if (ImGui::BeginTabItem("プレイヤー")) {
+			ImGui::DragFloat3("速度", &speed.x, 0.01f);
+			ImGui::DragFloat("動く速度", &kMoveSpeed, 0.01f);
+			ImGui::DragFloat("ダッシュ速度", &kDashSpeed, 0.01f);
+			ImGui::DragFloat("ダッシュ減衰率", &kDashDecay, 0.01f);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
 	}
+	afterImageEmitter_->imgui();
 }
 
 void Player::Move()
@@ -85,8 +98,14 @@ void Player::Move()
 		}
 	}
 
+	if (!Input::GetInstance()->PushKey(DIK_D) && !Input::GetInstance()->PushKey(DIK_W) && !Input::GetInstance()->PushKey(DIK_A) && !Input::GetInstance()->PushKey(DIK_S)) {
+		speed = { 0.0f,0.0f,0.0f };
+		move = { 0.0f,0.0f,0.0f };
+		dashSpeed_ = 0.0f;
+	}
+
 	// ダッシュ処理
-	if (Input::GetInstance()->TriggerKey(DIK_LSHIFT) && dashCoolTime_ <= 0.0f) {
+	if ((Input::GetInstance()->PushKey(DIK_D) || Input::GetInstance()->PushKey(DIK_W) || Input::GetInstance()->PushKey(DIK_A) || Input::GetInstance()->PushKey(DIK_S)) && Input::GetInstance()->TriggerKey(DIK_LSHIFT) && dashCoolTime_ <= 0.0f) {
 		dashSpeed_ = kDashSpeed;
 		dashCoolTime_ = 1.0f; // クールタイム設定
 	}
@@ -103,7 +122,8 @@ void Player::Move()
 			move.x *= diagonalSpeedFactor;
 			move.z *= diagonalSpeedFactor;
 		}
-		transform_.translation_ += move * dashSpeed_;  // ダッシュ速度を適用
+		speed = move * dashSpeed_;
+		transform_.translation_ += speed;  // ダッシュ速度を適用
 	}
 }
 
@@ -125,6 +145,36 @@ void Player::Rotation()
 
 		// スムーズな回転のための線形補間
 		transform_.rotation_.y = transform_.rotation_.y + (targetRotation - transform_.rotation_.y) * rotationSpeed;
+	}
+}
+
+void Player::AffterEffect()
+{
+	afterImageEmitter_->SetPosition(transform_.translation_);
+
+	// 最小と最大のfrequencyの値をローカル変数で設定
+	const float minFrequency = 0.045f;
+	const float maxFrequency = 0.15f;
+
+	// speedが0.3fより大きいまたは-0.3fより小さい場合にパーティクルの間隔を設定
+	if (speed.x > 0.3f || speed.y > 0.3f || speed.z > 0.3f ||
+		speed.x < -0.3f || speed.y < -0.3f || speed.z < -0.3f)
+	{
+		// speedの大きさに応じて間隔を設定
+		float speedMagnitude = std::max({ std::abs(speed.x), std::abs(speed.y), std::abs(speed.z) });
+
+		// 最小間隔と最大間隔をスケーリング
+		float newFrequency = maxFrequency - (speedMagnitude - 0.3f) * (maxFrequency - minFrequency) / (1.0f - 0.3f);
+		newFrequency = std::clamp(newFrequency, minFrequency, maxFrequency);  // 間隔がminFrequencyからmaxFrequencyに収束するようにクランプ
+
+		afterImageEmitter_->SetFrequency(newFrequency);
+		afterImageEmitter_->SetCount(1);  // 速度が速い場合にエフェクトを表示
+		afterImageEmitter_->SetStartRotate(transform_.rotation_);
+		afterImageEmitter_->SetEndRotate(transform_.rotation_);
+	}
+	else
+	{
+		afterImageEmitter_->SetCount(0);  // 速度が遅い場合はエフェクトを非表示
 	}
 }
 

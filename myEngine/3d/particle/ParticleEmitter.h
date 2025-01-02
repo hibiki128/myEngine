@@ -27,10 +27,13 @@ public:
     void imgui(); // ImGui用の関数を追加
 
     void SetPosition(const Vector3& position) { transform_.translation_ = position; }
+    void SetStartRotate(const Vector3& rotation) { startRote_ = rotation; }
+    void SetEndRotate(const Vector3& rotation) { endRote_ = rotation; }
     void SetScale(const Vector3& scale) { transform_.scale_ = scale; }
     void SetCount(const int& count) { count_ = count; }
     void SetActive(bool isActive) { isActive_ = isActive; }
     void SetValue();
+    void SetFrequency(const float& frequency) { emitFrequency_ = frequency; }
 
 private:
     // パーティクルを発生させるEmit関数

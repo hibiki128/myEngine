@@ -1,5 +1,5 @@
 {
-    "test": {
+    "afterImage": {
         "AllScale Max": [
             0.0,
             0.0,
@@ -16,44 +16,44 @@
             0.0
         ],
         "Emit scale": [
-            1.0,
-            1.0,
-            1.0
+            0.009999999776482582,
+            0.009999999776482582,
+            0.009999999776482582
         ],
         "Emit translation": [
-            -2.200000047683716,
-            -3.200000047683716,
-            0.0
+            -15.756869316101074,
+            1.0,
+            -36.715476989746094
         ],
         "Particle EndAcce": [
+            0.0,
             1.0,
-            1.0,
-            1.0
+            0.0
         ],
         "Particle EndRote": [
             0.0,
-            0.0,
+            -1.5750515460968018,
             0.0
         ],
         "Particle EndScale": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "Particle StartAcce": [
             1.0,
             1.0,
             1.0
         ],
+        "Particle StartAcce": [
+            0.0,
+            1.0,
+            0.0
+        ],
         "Particle StartRote": [
             0.0,
-            0.0,
+            -1.5750515460968018,
             0.0
         ],
         "Particle StartScale": [
-            0.5,
-            0.5,
-            0.5
+            1.0,
+            1.0,
+            1.0
         ],
         "RotationVelo Max": [
             0.07000000029802322,
@@ -69,27 +69,27 @@
         "Scale Min": 0.0,
         "alphaMax": 1.0,
         "alphaMin": 1.0,
-        "count": 1,
-        "emitFrequency": 0.30000001192092896,
+        "count": 0,
+        "emitFrequency": 0.09904704242944717,
         "isAcceMultiply": true,
         "isAllRamdomScale": false,
-        "isBillBoard": true,
-        "isRamdomColor": true,
+        "isBillBoard": false,
+        "isRamdomColor": false,
         "isRandomRotate": false,
         "isRandomScale": false,
         "isSinMove": false,
         "isVisible": true,
-        "lifeTimeMax": 3.0,
-        "lifeTimeMin": 1.0,
+        "lifeTimeMax": 0.5,
+        "lifeTimeMin": 0.5,
         "maxVelocity": [
+            0.0,
             1.0,
-            1.0,
-            1.0
+            0.0
         ],
         "minVelocity": [
-            -1.0,
-            -1.0,
-            -1.0
+            0.0,
+            1.0,
+            0.0
         ]
     }
 }

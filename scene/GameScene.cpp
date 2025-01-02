@@ -130,7 +130,7 @@ void GameScene::DrawForOffScreen()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-
+	player_->DrawParticle(vp_);
 	//-----------------------------
 
 
@@ -150,14 +150,10 @@ void GameScene::Debug()
 		ImGui::EndTabBar();
 	}
 
-	// 2つ目のタブバー
-	if (ImGui::BeginTabBar("2")) {
-		player_->imgui();
-		ImGui::EndTabBar();
-	}
-
 	ImGui::End(); // ダイアログの終了
-
+	ImGui::Begin("ObjData");
+	player_->imgui();
+	ImGui::End();
 	// その他のデバッグ情報
 	player_->DebugTransform("プレイヤー ");
 	enemy_->DebugTransform("エネミー ");

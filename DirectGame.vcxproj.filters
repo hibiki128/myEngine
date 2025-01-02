@@ -233,9 +233,6 @@
     <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\edit\Liner.cpp">
-      <Filter>ソースファイル\myEngine\utility\edit</Filter>
-    </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>ソースファイル\math</Filter>
     </ClCompile>
@@ -259,9 +256,6 @@
     </ClCompile>
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp">
       <Filter>ソースファイル\myEngine\3d\particle</Filter>
-    </ClCompile>
-    <ClCompile Include="myEngine\3d\line\LineManager.cpp">
-      <Filter>ソースファイル\myEngine\3d\line</Filter>
     </ClCompile>
     <ClCompile Include="math\Easing.cpp">
       <Filter>ソースファイル\math</Filter>
@@ -406,9 +400,6 @@
     <ClInclude Include="myEngine\3d\camera\ViewProjection.h">
       <Filter>ソースファイル\myEngine\3d\camera</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\3d\line\LineManager.h">
-      <Filter>ソースファイル\myEngine\3d\line</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\3d\model\Model.h">
       <Filter>ソースファイル\myEngine\3d\model</Filter>
     </ClInclude>
@@ -476,9 +467,6 @@
       <Filter>ソースファイル\myEngine\utility\debug</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\edit\LevelData.h">
-      <Filter>ソースファイル\myEngine\utility\edit</Filter>
-    </ClInclude>
-    <ClInclude Include="myEngine\utility\edit\Liner.h">
       <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\graphics\ModelManager.h">
