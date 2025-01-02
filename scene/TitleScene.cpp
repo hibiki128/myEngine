@@ -76,17 +76,12 @@ void TitleScene::Draw()
 
 	//------------------------
 
-	objCommon_->skinningDrawCommonSetting();
-	//-----アニメーションの描画開始-----
+	objCommon_->DrawCommonSetting();
+	//-----3DObjectの描画開始-----
 	walk_->Draw(wt1_, vp_);
 	walk_->DrawSkeleton(wt1_, vp_);
 	sphere_->Draw(wt2_, vp_);
 	sphere_->DrawSkeleton(wt2_, vp_);
-	//------------------------------
-
-	//-----3DObjectの描画開始-----
-	objCommon_->DrawCommonSetting();
-	//sphere_->Draw(wt2_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
@@ -113,11 +108,6 @@ void TitleScene::DrawForOffScreen()
 	//-----Spriteの描画開始-----
 
 	//------------------------
-
-	objCommon_->skinningDrawCommonSetting();
-	//-----アニメーションの描画開始-----
-
-	//------------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----

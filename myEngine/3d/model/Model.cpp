@@ -4,6 +4,7 @@
 #include"sstream"
 #include "TextureManager.h"
 #include"myEngine/Frame/Frame.h"
+#include <Object3dCommon.h>
 
 
 bool Model::isGltf = false;
@@ -51,6 +52,9 @@ void Model::Draw()
 	}
 	// 描画！（DrawCall/ドローコール）
 	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
+	if (animator_->HaveAnimation()) {
+		Object3dCommon::GetInstance()->DrawCommonSetting();
+	}
 }
 
 void Model::CreateVartexData()

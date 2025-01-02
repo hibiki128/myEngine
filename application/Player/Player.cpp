@@ -19,10 +19,17 @@ void Player::Init()
 
 void Player::Update()
 {
+	// 移動処理
 	Move();
+	// 回転処理
 	Rotation();
+	// 攻撃処理
+	Attack();
+	// 残像処理
 	AffterEffect();
+	// 基礎更新
 	BaseObject::Update();
+	// 武器更新
 	weapon_->Update();
 }
 
@@ -52,6 +59,7 @@ void Player::imgui()
 			ImGui::DragFloat("動く速度", &kMoveSpeed, 0.01f);
 			ImGui::DragFloat("ダッシュ速度", &kDashSpeed, 0.01f);
 			ImGui::DragFloat("ダッシュ減衰率", &kDashDecay, 0.01f);
+			ImGui::Text("コンボ数 : %d", comboStage_);
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -59,6 +67,7 @@ void Player::imgui()
 	afterImageEmitter_->imgui();
 }
 
+#pragma region 動きの関数
 void Player::Move()
 {
 	const float diagonalSpeedFactor = 1.0f / sqrt(2.0f);
@@ -147,14 +156,66 @@ void Player::Rotation()
 		transform_.rotation_.y = transform_.rotation_.y + (targetRotation - transform_.rotation_.y) * rotationSpeed;
 	}
 }
+#pragma endregion
 
+#pragma region 攻撃関数
+void Player::Attack()
+{
+	// 最大コンボ数
+	const int maxComboStage = 3;
+
+	// コンボタイマーの更新
+	if (comboTimer_ > 0.0f) {
+		comboTimer_ -= Frame::DeltaTime(); // フレーム間隔で減少
+	}
+	else {
+		comboStage_ = 0; // タイマーが切れたらコンボリセット
+	}
+
+	// 攻撃トリガーが発生した場合
+	if (Input::GetInstance()->TriggerKey(DIK_J)) {
+		if (comboTimer_ > 0.0f) {
+			// 次のコンボ段階に進む
+			comboStage_++;
+			if (comboStage_ > maxComboStage) {
+				comboStage_ = 1; // 最大値を超えたら1に戻る
+			}
+		}
+		else {
+			// タイマーが切れていたらコンボを初期化して1からスタート
+			comboStage_ = 1;
+		}
+
+		// コンボタイマーをリセット
+		comboTimer_ = maxComboTime_;
+
+		// 各コンボ攻撃の呼び出し
+		switch (comboStage_) {
+		case 1:
+			//FirstAttack();
+			break;
+		case 2:
+			//SecondAttack();
+			break;
+		case 3:
+			//ThirdAttack();
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+#pragma endregion
+
+#pragma region エフェクト
 void Player::AffterEffect()
 {
 	afterImageEmitter_->SetPosition(transform_.translation_);
 
 	// 最小と最大のfrequencyの値をローカル変数で設定
-	const float minFrequency = 0.045f;
-	const float maxFrequency = 0.15f;
+	const float minFrequency = 0.04f;
+	const float maxFrequency = 0.1f;
 
 	// speedが0.3fより大きいまたは-0.3fより小さい場合にパーティクルの間隔を設定
 	if (speed.x > 0.3f || speed.y > 0.3f || speed.z > 0.3f ||
@@ -177,6 +238,9 @@ void Player::AffterEffect()
 		afterImageEmitter_->SetCount(0);  // 速度が遅い場合はエフェクトを非表示
 	}
 }
+#pragma endregion
+
+#pragma region 当たったときの呼び出し関数
 
 Vector3 Player::GetCenterPosition() const
 {
@@ -194,3 +258,5 @@ void Player::OnCollision(Collider* other)
 
 	}
 }
+
+#pragma endregion

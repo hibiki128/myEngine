@@ -78,12 +78,6 @@ void GameScene::Draw()
 
 	//------------------------
 
-	objCommon_->skinningDrawCommonSetting();
-	//-----アニメーションの描画開始-----
-
-	//------------------------------
-
-
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	player_->Draw(vp_);
@@ -114,12 +108,6 @@ void GameScene::DrawForOffScreen()
 	//-----Spriteの描画開始-----
 
 	//------------------------
-
-	objCommon_->skinningDrawCommonSetting();
-	//-----アニメーションの描画開始-----
-
-	//------------------------------
-
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----

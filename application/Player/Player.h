@@ -45,6 +45,8 @@ private:
 
 	void AffterEffect();
 
+	void Attack();
+
 private:
 	FollowCamera* camera_;
 	std::unique_ptr<Weapon>weapon_;
@@ -59,6 +61,10 @@ private:
 	float kMoveSpeed = 0.3f;
 	float kDashSpeed = 1.75f;
 	float kDashDecay = 0.97f;
+
+	float comboTimer_ = 0.0f;          // コンボの持続時間を管理
+	int comboStage_ = 0;              // 現在のコンボ段階
+	const float maxComboTime_ = 1.0f;        // 次の攻撃までの入力猶予（1秒）
 
 };
 

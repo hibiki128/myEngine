@@ -83,6 +83,10 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	materialData->enableLighting = Lighting;
 	Update(worldTransform, viewProjection);
 
+	if (modelAnimation_->GetAnimator()->HaveAnimation()) {
+		Object3dCommon::GetInstance()->skinningDrawCommonSetting();
+	}
+
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// wvp用のCBufferの場所を設定
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
