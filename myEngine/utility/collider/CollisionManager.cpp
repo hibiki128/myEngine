@@ -210,15 +210,24 @@ bool CollisionManager::IsCollision(const OBB& obb1, const OBB& obb2) {
 		}
 	}
 
-
 	return true;  // 全ての軸で衝突している場合はtrue
 }
 
 // 軸に対するOBBの投影範囲を計算する関数
 void CollisionManager::projectOBB(const OBB& obb, const Vector3& axis, float& min, float& max) {
-	float centerProjection = obb.center.Dot(axis);
-	float radius = std::abs(obb.orientations[0].Dot(axis)) * obb.size.x + std::abs(obb.orientations[1].Dot(axis)) * obb.size.y + std::abs(obb.orientations[2].Dot(axis)) * obb.size.z;
+	// scaleCenterRotated を使って中心位置を計算
+	Vector3 rotatedCenter = obb.scaleCenterRotated;
 
+	// 軸への投影範囲を計算
+	float centerProjection = rotatedCenter.Dot(axis);
+
+	// 回転による半径の投影を計算
+	float radius =
+		std::abs(obb.orientations[0].Dot(axis)) * obb.size.x +
+		std::abs(obb.orientations[1].Dot(axis)) * obb.size.y +
+		std::abs(obb.orientations[2].Dot(axis)) * obb.size.z;
+
+	// 投影範囲の計算
 	min = centerProjection - radius;
 	max = centerProjection + radius;
 }

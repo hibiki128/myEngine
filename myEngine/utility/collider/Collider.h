@@ -9,9 +9,11 @@ struct AABB {
 	Vector3 max; //!< 最大点
 };
 struct OBB {
-	Vector3 center;          //!< 中心点
-	Vector3 orientations[3]; //!< 座標軸。正規化・直行必須
-	Vector3 size;            //!< 座標軸方向の長さの半分。中心から面までの距離
+	Vector3 rotationCenter;  // 回転中心
+	Vector3 scaleCenter;     // スケール中心
+	Vector3 scaleCenterRotated; // 回転後のスケール中心
+	Vector3 size;            // サイズ
+	Vector3 orientations[3]; // 各軸の方向ベクトル
 };
 class Collider {
 public:
@@ -48,6 +50,11 @@ public:
 	void DrawAABB(const ViewProjection& viewProjection);
 
 	void DrawOBB(const ViewProjection& viewProjection);
+
+	void DrawRotationCenter(const ViewProjection& viewProjection);
+
+	// 球を描画する関数
+	void DrawSphereAtCenter(const ViewProjection& viewProjection, const Vector3& center, float radius);
 
 	/// <summary>
 	/// 当たってる間

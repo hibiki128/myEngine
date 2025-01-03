@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Collider.h"
 #include"CollisionManager.h"
 #include <line/DrawLine3D.h>
@@ -25,8 +26,9 @@ Collider::Collider() {
 	SphereOffset = { 0.0f, 0.0f, 0.0f };
 	AABBOffset.min = { 0.0f, 0.0f, 0.0f };
 	AABBOffset.max = { 0.0f, 0.0f, 0.0f };
-	OBBOffset.center = { 0.0f,0.0f,0.0f };
-	OBBOffset.size = { 0.0f,0.0f,0.0f };
+	OBBOffset.rotationCenter = { 0.0f,0.0f,0.0f };
+	OBBOffset.scaleCenter = { 0.0f,0.0f,0.0f };
+	OBBOffset.size = { 1.0f,1.0f,1.0f };
 
 	// グループがまだ存在しない場合のみ作成
 	if (!variables_->GroupExists(groupName)) {
@@ -34,7 +36,8 @@ Collider::Collider() {
 		variables_->AddItem(groupName, "Sphere Translation", SphereOffset);
 		variables_->AddItem(groupName, "AABB Min", AABBOffset.min);
 		variables_->AddItem(groupName, "AABB Max", AABBOffset.max);
-		variables_->AddItem(groupName, "OBB center", OBBOffset.center);
+		variables_->AddItem(groupName, "OBB rotateCenter", OBBOffset.rotationCenter);
+		variables_->AddItem(groupName, "OBB scaleCenter", OBBOffset.scaleCenter);
 		variables_->AddItem(groupName, "OBB size", OBBOffset.size);
 	}
 }
@@ -71,13 +74,18 @@ void Collider::UpdateWorldTransform() {
 	AABBwt_.scale_ = aabbScale;
 	AABBwt_.UpdateMatrix();
 
-	obb.center = GetCenterPosition();
-	obb.center = obb.center + OBBOffset.center;
-	MakeOBBOrientations(obb, GetCenterRotation());
-	obb.size = { 1.0f,1.0f,1.0f };
-	obb.size = obb.size + OBBOffset.size;
+	// OBBの各プロパティを更新
+	obb.rotationCenter = GetCenterPosition() + OBBOffset.rotationCenter; // 回転中心
+	obb.scaleCenter = GetCenterPosition() + OBBOffset.scaleCenter;       // スケール中心
 
-	OBBwt_.translation_ = obb.center;
+	// OBBの向きベクトルを計算
+	MakeOBBOrientations(obb, GetCenterRotation());
+
+	// サイズを更新
+	obb.size = OBBOffset.size;
+
+	// ワールドトランスフォームの更新
+	OBBwt_.translation_ = obb.scaleCenter;
 	OBBwt_.rotation_ = GetCenterRotation();
 	OBBwt_.scale_ = obb.size;
 	OBBwt_.UpdateMatrix();
@@ -156,20 +164,37 @@ void Collider::DrawAABB(const ViewProjection& viewProjection)
 void Collider::DrawOBB(const ViewProjection& viewProjection) {
 	// OBBの8つの頂点を計算
 	std::array<Vector3, 8> vertices;
+	Vector3 halfSize = obb.size; // サイズの半分を計算
 
-	Vector3 halfSize = obb.size;
+	// OBBの8頂点を計算するループ
 	for (int i = 0; i < 8; i++) {
-		Vector3 offset = Vector3(
+		// 各頂点のローカル座標を計算
+		Vector3 localPosition = Vector3(
 			(i & 1) ? halfSize.x : -halfSize.x,
 			(i & 2) ? halfSize.y : -halfSize.y,
 			(i & 4) ? halfSize.z : -halfSize.z
 		);
 
-		vertices[i] = obb.center +
-			obb.orientations[0] * offset.x +
-			obb.orientations[1] * offset.y +
-			obb.orientations[2] * offset.z;
+		// scaleCenter を基準にスケール変換
+		Vector3 scaledPosition = localPosition + (obb.scaleCenter - obb.rotationCenter);
+
+		// 回転中心を基準に回転を適用
+		Vector3 rotatedPosition =
+			obb.orientations[0] * scaledPosition.x +
+			obb.orientations[1] * scaledPosition.y +
+			obb.orientations[2] * scaledPosition.z;
+
+		// ワールド座標へ変換
+		vertices[i] = obb.rotationCenter + rotatedPosition;
 	}
+
+	// 回転後にscaleCenterの位置を計算
+	obb.scaleCenterRotated = obb.orientations[0] * (obb.scaleCenter.x - obb.rotationCenter.x) +
+		obb.orientations[1] * (obb.scaleCenter.y - obb.rotationCenter.y) +
+		obb.orientations[2] * (obb.scaleCenter.z - obb.rotationCenter.z) + obb.rotationCenter;
+
+	// scaleCenterに球を描画
+	DrawSphereAtCenter(viewProjection, obb.scaleCenterRotated, 0.1f);  // 半径0.1fで球を描画
 
 	// エッジ接続リスト
 	const std::array<std::pair<int, int>, 12> edges = {
@@ -182,20 +207,112 @@ void Collider::DrawOBB(const ViewProjection& viewProjection) {
 	for (const auto& edge : edges) {
 		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
 	}
+
+	DrawRotationCenter(viewProjection);
 }
 
+// 球を描画する関数
+void Collider::DrawSphereAtCenter(const ViewProjection& viewProjection, const Vector3& center, float radius) {
+	const int slices = 16;  // 球の横方向の分割数
+	const int stacks = 8;   // 球の縦方向の分割数
+
+	for (int i = 0; i < slices; i++) {
+		float theta1 = (i * 2.0f * std::numbers::pi_v<float>) / slices;
+		float theta2 = ((i + 1) * 2.0f * std::numbers::pi_v<float>) / slices;
+
+		for (int j = 0; j < stacks; j++) {
+			float phi1 = (j * std::numbers::pi_v<float>) / stacks;
+			float phi2 = ((j + 1) * std::numbers::pi_v<float>) / stacks;
+
+			// 球の4つの頂点を計算
+			Vector3 p1 = Vector3(
+				center.x + radius * sin(phi1) * cos(theta1),
+				center.y + radius * cos(phi1),
+				center.z + radius * sin(phi1) * sin(theta1)
+			);
+
+			Vector3 p2 = Vector3(
+				center.x + radius * sin(phi1) * cos(theta2),
+				center.y + radius * cos(phi1),
+				center.z + radius * sin(phi1) * sin(theta2)
+			);
+
+			Vector3 p3 = Vector3(
+				center.x + radius * sin(phi2) * cos(theta1),
+				center.y + radius * cos(phi2),
+				center.z + radius * sin(phi2) * sin(theta1)
+			);
+
+			Vector3 p4 = Vector3(
+				center.x + radius * sin(phi2) * cos(theta2),
+				center.y + radius * cos(phi2),
+				center.z + radius * sin(phi2) * sin(theta2)
+			);
+
+			// 4つの三角形で球の断片を描画
+			DrawLine3D::GetInstance()->SetPoints(p1, p2, color_);
+			DrawLine3D::GetInstance()->SetPoints(p2, p4, color_);
+			DrawLine3D::GetInstance()->SetPoints(p4, p3, color_);
+			DrawLine3D::GetInstance()->SetPoints(p3, p1, color_);
+		}
+	}
+}
+
+
+void Collider::DrawRotationCenter(const ViewProjection& viewProjection) {
+	// 回転中心を表す球の半径
+	float rotationCenterRadius = 0.1f;
+
+	// 球を構成する点を描画
+	const uint32_t kSubdivision = 10; // 分割数
+	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / kSubdivision;
+	const float kLatEvery = std::numbers::pi_v<float> / kSubdivision;
+
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex;
+
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+			float lon = lonIndex * kLonEvery;
+
+			Vector3 start = {
+				obb.rotationCenter.x + rotationCenterRadius * std::cosf(lat) * std::cosf(lon),
+				obb.rotationCenter.y + rotationCenterRadius * std::sinf(lat),
+				obb.rotationCenter.z + rotationCenterRadius * std::cosf(lat) * std::sinf(lon)
+			};
+
+			Vector3 end1 = {
+				obb.rotationCenter.x + rotationCenterRadius * std::cosf(lat) * std::cosf(lon + kLonEvery),
+				obb.rotationCenter.y + rotationCenterRadius * std::sinf(lat),
+				obb.rotationCenter.z + rotationCenterRadius * std::cosf(lat) * std::sinf(lon + kLonEvery),
+			};
+
+			Vector3 end2 = {
+				obb.rotationCenter.x + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::cosf(lon),
+				obb.rotationCenter.y + rotationCenterRadius * std::sinf(lat + kLatEvery),
+				obb.rotationCenter.z + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::sinf(lon),
+			};
+
+			DrawLine3D::GetInstance()->SetPoints(start, end1, color_);
+			DrawLine3D::GetInstance()->SetPoints(start, end2, color_);
+		}
+	}
+}
 
 void Collider::ApplyVariables()
 {
 	SphereOffset = variables_->GetVector3Value(groupName, "Sphere Translation");
 	AABBOffset.min = variables_->GetVector3Value(groupName, "AABB Min");
 	AABBOffset.max = variables_->GetVector3Value(groupName, "AABB Max");
-	OBBOffset.center = variables_->GetVector3Value(groupName, "OBB center");
+	OBBOffset.rotationCenter = variables_->GetVector3Value(groupName, "OBB rotateCenter");
+	OBBOffset.scaleCenter = variables_->GetVector3Value(groupName, "OBB scaleCenter");
 	OBBOffset.size = variables_->GetVector3Value(groupName, "OBB size");
 }
 
 void Collider::MakeOBBOrientations(OBB& obb, const Vector3& rotate) {
-	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * (MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z));
+	// 回転行列を作成
+	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z);
+
+	// 各方向ベクトルを計算
 	obb.orientations[0].x = rotateMatrix.m[0][0];
 	obb.orientations[0].y = rotateMatrix.m[0][1];
 	obb.orientations[0].z = rotateMatrix.m[0][2];
