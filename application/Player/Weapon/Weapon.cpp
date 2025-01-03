@@ -9,6 +9,7 @@ void Weapon::Init()
 
 void Weapon::Update()
 {
+	
 	BaseObject::Update();
 }
 
@@ -41,12 +42,14 @@ Vector3 Weapon::GetCenterPosition() const
 // 子オブジェクトの回転を親の回転を考慮して計算する
 Vector3 Weapon::GetCenterRotation() const
 {
+	// 親の位置に対する相対的な位置をローカル位置として計算
 	Vector3 worldRotation = transform_.rotation_;
 
+	// 親がいる場合、その位置と回転を考慮する
 	if (transform_.parent_ != nullptr)
 	{
-		// 親の回転を考慮して子のローカル回転をワールド回転に変換
-		worldRotation += transform_.parent_->rotation_;
+		// 親の回転を考慮して相対位置をワールド座標に変換
+		worldRotation = transform_.rotation_ + transform_.parent_->rotation_;
 	}
 
 	return worldRotation;

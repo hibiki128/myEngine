@@ -219,59 +219,121 @@ Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, f
 	return { width / 2.0f, 0, 0, 0, 0, -height / 2.0f, 0, 0, 0, 0, maxDepth - minDepth, 0, left + width / 2.0f, top + height / 2.0f, minDepth, 1.0f };
 }
 
-Vector3 QuaternionToAxis(const Quaternion& q)
-{
-	Quaternion normalizedQ = q.Normalize(); 
-
-	// 回転軸の計算: ベクトル部分(x, y, z)が回転軸になる
-	Vector3 axis(normalizedQ.x, normalizedQ.y, normalizedQ.z);
-
-	// 回転軸を正規化して戻す（すでに正規化されたクォータニオンの場合はこの操作は不要）
-	return axis.Normalize();
-}
-
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate) {
-	Matrix4x4 result = MakeScaleMatrix(scale) * QuaternionToMatrix4x4(rotate) * MakeTranslateMatrix(translate);
+	Matrix4x4 result = MakeScaleMatrix(scale) * MakeRotateMatrix(rotate) * MakeTranslateMatrix(translate);
 	return result;
 }
-Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q) {
-	Matrix4x4 mat;
 
-	// クォータニオンの各成分の積を計算
-	float xx = q.x * q.x;
-	float yy = q.y * q.y;
-	float zz = q.z * q.z;
-	float xy = q.x * q.y;
-	float xz = q.x * q.z;
-	float yz = q.y * q.z;
-	float wx = q.w * q.x;
-	float wy = q.w * q.y;
-	float wz = q.w * q.z;
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle)
+{
+	// 回転軸を正規化
+	float length = std::sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
+	Vector3 normalizedAxis = { axis.x / length, axis.y / length, axis.z / length };
 
-	// 左手座標系用の回転行列を設定
-	mat.m[0][0] = 1.0f - 2.0f * (yy + zz);
-	mat.m[0][1] = 2.0f * (xy + wz);
-	mat.m[0][2] = 2.0f * (xz - wy);
-	mat.m[0][3] = 0.0f;
+	// 半角を計算
+	float halfAngle = angle * 0.5f;
+	float sinHalfAngle = std::sin(halfAngle);
+	float cosHalfAngle = std::cos(halfAngle);
 
-	mat.m[1][0] = 2.0f * (xy - wz);
-	mat.m[1][1] = 1.0f - 2.0f * (xx + zz);
-	mat.m[1][2] = 2.0f * (yz + wx);
-	mat.m[1][3] = 0.0f;
-
-	mat.m[2][0] = 2.0f * (xz + wy);
-	mat.m[2][1] = 2.0f * (yz - wx);
-	mat.m[2][2] = 1.0f - 2.0f * (xx + yy);
-	mat.m[2][3] = 0.0f;
-
-	mat.m[3][0] = 0.0f;
-	mat.m[3][1] = 0.0f;
-	mat.m[3][2] = 0.0f;
-	mat.m[3][3] = 1.0f;
-
-	return mat;
+	// 回転クォータニオンを生成
+	return {
+		normalizedAxis.x * sinHalfAngle, // x
+		normalizedAxis.y * sinHalfAngle, // y
+		normalizedAxis.z * sinHalfAngle, // z
+		cosHalfAngle                     // w
+	};
 }
 
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion)
+{
+	// 入力ベクトルをクォータニオン形式に変換（w成分は0）
+	Quaternion vectorQuaternion = { vector.x, vector.y, vector.z, 0.0f };
+
+	// クォータニオンの共役を計算
+	Quaternion conjugate = quaternion.Conjugate();
+
+	// 回転を適用: q * v * q^-1
+	Quaternion rotatedQuaternion = quaternion * vectorQuaternion * conjugate;
+
+	// 結果をベクトルとして返す（x, y, z成分）
+	return { rotatedQuaternion.x, rotatedQuaternion.y, rotatedQuaternion.z };
+}
+
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion)
+{
+	// クォータニオンを正規化
+	Quaternion q = quaternion.Normalize();
+
+	// クォータニオン成分を取得
+	float x = q.x, y = q.y, z = q.z, w = q.w;
+
+	// 回転行列を生成
+	Matrix4x4 matrix = {}; // 全要素を0で初期化
+
+	// 各成分を計算
+	matrix.m[0][0] = std::powf(w, 2) + std::powf(x, 2) - std::powf(y, 2) - std::powf(z, 2);
+	matrix.m[0][1] = 2.0f * (x * y + w * z);
+	matrix.m[0][2] = 2.0f * (x * z - w * y);
+	matrix.m[0][3] = 0.0f;
+
+	matrix.m[1][0] = 2.0f * (x * y - w * z);
+	matrix.m[1][1] = std::powf(w, 2) - std::powf(x, 2) + std::powf(y, 2) - std::powf(z, 2);
+	matrix.m[1][2] = 2.0f * (y * z + w * x);
+	matrix.m[1][3] = 0.0f;
+
+	matrix.m[2][0] = 2.0f * (x * z + w * y);
+	matrix.m[2][1] = 2.0f * (y * z - w * x);
+	matrix.m[2][2] = std::powf(w, 2) - std::powf(x, 2) - std::powf(y, 2) + std::powf(z, 2);
+	matrix.m[2][3] = 0.0f;
+
+	matrix.m[3][0] = 0.0f;
+	matrix.m[3][1] = 0.0f;
+	matrix.m[3][2] = 0.0f;
+	matrix.m[3][3] = 1.0f;
+
+	return matrix;
+}
+
+Quaternion MatrixToQuaternion(const Matrix4x4& matrix)
+{
+	// 行列からクォータニオンを計算
+	float trace = matrix.m[0][0] + matrix.m[1][1] + matrix.m[2][2]; // トレースの計算
+
+	Quaternion q;
+
+	if (trace > 0.0f) {
+		float s = std::sqrt(trace + 1.0f) * 2.0f;
+		q.w = 0.25f * s;
+		q.x = (matrix.m[2][1] - matrix.m[1][2]) / s;
+		q.y = (matrix.m[0][2] - matrix.m[2][0]) / s;
+		q.z = (matrix.m[1][0] - matrix.m[0][1]) / s;
+	}
+	else {
+		if (matrix.m[0][0] > matrix.m[1][1] && matrix.m[0][0] > matrix.m[2][2]) {
+			float s = std::sqrt(1.0f + matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2]) * 2.0f;
+			q.w = (matrix.m[2][1] - matrix.m[1][2]) / s;
+			q.x = 0.25f * s;
+			q.y = (matrix.m[0][1] + matrix.m[1][0]) / s;
+			q.z = (matrix.m[0][2] + matrix.m[2][0]) / s;
+		}
+		else if (matrix.m[1][1] > matrix.m[2][2]) {
+			float s = std::sqrt(1.0f + matrix.m[1][1] - matrix.m[0][0] - matrix.m[2][2]) * 2.0f;
+			q.w = (matrix.m[0][2] - matrix.m[2][0]) / s;
+			q.x = (matrix.m[0][1] + matrix.m[1][0]) / s;
+			q.y = 0.25f * s;
+			q.z = (matrix.m[1][2] + matrix.m[2][1]) / s;
+		}
+		else {
+			float s = std::sqrt(1.0f + matrix.m[2][2] - matrix.m[0][0] - matrix.m[1][1]) * 2.0f;
+			q.w = (matrix.m[1][0] - matrix.m[0][1]) / s;
+			q.x = (matrix.m[0][2] + matrix.m[2][0]) / s;
+			q.y = (matrix.m[1][2] + matrix.m[2][1]) / s;
+			q.z = 0.25f * s;
+		}
+	}
+
+	return q;
+}
 
 float LerpShortAngle(float a, float b, float t) {
 	// 角度差分を求める

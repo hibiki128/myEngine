@@ -2,6 +2,7 @@
 #include "Vector3.h"
 #include <cmath>
 #include <numbers>
+#include <Matrix4x4.h>
 
 class Quaternion final {
 public:
@@ -29,10 +30,12 @@ public:
     void SetFromTo(const Vector3& from, const Vector3& to);
 
     // オイラー角からクォータニオンを生成
-    static Quaternion FromEulerAngles(const Vector3& eulerAngles);
+    static Quaternion FromEuler(const Vector3& euler);
+
+    static Quaternion FromMatrix(const Matrix4x4& mat);
 
     // クォータニオンをオイラー角に変換
-    Vector3 ToEulerAngles() const;
+    Vector3 ToEuler() const;
 
     // クォータニオンの共役を返す
     Quaternion Conjugate() const;

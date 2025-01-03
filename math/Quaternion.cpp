@@ -18,46 +18,75 @@ void Quaternion::SetFromTo(const Vector3& from, const Vector3& to)
 	z = cross.z * s;
 }
 
-Quaternion Quaternion::FromEulerAngles(const Vector3& eulerAngles)
+Quaternion Quaternion::FromEuler(const Vector3& euler)
 {
-	float pitch = eulerAngles.x * 0.5f;
-	float yaw = eulerAngles.y * 0.5f;
-	float roll = eulerAngles.z * 0.5f;
+	float cy = std::cos(euler.z * 0.5f);
+	float sy = std::sin(euler.z * 0.5f);
+	float cp = std::cos(euler.y * 0.5f);
+	float sp = std::sin(euler.y * 0.5f);
+	float cr = std::cos(euler.x * 0.5f);
+	float sr = std::sin(euler.x * 0.5f);
 
-	float sinPitch = sinf(pitch);
-	float cosPitch = cosf(pitch);
-	float sinYaw = sinf(yaw);
-	float cosYaw = cosf(yaw);
-	float sinRoll = sinf(roll);
-	float cosRoll = cosf(roll);
+	Quaternion q;
+	q.w = cr * cp * cy + sr * sp * sy;
+	q.x = sr * cp * cy - cr * sp * sy;
+	q.y = cr * sp * cy + sr * cp * sy;
+	q.z = cr * cp * sy - sr * sp * cy;
 
-	return Quaternion(
-		cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll, // w成分
-		sinYaw * cosPitch * cosRoll - cosYaw * sinPitch * sinRoll, // x成分
-		cosYaw * sinPitch * cosRoll + sinYaw * cosPitch * sinRoll, // y成分
-		cosYaw * cosPitch * sinRoll - sinYaw * sinPitch * cosRoll  // z成分
-	);
+	return q;
 }
 
-Vector3 Quaternion::ToEulerAngles() const
+Quaternion Quaternion::FromMatrix(const Matrix4x4& mat)
 {
-	Vector3 angles;
+	Quaternion q;
+	// 回転行列からクォータニオンを生成するロジック（一般的なアルゴリズムを使用）
+	float trace = mat.m[0][0] + mat.m[1][1] + mat.m[2][2];
+	if (trace > 0.0f) {
+		float s = 0.5f / std::sqrt(trace + 1.0f);
+		q.w = 0.25f / s;
+		q.x = (mat.m[2][1] - mat.m[1][2]) * s;
+		q.y = (mat.m[0][2] - mat.m[2][0]) * s;
+		q.z = (mat.m[1][0] - mat.m[0][1]) * s;
+	}
+	else {
+		if (mat.m[0][0] > mat.m[1][1] && mat.m[0][0] > mat.m[2][2]) {
+			float s = 2.0f * std::sqrt(1.0f + mat.m[0][0] - mat.m[1][1] - mat.m[2][2]);
+			q.w = (mat.m[2][1] - mat.m[1][2]) / s;
+			q.x = 0.25f * s;
+			q.y = (mat.m[0][1] + mat.m[1][0]) / s;
+			q.z = (mat.m[0][2] + mat.m[2][0]) / s;
+		}
+		else if (mat.m[1][1] > mat.m[2][2]) {
+			float s = 2.0f * std::sqrt(1.0f + mat.m[1][1] - mat.m[0][0] - mat.m[2][2]);
+			q.w = (mat.m[0][2] - mat.m[2][0]) / s;
+			q.x = (mat.m[0][1] + mat.m[1][0]) / s;
+			q.y = 0.25f * s;
+			q.z = (mat.m[1][2] + mat.m[2][1]) / s;
+		}
+		else {
+			float s = 2.0f * std::sqrt(1.0f + mat.m[2][2] - mat.m[0][0] - mat.m[1][1]);
+			q.w = (mat.m[1][0] - mat.m[0][1]) / s;
+			q.x = (mat.m[0][2] + mat.m[2][0]) / s;
+			q.y = (mat.m[1][2] + mat.m[2][1]) / s;
+			q.z = 0.25f * s;
+		}
+	}
+	return q;
+}
 
-	// ピッチ（X軸）
-	float sinPitch = 2.0f * (w * x + y * z);
-	float cosPitch = 1.0f - 2.0f * (x * x + y * y);
-	angles.x = atan2(sinPitch, cosPitch);
+Vector3 Quaternion::ToEuler() const
+{
+	Vector3 euler;
 
-	// ヨー（Y軸）
-	float sinYaw = 2.0f * (w * y - z * x);
-	angles.y = fabs(sinYaw) >= 1.0f ? copysign(std::numbers::pi_v<float> / 2, sinYaw) : asin(sinYaw); // 特別なケース
+	// クォータニオンを正規化
+	Quaternion q = Normalize();
 
-	// ロール（Z軸）
-	float sinRoll = 2.0f * (w * z + x * y);
-	float cosRoll = 1.0f - 2.0f * (y * y + z * z);
-	angles.z = atan2(sinRoll, cosRoll);
+	// オイラー角を計算
+	euler.x = std::atan2(2.0f * (q.w * q.x + q.y * q.z), 1.0f - 2.0f * (q.x * q.x + q.y * q.y)); // Roll
+	euler.y = std::asin(2.0f * (q.w * q.y - q.z * q.x));                                         // Pitch
+	euler.z = std::atan2(2.0f * (q.w * q.z + q.x * q.y), 1.0f - 2.0f * (q.y * q.y + q.z * q.z)); // Yaw
 
-	return angles;
+	return euler;
 }
 
 Quaternion Quaternion::Conjugate() const
@@ -68,7 +97,10 @@ Quaternion Quaternion::Conjugate() const
 Quaternion Quaternion::Normalize() const
 {
 	float length = sqrtf(x * x + y * y + z * z + w * w);
-	return Quaternion(x / length, y / length, z / length, w / length);
+	if (length > 0.0f) {
+		return Quaternion(x / length, y / length, z / length, w / length);
+	}
+	return Quaternion(0, 0, 0, 1); // 単位クォータニオンを返す
 }
 
 Quaternion Quaternion::FromLookRotation(const Vector3& direction, const Vector3& up)

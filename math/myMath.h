@@ -66,21 +66,25 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 // ビューポート変換行列
 Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
 
-// クォータニオンから回転軸(Vector3)を計算する関数
-Vector3 QuaternionToAxis(const Quaternion& q);
-
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
 
-Matrix4x4 QuaternionToMatrix4x4(const Quaternion& q);
+// 任意軸回転を表すQuaternionの生成
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+
+// ベクトルをQuaternionで回転させた結果のベクトルを求める
+Vector3 RotateVector(const Vector3& vector, const Quaternion& quaternion);
+
+// Quaternionから回転行列を求める
+Matrix4x4 MakeRotateMatrix(const Quaternion& quaternion);
+
+Quaternion MatrixToQuaternion(const Matrix4x4& matrix);
 
 float LerpShortAngle(float a, float b, float t);
 
 // 行列から回転成分をオイラー角に変換して取得
 Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat);
 
-
 Vector3 ScreenTransform(Vector3 worldPos, const ViewProjection& viewProjection);
-
 
 float radiansToDegrees(float radians);
 
