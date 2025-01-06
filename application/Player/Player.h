@@ -52,6 +52,12 @@ private:
 	std::unique_ptr<Weapon>weapon_;
 	std::unique_ptr<ParticleEmitter> afterImageEmitter_;
 
+	// プレイヤーの部位
+	WorldTransform R_arm_wt;
+	WorldTransform L_arm_wt;
+	std::unique_ptr<Object3d>R_armModel_;
+	std::unique_ptr<Object3d>L_armModel_;
+
 	Vector3 move = { 0.0f,0.0f,0.0f };
 	Vector3 acce = { 0.1f,0.0f,0.1f };
 	Vector3 speed = { 0.0f,0.0f,0.0f };

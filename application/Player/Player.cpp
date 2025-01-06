@@ -9,9 +9,25 @@ void Player::Init()
 	BaseObject::Init();
 	BaseObject::CreateModel("debug/Cube.obj");
 	transform_.translation_ += transform_.scale_.y;
+
+	R_arm_wt.Initialize();
+	L_arm_wt.Initialize();
+	R_arm_wt.translation_ = { 2.0f,-0.3f,0.0f };
+	L_arm_wt.translation_ = { -2.0f,-0.3f,0.0f };
+	R_arm_wt.scale_ = { 0.5f,0.5f,0.5f };
+	L_arm_wt.scale_ = { 0.5f,0.5f,0.5f };
+	R_arm_wt.parent_ = &transform_;
+	L_arm_wt.parent_ = &transform_;
+
+	R_armModel_ = std::make_unique<Object3d>();
+	R_armModel_->Initialize("debug/Cube.obj");
+	L_armModel_ = std::make_unique<Object3d>();
+	L_armModel_->Initialize("debug/Cube.obj");
+
 	weapon_ = std::make_unique<Weapon>();
 	weapon_->Init();
-	weapon_->SetParent(transform_);
+	weapon_->SetParent(R_arm_wt);
+	weapon_->SetScale({ 2.0f,2.0f,2.0f });
 
 	afterImageEmitter_ = std::make_unique<ParticleEmitter>();
 	afterImageEmitter_->Initialize("afterImage", "debug/Cube.obj");
@@ -31,11 +47,15 @@ void Player::Update()
 	BaseObject::Update();
 	// 武器更新
 	weapon_->Update();
+	R_arm_wt.UpdateMatrix();
+	L_arm_wt.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection& viewProjection)
 {
 	BaseObject::Draw(viewProjection);
+	R_armModel_->Draw(R_arm_wt, viewProjection);
+	L_armModel_->Draw(L_arm_wt, viewProjection);
 	weapon_->Draw(viewProjection);
 }
 
@@ -64,6 +84,28 @@ void Player::imgui()
 		}
 		ImGui::EndTabBar();
 	}
+	ImGui::Begin("腕");
+	if (ImGui::BeginTabBar("R_arm")) {
+		if (ImGui::BeginTabItem("右腕")) {
+			ImGui::DragFloat3("位置", &R_arm_wt.translation_.x, 0.1f);
+			ImGui::DragFloat3("回転", &R_arm_wt.rotation_.x, 0.1f);
+			ImGui::DragFloat3("大きさ", &R_arm_wt.scale_.x, 0.1f);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+	if (ImGui::BeginTabBar("L_arm")) {
+		if (ImGui::BeginTabItem("左腕")) {
+			ImGui::DragFloat3("位置", &L_arm_wt.translation_.x, 0.1f);
+			ImGui::DragFloat3("回転", &L_arm_wt.rotation_.x, 0.1f);
+			ImGui::DragFloat3("大きさ", &L_arm_wt.scale_.x, 0.1f);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
+
+
 	afterImageEmitter_->imgui();
 }
 

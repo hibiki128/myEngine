@@ -17,6 +17,8 @@ public:
 
 	void SetParent(const WorldTransform& worldTransform) { transform_.parent_ = &worldTransform; }
 
+	void SetScale(const Vector3& scale) { transform_.scale_ = scale; }
+
 	Vector3 GetCenterPosition()const override;
 	Vector3 GetCenterRotation()const override;
 

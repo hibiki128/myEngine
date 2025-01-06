@@ -4,7 +4,6 @@
 #include "Object3d.h"
 #include"Object3dCommon.h"
 #include <line/DrawLine3D.h>
-#include"AnimationManager.h"
 
 
 

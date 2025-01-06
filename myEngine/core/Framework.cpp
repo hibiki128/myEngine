@@ -86,12 +86,6 @@ void Framework::Initialize()
 	object3dCommon->Initialize();
 	///-----------------------------------
 
-	///----------AnimationManager-----------
-	// 3Dオブジェクト共通部の初期化
-	animationManager_ = AnimationManager::GetInstance();
-	animationManager_->Initialize();
-	///-----------------------------------
-
 	///----------ParticleCommon------------
 	particleCommon = ParticleCommon::GetInstance();
 	particleCommon->Initialize(dxCommon);
@@ -141,10 +135,6 @@ void Framework::Finalize()
 	/// -------TextureManager-------
 	textureManager_->Finalize();
 	///-----------------------------
-
-	/// -------ModelCommon-------
-	animationManager_->Finalize();
-	///---------------------------
 
 	/// -------ModelCommon-------
 	modelManager_->Finalize();

@@ -114,7 +114,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Player\Player.cpp" />
     <ClCompile Include="application\Player\Weapon\Weapon.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp" />
-    <ClCompile Include="myEngine\utility\graphics\AnimationManager.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Bone.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Animator.cpp" />
     <ClCompile Include="application\Base\BaseObject.cpp" />
@@ -206,7 +205,6 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Player\Player.h" />
     <ClInclude Include="application\Player\Weapon\Weapon.h" />
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h" />
-    <ClInclude Include="myEngine\utility\graphics\AnimationManager.h" />
     <ClInclude Include="myEngine\3d\model\animation\Bone.h" />
     <ClInclude Include="myEngine\3d\model\animation\Animator.h" />
     <ClInclude Include="application\Base\BaseObject.h" />
