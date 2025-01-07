@@ -3,7 +3,7 @@
 void Ground::Init()
 {
 	BaseObject::Init();
-	BaseObject::CreateModel("debug/Ground.obj");
+	BaseObject::CreateModel("Field/Ground.obj");
 	Collider::SetCollisionEnabled(false);
 }
 

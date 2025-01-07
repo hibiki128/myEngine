@@ -205,7 +205,7 @@ void Collider::DrawOBB(const ViewProjection& viewProjection) {
 
 	// 線を描画
 	for (const auto& edge : edges) {
-		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
+		//DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
 	}
 
 	DrawRotationCenter(viewProjection);
@@ -250,10 +250,10 @@ void Collider::DrawSphereAtCenter(const ViewProjection& viewProjection, const Ve
 			);
 
 			// 4つの三角形で球の断片を描画
-			DrawLine3D::GetInstance()->SetPoints(p1, p2);
-			DrawLine3D::GetInstance()->SetPoints(p2, p4);
-			DrawLine3D::GetInstance()->SetPoints(p4, p3);
-			DrawLine3D::GetInstance()->SetPoints(p3, p1);
+			//DrawLine3D::GetInstance()->SetPoints(p1, p2);
+			//DrawLine3D::GetInstance()->SetPoints(p2, p4);
+			//DrawLine3D::GetInstance()->SetPoints(p4, p3);
+			//DrawLine3D::GetInstance()->SetPoints(p3, p1);
 		}
 	}
 }
@@ -292,8 +292,8 @@ void Collider::DrawRotationCenter(const ViewProjection& viewProjection) {
 				obb.rotationCenter.z + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::sinf(lon),
 			};
 
-			DrawLine3D::GetInstance()->SetPoints(start, end1);
-			DrawLine3D::GetInstance()->SetPoints(start, end2);
+			//DrawLine3D::GetInstance()->SetPoints(start, end1);
+			//DrawLine3D::GetInstance()->SetPoints(start, end2);
 		}
 	}
 }

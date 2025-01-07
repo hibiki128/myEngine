@@ -49,6 +49,13 @@ private:
 	void CameraUpdate();
 
 	void ChangeScene();
+
+	void AddEnemy(std::unique_ptr<Enemy> enemy);
+
+	void SpawnEnemy(const Vector3& position);
+
+	void SpawnEnemies(const Vector3& position);
+
 private:
 
 	Audio* audio_;
@@ -69,7 +76,7 @@ private:
 	std::unique_ptr<Player> player_;
 
 	// 敵
-	std::unique_ptr<Enemy> enemy_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -79,5 +86,9 @@ private:
 
 	// 地面
 	std::unique_ptr<Ground>ground_;
+
+	float spawnTimer_ = 0.0f;  // 敵を追加するためのタイマー
+	const float spawnInterval_ = 1.0f; // 敵を追加する間隔（1秒）
+	int deadEnemiesCount_ = 0;  // 死亡した敵のカウント
 
 };

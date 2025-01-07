@@ -3,8 +3,9 @@
 void SkyDome::Init()
 {
 	BaseObject::Init();
-	BaseObject::CreateModel("debug/skyDome.obj");
+	BaseObject::CreateModel("Field/skyDome.obj");
 	Collider::SetCollisionEnabled(false);
+	transform_.scale_ = { 10.0f,10.0f,10.0f };
 }
 
 void SkyDome::Update()

@@ -1,5 +1,5 @@
 {
-    "afterImage": {
+    "afterImageWeapon": {
         "AllScale Max": [
             0.0,
             0.0,
@@ -16,23 +16,23 @@
             0.0
         ],
         "Emit scale": [
-            0.009999999776482582,
-            0.009999999776482582,
-            0.009999999776482582
+            0.0,
+            0.0,
+            0.0
         ],
         "Emit translation": [
-            4.577288627624512,
-            1.0,
-            -11.735006332397461
+            2.5856988430023193,
+            0.800000011920929,
+            -11.383480072021484
         ],
         "Particle EndAcce": [
             0.0,
-            1.0,
+            0.0,
             0.0
         ],
         "Particle EndRote": [
-            3.0710834266270415e-13,
-            -1.321650743484497,
+            0.0,
+            3.1674084663391113,
             0.0
         ],
         "Particle EndScale": [
@@ -42,12 +42,12 @@
         ],
         "Particle StartAcce": [
             0.0,
-            1.0,
+            0.0,
             0.0
         ],
         "Particle StartRote": [
-            3.0710834266270415e-13,
-            -1.321650743484497,
+            0.0,
+            3.1674084663391113,
             0.0
         ],
         "Particle StartScale": [
@@ -70,7 +70,7 @@
         "alphaMax": 0.6000000238418579,
         "alphaMin": 0.6000000238418579,
         "count": 0,
-        "emitFrequency": 0.09586088359355927,
+        "emitFrequency": 0.009999999776482582,
         "isAcceMultiply": true,
         "isAllRamdomScale": false,
         "isBillBoard": false,
@@ -79,16 +79,16 @@
         "isRandomScale": false,
         "isSinMove": false,
         "isVisible": true,
-        "lifeTimeMax": 0.4000000059604645,
-        "lifeTimeMin": 0.4000000059604645,
+        "lifeTimeMax": 0.20000000298023224,
+        "lifeTimeMin": 0.20000000298023224,
         "maxVelocity": [
             0.0,
-            1.0,
+            0.0,
             0.0
         ],
         "minVelocity": [
             0.0,
-            1.0,
+            0.0,
             0.0
         ]
     }
