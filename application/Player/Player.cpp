@@ -108,7 +108,7 @@ void Player::Update()
 	// 腕追従
 	ArmFollow();
 
-	Shadow_.translation_ = Vector3(transform_.translation_.x, transform_.translation_.y - 0.9f, transform_.translation_.z);
+	Shadow_.translation_ = Vector3(transform_.translation_.x, 0.1f, transform_.translation_.z);
 	// 武器更新
 	weapon_->Update();
 	R_arm_wt.UpdateMatrix();
