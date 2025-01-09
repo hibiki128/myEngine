@@ -116,6 +116,7 @@ public:
 private:
 	void ApplyVariables();
 	void MakeOBBOrientations(OBB& obb, const Vector3& rotate);
+	void UpdateOBB();
 
 private:
 

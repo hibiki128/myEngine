@@ -88,6 +88,7 @@ void Collider::UpdateWorldTransform() {
 	OBBwt_.translation_ = obb.scaleCenter;
 	OBBwt_.rotation_ = GetCenterRotation();
 	OBBwt_.scale_ = obb.size;
+	UpdateOBB();
 	OBBwt_.UpdateMatrix();
 }
 
@@ -188,11 +189,6 @@ void Collider::DrawOBB(const ViewProjection& viewProjection) {
 		vertices[i] = obb.rotationCenter + rotatedPosition;
 	}
 
-	// 回転後にscaleCenterの位置を計算
-	obb.scaleCenterRotated = obb.orientations[0] * (obb.scaleCenter.x - obb.rotationCenter.x) +
-		obb.orientations[1] * (obb.scaleCenter.y - obb.rotationCenter.y) +
-		obb.orientations[2] * (obb.scaleCenter.z - obb.rotationCenter.z) + obb.rotationCenter;
-
 	// scaleCenterに球を描画
 	DrawSphereAtCenter(viewProjection, obb.scaleCenterRotated, 0.1f);  // 半径0.1fで球を描画
 
@@ -205,7 +201,7 @@ void Collider::DrawOBB(const ViewProjection& viewProjection) {
 
 	// 線を描画
 	for (const auto& edge : edges) {
-		//DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
 	}
 
 	DrawRotationCenter(viewProjection);
@@ -250,10 +246,10 @@ void Collider::DrawSphereAtCenter(const ViewProjection& viewProjection, const Ve
 			);
 
 			// 4つの三角形で球の断片を描画
-			//DrawLine3D::GetInstance()->SetPoints(p1, p2);
-			//DrawLine3D::GetInstance()->SetPoints(p2, p4);
-			//DrawLine3D::GetInstance()->SetPoints(p4, p3);
-			//DrawLine3D::GetInstance()->SetPoints(p3, p1);
+			DrawLine3D::GetInstance()->SetPoints(p1, p2);
+			DrawLine3D::GetInstance()->SetPoints(p2, p4);
+			DrawLine3D::GetInstance()->SetPoints(p4, p3);
+			DrawLine3D::GetInstance()->SetPoints(p3, p1);
 		}
 	}
 }
@@ -292,8 +288,8 @@ void Collider::DrawRotationCenter(const ViewProjection& viewProjection) {
 				obb.rotationCenter.z + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::sinf(lon),
 			};
 
-			//DrawLine3D::GetInstance()->SetPoints(start, end1);
-			//DrawLine3D::GetInstance()->SetPoints(start, end2);
+			DrawLine3D::GetInstance()->SetPoints(start, end1);
+			DrawLine3D::GetInstance()->SetPoints(start, end2);
 		}
 	}
 }
@@ -324,4 +320,12 @@ void Collider::MakeOBBOrientations(OBB& obb, const Vector3& rotate) {
 	obb.orientations[2].x = rotateMatrix.m[2][0];
 	obb.orientations[2].y = rotateMatrix.m[2][1];
 	obb.orientations[2].z = rotateMatrix.m[2][2];
+}
+
+void Collider::UpdateOBB()
+{
+	// 回転後にscaleCenterの位置を計算
+	obb.scaleCenterRotated = obb.orientations[0] * (obb.scaleCenter.x - obb.rotationCenter.x) +
+		obb.orientations[1] * (obb.scaleCenter.y - obb.rotationCenter.y) +
+		obb.orientations[2] * (obb.scaleCenter.z - obb.rotationCenter.z) + obb.rotationCenter;
 }
