@@ -21,6 +21,9 @@ void TitleScene::Initialize()
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
+
+	emitter_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize("spawnEffect", "debug/cube.obj");
 }
 
 void TitleScene::Finalize()
@@ -40,6 +43,15 @@ void TitleScene::Update()
 
 	// シーン切り替え
 	ChangeScene();
+
+	emitter_->imgui();
+
+	ImGui::Begin("パーティクル");
+	if (ImGui::Button("生成")) {
+		emitter_->SetActive(false);
+	}
+	ImGui::End();
+
 }
 
 void TitleScene::Draw()
@@ -54,13 +66,14 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	
+	emitter_->DrawEmitter();
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	
+	emitter_->UpdateOnce(vp_);
+	emitter_->Draw();
 	//-----------------------------
 
 	//-----線描画-----
@@ -84,7 +97,7 @@ void TitleScene::DrawForOffScreen()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	
+
 	//--------------------------
 
 	/// Particleの描画準備

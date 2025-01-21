@@ -121,6 +121,8 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	colliderA->SetIsColliding(isCollidingNow);
 	colliderB->SetIsColliding(isCollidingNow);
+	colliderA->SetIsCollidingInCurrentFrame(isCollidingNow);
+	colliderB->SetIsCollidingInCurrentFrame(isCollidingNow);
 
 	bool wasColliding = collisionStates[key];
 
@@ -144,10 +146,6 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			colliderB->OnCollisionOut(colliderA);
 		}
 	}
-
-
-	colliderA->SetIsCollidingInCurrentFrame(isCollidingNow);
-	colliderB->SetIsCollidingInCurrentFrame(isCollidingNow);
 
 	// 衝突状態の更新
 	collisionStates[key] = isCollidingNow;

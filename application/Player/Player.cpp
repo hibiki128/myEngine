@@ -618,11 +618,11 @@ void Player::OnCollision(Collider* other)
 
 void Player::OnCollisionEnter(Collider* other)
 {
-	if (dynamic_cast<Enemy*>(other)) {
+	/*if (dynamic_cast<Enemy*>(other)) {
 		ImGui::Begin("プレイヤー");
 		ImGui::Text("OnCollisionEnter");
 		ImGui::End();
-	}
+	}*/
 }
 
 #pragma endregion

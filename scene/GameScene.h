@@ -7,11 +7,12 @@
 #include "ParticleCommon.h"
 #include"ViewProjection.h"
 #include"DebugCamera.h"
+#include"application/Enemy/EnemyManager.h"
 #include"application/Player/Player.h"
-#include"application/Enemy/Enemy.h"
 #include"application/Camera/FollowCamera.h"
 #include"application/Field/SkyDome/SkyDome.h"
 #include"application/Field/Ground/Ground.h"
+#include"application/UI/Ui.h"
 
 class GameScene : public BaseScene
 {
@@ -49,13 +50,6 @@ private:
 	void CameraUpdate();
 
 	void ChangeScene();
-
-	void AddEnemy(std::unique_ptr<Enemy> enemy);
-
-	void SpawnEnemy(const Vector3& position);
-
-	void SpawnEnemies(const Vector3& position);
-
 private:
 
 	Audio* audio_;
@@ -75,8 +69,8 @@ private:
 	// プレイヤー
 	std::unique_ptr<Player> player_;
 
-	// 敵
-	std::list<std::unique_ptr<Enemy>> enemies_;
+	// エネミーマネージャ
+	std::unique_ptr<EnemyManager> enemyManager_;
 
 	// 追従カメラ
 	std::unique_ptr<FollowCamera> followCamera_;
@@ -87,8 +81,6 @@ private:
 	// 地面
 	std::unique_ptr<Ground>ground_;
 
-	float spawnTimer_ = 0.0f;  // 敵を追加するためのタイマー
-	const float spawnInterval_ = 1.0f; // 敵を追加する間隔（1秒）
-	int deadEnemiesCount_ = 0;  // 死亡した敵のカウント
-
+	// UI
+	std::unique_ptr<UI> ui_;
 };

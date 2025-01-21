@@ -113,6 +113,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\Field\SkyDome\SkyDome.cpp" />
     <ClCompile Include="application\Player\Player.cpp" />
     <ClCompile Include="application\Player\Weapon\Weapon.cpp" />
+    <ClCompile Include="application\Enemy\EnemyManager.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Bone.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Animator.cpp" />
@@ -173,6 +174,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Skin.cpp" />
+    <ClCompile Include="application\UI\Ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -204,6 +206,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
     <ClInclude Include="application\Player\Player.h" />
     <ClInclude Include="application\Player\Weapon\Weapon.h" />
+    <ClInclude Include="application\Enemy\EnemyManager.h" />
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h" />
     <ClInclude Include="myEngine\3d\model\animation\Bone.h" />
     <ClInclude Include="myEngine\3d\model\animation\Animator.h" />
@@ -271,6 +274,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
     <ClInclude Include="myEngine\3d\model\animation\Skin.h" />
+    <ClInclude Include="application\UI\Ui.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\OffScreen\BoxFilter.PS.hlsl">

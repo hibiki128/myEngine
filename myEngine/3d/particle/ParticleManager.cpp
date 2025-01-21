@@ -46,6 +46,7 @@ void ParticleManager::Update(const ViewProjection& viewProjection)
 			// 拡縮処理
 			// 拡縮処理
 			if (isSinMove_) {
+				
 				// Sin波の周波数制御 (速度調整)
 				float waveScale = 0.5f * (sin(t * DirectX::XM_PI * 18.0f) + 1.0f);  // 0 ～ 1 の範囲
 

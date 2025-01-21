@@ -1,0 +1,96 @@
+{
+    "allScaleMax": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "allScaleMin": [
+        1.0,
+        1.0,
+        1.0
+    ],
+    "alphaMax": 1.0,
+    "alphaMin": 1.0,
+    "count": 10,
+    "emitFrequency": 0.10000000149011612,
+    "emitter": {
+        "rotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "scale": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "translate": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "endAcce": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "endRote": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "endScale": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "isAcceMultiply": true,
+    "isActive": true,
+    "isAllRamdomScale": false,
+    "isBillBoard": false,
+    "isRandomColor": true,
+    "isRandomRotate": true,
+    "isRandomScale": false,
+    "isSinMove": false,
+    "isVisible": true,
+    "lifeTimeMax": 0.5,
+    "lifeTimeMin": 0.5,
+    "rotateVelocityMax": [
+        0.1599999964237213,
+        0.1599999964237213,
+        0.1599999964237213
+    ],
+    "rotateVelocityMin": [
+        -0.1599999964237213,
+        -0.1599999964237213,
+        -0.1599999964237213
+    ],
+    "scaleMax": 0.0,
+    "scaleMin": 0.0,
+    "startAcce": [
+        1.5,
+        1.5,
+        1.5
+    ],
+    "startRote": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "startScale": [
+        2.0,
+        2.0,
+        2.0
+    ],
+    "velocityMax": [
+        3.0,
+        3.0,
+        3.0
+    ],
+    "velocityMin": [
+        -3.0,
+        -3.0,
+        -3.0
+    ]
+}
