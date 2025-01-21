@@ -1,8 +1,8 @@
 #include "SkyDome.h"
 
-void SkyDome::Init()
+void SkyDome::Init(const std::string className)
 {
-	BaseObject::Init();
+	BaseObject::Init(className);
 	BaseObject::CreateModel("Field/skyDome.obj");
 	Collider::SetCollisionEnabled(false);
 	transform_.scale_ = { 10.0f,10.0f,10.0f };
@@ -16,9 +16,4 @@ void SkyDome::Update()
 void SkyDome::Draw(const ViewProjection& viewProjection)
 {
 	BaseObject::Draw(viewProjection);
-}
-
-void SkyDome::DebugTransform(const std::string className)
-{
-	BaseObject::DebugTransform(className);
 }

@@ -4,10 +4,10 @@
 #include"Object3d.h"
 #include"ObjColor.h"
 #include"myEngine/utility/collider/Collider.h"
-//std
+#include "externals/nlohmann/json.hpp"
 #include<string>
 
-class BaseObject : public Collider{
+class BaseObject : public Collider {
 protected:
 
 	/// ===================================================
@@ -20,6 +20,13 @@ protected:
 	WorldTransform transform_;
 	//カラー
 	ObjColor objColor_;
+	// ライティング
+	bool isLighting_;
+
+	std::string className_;
+
+private:
+	using json = nlohmann::json;
 
 public:
 
@@ -28,13 +35,14 @@ public:
 	/// ===================================================
 
 	//初期化、更新、描画
-	virtual void Init();
+	virtual void Init(const std::string className);
 	virtual void Update();
 	virtual void Draw(const ViewProjection& viewProjection);
 
 	virtual void CreateModel(const std::string modelname);
+	virtual void CreateCollider();
 
-	virtual void DebugTransform(const std::string className);
+	virtual void DebugImGui();
 
 	Vector3 GetCenterPosition()const override;
 	Vector3 GetCenterRotation()const override;
@@ -60,4 +68,11 @@ public:
 	void SetRotation(Vector3 rotate) { transform_.rotation_ = rotate; }
 	void SetRotationY(float rotate) { transform_.rotation_.y = rotate; }
 	void SetScale(Vector3 scale) { transform_.scale_ = scale; }
+	void SetLighting(bool isLighting) { isLighting_ = isLighting; }
+
+private:
+	void DebugTransform();
+	void DebugCollider();
+	void SaveToJson();
+	void LoadFromJson();
 };

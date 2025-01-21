@@ -1,8 +1,8 @@
 #include "Ground.h"
 
-void Ground::Init()
+void Ground::Init(const std::string className)
 {
-	BaseObject::Init();
+	BaseObject::Init(className);
 	BaseObject::CreateModel("Field/Ground.obj");
 	Collider::SetCollisionEnabled(false);
 }
@@ -15,9 +15,4 @@ void Ground::Update()
 void Ground::Draw(const ViewProjection& viewProjection)
 {
 	BaseObject::Draw(viewProjection);
-}
-
-void Ground::DebugTransform(const std::string className)
-{
-	BaseObject::DebugTransform(className);
 }

@@ -22,7 +22,7 @@ public:
 	///public method
 	/// ===================================================
 
-	void Init()override;
+	void Init(const std::string className)override;
 
 	void Update()override;
 
@@ -30,9 +30,9 @@ public:
 
 	void DrawParticle(const ViewProjection& viewProjection);
 
-	void DebugTransform(const std::string className)override;
-
 	void imgui();
+
+	void Debug();
 
 	void SetCamera(FollowCamera* camera) { camera_ = camera; }
 
@@ -44,6 +44,7 @@ public:
 	Vector3 GetCenterRotation()const override;
 
 	void OnCollision([[maybe_unused]] Collider* other)override;
+	void OnCollisionEnter([[maybe_unused]] Collider* other)override;
 	int GetComboStage() { return comboStage_; }
 
 private:

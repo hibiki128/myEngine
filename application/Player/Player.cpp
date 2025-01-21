@@ -4,10 +4,11 @@
 #include"application/Camera/FollowCamera.h"
 #include"application/Enemy/Enemy.h"
 
-void Player::Init()
+void Player::Init(const std::string className)
 {
-	BaseObject::Init();
+	BaseObject::Init(className);
 	BaseObject::CreateModel("debug/Cube.obj");
+	BaseObject::CreateCollider();
 	transform_.translation_ += transform_.scale_.y;
 
 	R_arm_wt.Initialize();
@@ -26,7 +27,7 @@ void Player::Init()
 	Shadow_.scale_ = { 1.5f,1.5f,1.5f };
 
 	weapon_ = std::make_unique<Weapon>();
-	weapon_->Init();
+	weapon_->Init("Weapon");
 	weapon_->SetParent(R_arm_wt);
 	weapon_->SetScale({ 2.0f,2.0f,2.0f });
 
@@ -138,12 +139,6 @@ void Player::DrawParticle(const ViewProjection& viewProjection)
 	weapon_->DrawParticle();
 }
 
-void Player::DebugTransform(const std::string className)
-{
-	BaseObject::DebugTransform(className);
-	weapon_->DebugTransform("ウェポン ");
-}
-
 void Player::imgui()
 {
 	if (ImGui::BeginTabBar("player")) {
@@ -180,6 +175,11 @@ void Player::imgui()
 	ImGui::End();
 
 	afterImageEmitter_->imgui();
+}
+void Player::Debug()
+{
+	BaseObject::DebugImGui();
+	weapon_->Debug();
 }
 #pragma region 状態
 
@@ -424,7 +424,6 @@ void Player::RowlingAttack()
 {
 	groupName = "RowlingAttack";
 
-
 	// 補間するための開始角度と終了角度を設定
 	startAngle = globalVariables->GetVector3Value(groupName, "startAngle");
 	endAngle = globalVariables->GetVector3Value(groupName, "endAngle");
@@ -610,8 +609,19 @@ Vector3 Player::GetCenterRotation() const
 
 void Player::OnCollision(Collider* other)
 {
-	if (dynamic_cast<Enemy*>(other)) {
+	/*if (dynamic_cast<Enemy*>(other)) {
+		ImGui::Begin("プレイヤー");
+		ImGui::Text("OnCollision");
+		ImGui::End();
+	}*/
+}
 
+void Player::OnCollisionEnter(Collider* other)
+{
+	if (dynamic_cast<Enemy*>(other)) {
+		ImGui::Begin("プレイヤー");
+		ImGui::Text("OnCollisionEnter");
+		ImGui::End();
 	}
 }
 

@@ -35,11 +35,11 @@ void GameScene::Initialize()
 	/// ===================================================
 	/// 初期化
 	/// ===================================================
-	player_->Init();
+	player_->Init("Player");
 	//enemy_->Init();
 	followCamera_->Init();
-	skyDome_->Init();
-	ground_->Init();
+	skyDome_->Init("SkyDome");
+	ground_->Init("Ground");
 
 	/// ===================================================
 	/// セット
@@ -117,8 +117,7 @@ void GameScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	skyDome_->Draw(vp_);
-	ground_->Draw(vp_);
+	
 	player_->Draw(vp_);
 	for (auto& enemy : enemies_) {
 		enemy->Draw(vp_);
@@ -128,7 +127,7 @@ void GameScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	player_->DrawParticle(vp_);
+	
 	//-----------------------------
 
 	//-----線描画-----
@@ -152,13 +151,14 @@ void GameScene::DrawForOffScreen()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-
+	skyDome_->Draw(vp_);
+	ground_->Draw(vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-
+	player_->DrawParticle(vp_);
 	//-----------------------------
 
 
@@ -183,8 +183,7 @@ void GameScene::Debug()
 	player_->imgui();
 	ImGui::End();
 	// その他のデバッグ情報
-	player_->DebugTransform("プレイヤー ");
-	//enemy_->DebugTransform("エネミー ");
+	player_->Debug();
 	followCamera_->imgui();
 }
 
@@ -220,7 +219,7 @@ void GameScene::SpawnEnemy(const Vector3& position) {
 
 	enemy = std::make_unique<Enemy>();
 	// 敵キャラモデル
-	enemy->Init();
+	enemy->Init("enemy");
 	enemy->SetPosition(position);
 	enemy->SetPlayer(player_.get());
 	// 敵を追加
@@ -229,7 +228,6 @@ void GameScene::SpawnEnemy(const Vector3& position) {
 
 void GameScene::SpawnEnemies(const Vector3& position)
 {
-	const int maxEnemies = 5;
 	const float radius = 30.0f;
 
 	std::random_device rd;

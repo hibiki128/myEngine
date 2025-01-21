@@ -1,6 +1,6 @@
 #include "ParticleEmitter.h"
 #include"line/DrawLine3D.h"
-
+#include"myEngine/Frame/Frame.h"
 // コンストラクタ
 ParticleEmitter::ParticleEmitter() {}
 
@@ -16,30 +16,28 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 	velocityMax_ = { 1.0f, 1.0f, 1.0f };
 	lifeTimeMin_ = { 1.0f };
 	lifeTimeMax_ = { 3.0f };
-	isVisible = true;
+	isVisible_ = true;
 	startAcce_ = { 1.0f,1.0f,1.0f };
 	endAcce_ = { 1.0f,1.0f,1.0f };
 	startScale_ = { 1.0f,1.0f,1.0f };
 	endScale_ = { 1.0f,1.0f,1.0f };
-	rotateVelocityMin = { -0.07f,-0.07f,-0.07f };
-	rotateVelocityMax = { 0.07f,0.07f,0.07f };
+	rotateVelocityMin_ = { -0.07f,-0.07f,-0.07f };
+	rotateVelocityMax_ = { 0.07f,0.07f,0.07f };
 	count_ = 3;
 	alphaMin_ = 1.0f;
 	alphaMax_ = 1.0f;
-	AddItem();
-	isBillBoard = false;
+	isBillBoard_ = false;
 	isActive_ = true;
-	isAcceMultiply = false;
-	allScaleMin = { 1.0f,1.0f,1.0f };
-	allScaleMax = { 1.0f,1.0f,1.0f };
-	ApplyGlobalVariables();
+	isAcceMultiply_ = false;
+	allScaleMin_ = { 1.0f,1.0f,1.0f };
+	allScaleMax_ = { 1.0f,1.0f,1.0f };
+	LoadFromJson();
 }
 
 // Update関数
 void ParticleEmitter::Update(const ViewProjection& vp_) {
-	SetValue();
 	// 経過時間を進める
-	elapsedTime_ += deltaTime;
+	elapsedTime_ += Frame::DeltaTime();
 
 	// 発生頻度に基づいてパーティクルを発生させる
 	while (elapsedTime_ >= emitFrequency_) {
@@ -52,7 +50,6 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 
 void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 {
-	SetValue();
 	if (!isActive_) {
 		Emit();  // パーティクルを発生させる
 		isActive_ = true;
@@ -63,19 +60,19 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 
 void ParticleEmitter::Draw()
 {
-	Manager_->SetRandomRotate(isRandomRotate);
-	Manager_->SetAcceMultipy(isAcceMultiply);
-	Manager_->SetBillBorad(isBillBoard);
-	Manager_->SetRandomSize(isRandomScale);
-	Manager_->SetAllRandomSize(isAllRamdomScale);
-	Manager_->SetSinMove(isSinMove);
+	Manager_->SetRandomRotate(isRandomRotate_);
+	Manager_->SetAcceMultipy(isAcceMultiply_);
+	Manager_->SetBillBorad(isBillBoard_);
+	Manager_->SetRandomSize(isRandomScale_);
+	Manager_->SetAllRandomSize(isAllRamdomScale_);
+	Manager_->SetSinMove(isSinMove_);
 	Manager_->Draw();
 }
 
 void ParticleEmitter::DrawEmitter()
 {
 	// isVisibleがtrueのときだけ描画
-	if (!isVisible) return;
+	if (!isVisible_) return;
 
 	// 立方体のローカル座標での基本頂点（スケーリング済み）
 	std::array<Vector3, 8> localVertices = {
@@ -132,127 +129,153 @@ void ParticleEmitter::Emit() {
 		endAcce_,
 		startRote_,
 		endRote_,
-		isRandomColor,
+		isRandomColor_,
 		alphaMin_,
 		alphaMax_,
-		rotateVelocityMin,
-		rotateVelocityMax,
-		allScaleMax,
-		allScaleMin,
-		scaleMin,
-		scaleMax,
+		rotateVelocityMin_,
+		rotateVelocityMax_,
+		allScaleMax_,
+		allScaleMin_,
+		scaleMin_,
+		scaleMax_,
 		transform_.rotation_
 	);
 }
 
-void ParticleEmitter::ApplyGlobalVariables()
-{
-	emitFrequency_ = globalVariables->GetFloatValue(groupName, "emitFrequency");
-	count_ = globalVariables->GetIntValue(groupName, "count");
-	transform_.translation_ = globalVariables->GetVector3Value(groupName, "Emit translation");
-	transform_.scale_ = globalVariables->GetVector3Value(groupName, "Emit scale");
-	transform_.rotation_ = globalVariables->GetVector3Value(groupName, "Emit rotation");
-	startScale_ = globalVariables->GetVector3Value(groupName, "Particle StartScale");
-	endScale_ = globalVariables->GetVector3Value(groupName, "Particle EndScale");
-	startRote_ = globalVariables->GetVector3Value(groupName, "Particle StartRote");
-	endRote_ = globalVariables->GetVector3Value(groupName, "Particle EndRote");
-	startAcce_ = globalVariables->GetVector3Value(groupName, "Particle StartAcce");
-	endAcce_ = globalVariables->GetVector3Value(groupName, "Particle EndAcce");
-	velocityMin_ = globalVariables->GetVector3Value(groupName, "minVelocity");
-	velocityMax_ = globalVariables->GetVector3Value(groupName, "maxVelocity");
-	lifeTimeMax_ = globalVariables->GetFloatValue(groupName, "lifeTimeMax");
-	lifeTimeMin_ = globalVariables->GetFloatValue(groupName, "lifeTimeMin");
-	isVisible = globalVariables->GetBoolValue(groupName, "isVisible");
-	isBillBoard = globalVariables->GetBoolValue(groupName, "isBillBoard");
-	isRandomColor = globalVariables->GetBoolValue(groupName, "isRamdomColor");
-	alphaMin_ = globalVariables->GetFloatValue(groupName, "alphaMin");
-	alphaMax_ = globalVariables->GetFloatValue(groupName, "alphaMax");
-	isRandomRotate = globalVariables->GetBoolValue(groupName, "isRandomRotate");
-	isAcceMultiply = globalVariables->GetBoolValue(groupName, "isAcceMultiply");
-	rotateVelocityMin = globalVariables->GetVector3Value(groupName, "RotationVelo Min");
-	rotateVelocityMax = globalVariables->GetVector3Value(groupName, "RotationVelo Max");
-	allScaleMax = globalVariables->GetVector3Value(groupName, "AllScale Max");
-	allScaleMin = globalVariables->GetVector3Value(groupName, "AllScale Min");
-	scaleMin = globalVariables->GetFloatValue(groupName, "Scale Min");
-	scaleMax = globalVariables->GetFloatValue(groupName, "Scale Max");
-	isRandomScale = globalVariables->GetBoolValue(groupName, "isRandomScale");
-	isAllRamdomScale = globalVariables->GetBoolValue(groupName, "isAllRamdomScale");
-	isSinMove = globalVariables->GetBoolValue(groupName, "isSinMove");
+void ParticleEmitter::SaveToJson() {
+	json j;
+
+	// メンバー変数をJSONに保存
+	j["emitter"]["translate"] = { transform_.translation_.x,transform_.translation_.y,transform_.translation_.z };
+	j["emitter"]["rotation"] = { transform_.rotation_.x,transform_.rotation_.y,transform_.rotation_.z };
+	j["emitter"]["scale"] = { transform_.scale_.x,transform_.scale_.y,transform_.scale_.z };
+	j["count"] = count_;
+	j["emitFrequency"] = emitFrequency_;
+	j["lifeTimeMin"] = lifeTimeMin_;
+	j["lifeTimeMax"] = lifeTimeMax_;
+	j["alphaMin"] = alphaMin_;
+	j["alphaMax"] = alphaMax_;
+	j["scaleMin"] = scaleMin_;
+	j["scaleMax"] = scaleMax_;
+	j["velocityMin"] = { velocityMin_.x,velocityMin_.y,velocityMin_.z };
+	j["velocityMax"] = { velocityMax_.x,velocityMax_.y,velocityMax_.z };
+	j["startScale"] = { startScale_.x,startScale_.y,startScale_.z };
+	j["endScale"] = { endScale_.x,endScale_.y,endScale_.z };
+	j["startAcce"] = { startAcce_.x,startAcce_.y,startAcce_.z };
+	j["endAcce"] = { endAcce_.x,endAcce_.y,endAcce_.z };
+	j["startRote"] = { startRote_.x,startRote_.y,startRote_.z };
+	j["endRote"] = { endRote_.x,endRote_.y,endRote_.z };
+	j["rotateVelocityMin"] = { rotateVelocityMin_.x,rotateVelocityMin_.y,rotateVelocityMin_.z };
+	j["rotateVelocityMax"] = { rotateVelocityMax_.x,rotateVelocityMax_.y,rotateVelocityMax_.z };
+	j["allScaleMin"] = { allScaleMin_.x,allScaleMin_.y,allScaleMin_.z };
+	j["allScaleMax"] = { allScaleMax_.x,allScaleMax_.y,allScaleMax_.z };
+	j["isRandomScale"] = isRandomScale_;
+	j["isAllRamdomScale"] = isAllRamdomScale_;
+	j["isRandomColor"] = isRandomColor_;
+	j["isRandomRotate"] = isRandomRotate_;
+	j["isVisible"] = isVisible_;
+	j["isBillBoard"] = isBillBoard_;
+	j["isActive"] = isActive_;
+	j["isAcceMultiply"] = isAcceMultiply_;
+	j["isSinMove"] = isSinMove_;
+
+	// ディレクトリを作成し、JSONファイルを保存
+	std::filesystem::create_directories("resources/jsons/Particle/");
+	std::ofstream outFile("resources/jsons/Particle/" + name_ + ".json");
+	outFile << j.dump(4);
 }
 
-void ParticleEmitter::SetValue()
-{
+void ParticleEmitter::LoadFromJson() {
+	std::ifstream inFile("resources/jsons/Particle/" + name_ + ".json");
+	if (!inFile.is_open()) {
+		return; // JSONファイルがない場合は早期リターン
+	}
 
-	globalVariables->SetValue(groupName, "emitFrequency", emitFrequency_);
-	globalVariables->SetValue(groupName, "count", count_);
-	globalVariables->SetValue(groupName, "Emit translation", transform_.translation_);
-	globalVariables->SetValue(groupName, "Emit scale", transform_.scale_);
-	globalVariables->SetValue(groupName, "Emit rotation", transform_.rotation_);
-	globalVariables->SetValue(groupName, "Particle StartScale", startScale_);
-	globalVariables->SetValue(groupName, "Particle StartRote", startRote_);
-	globalVariables->SetValue(groupName, "Particle EndRote", endRote_);
-	globalVariables->SetValue(groupName, "Particle EndScale", endScale_);
-	globalVariables->SetValue(groupName, "Particle StartAcce", startAcce_);
-	globalVariables->SetValue(groupName, "Particle EndAcce", endAcce_);
-	globalVariables->SetValue(groupName, "minVelocity", velocityMin_);
-	globalVariables->SetValue(groupName, "maxVelocity", velocityMax_);
-	globalVariables->SetValue(groupName, "lifeTimeMax", lifeTimeMax_);
-	globalVariables->SetValue(groupName, "lifeTimeMin", lifeTimeMin_);
-	globalVariables->SetValue(groupName, "isVisible", isVisible);
-	globalVariables->SetValue(groupName, "isBillBoard", isBillBoard);
-	globalVariables->SetValue(groupName, "isRamdomColor", isRandomColor);
-	globalVariables->SetValue(groupName, "alphaMin", alphaMin_);
-	globalVariables->SetValue(groupName, "alphaMax", alphaMax_);
-	globalVariables->SetValue(groupName, "isRandomRotate", isRandomRotate);
-	globalVariables->SetValue(groupName, "RotationVelo Min", rotateVelocityMin);
-	globalVariables->SetValue(groupName, "isAcceMultiply", isAcceMultiply);
-	globalVariables->SetValue(groupName, "RotationVelo Max", rotateVelocityMax);
-	globalVariables->SetValue(groupName, "AllScale Max", allScaleMax);
-	globalVariables->SetValue(groupName, "AllScale Min", allScaleMin);
-	globalVariables->SetValue(groupName, "Scale Min", scaleMin);
-	globalVariables->SetValue(groupName, "Scale Max", scaleMax);
-	globalVariables->SetValue(groupName, "isRandomScale", isRandomScale);
-	globalVariables->SetValue(groupName, "isAllRamdomScale", isAllRamdomScale);
-	globalVariables->SetValue(groupName, "isSinMove", isSinMove);
+	json j;
+	inFile >> j;
+
+	// emitter内のtransform情報を読み込み
+	transform_.translation_.x = j["emitter"]["translate"][0];
+	transform_.translation_.y = j["emitter"]["translate"][1];
+	transform_.translation_.z = j["emitter"]["translate"][2];
+
+	transform_.rotation_.x = j["emitter"]["rotation"][0];
+	transform_.rotation_.y = j["emitter"]["rotation"][1];
+	transform_.rotation_.z = j["emitter"]["rotation"][2];
+
+	transform_.scale_.x = j["emitter"]["scale"][0];
+	transform_.scale_.y = j["emitter"]["scale"][1];
+	transform_.scale_.z = j["emitter"]["scale"][2];
+
+	// その他の変数の読み込み
+	count_ = j["count"];
+	emitFrequency_ = j["emitFrequency"];
+	lifeTimeMin_ = j["lifeTimeMin"];
+	lifeTimeMax_ = j["lifeTimeMax"];
+	alphaMin_ = j["alphaMin"];
+	alphaMax_ = j["alphaMax"];
+	scaleMin_ = j["scaleMin"];
+	scaleMax_ = j["scaleMax"];
+
+	velocityMin_.x = j["velocityMin"][0];
+	velocityMin_.y = j["velocityMin"][1];
+	velocityMin_.z = j["velocityMin"][2];
+
+	velocityMax_.x = j["velocityMax"][0];
+	velocityMax_.y = j["velocityMax"][1];
+	velocityMax_.z = j["velocityMax"][2];
+
+	startScale_.x = j["startScale"][0];
+	startScale_.y = j["startScale"][1];
+	startScale_.z = j["startScale"][2];
+
+	endScale_.x = j["endScale"][0];
+	endScale_.y = j["endScale"][1];
+	endScale_.z = j["endScale"][2];
+
+	startAcce_.x = j["startAcce"][0];
+	startAcce_.y = j["startAcce"][1];
+	startAcce_.z = j["startAcce"][2];
+
+	endAcce_.x = j["endAcce"][0];
+	endAcce_.y = j["endAcce"][1];
+	endAcce_.z = j["endAcce"][2];
+
+	startRote_.x = j["startRote"][0];
+	startRote_.y = j["startRote"][1];
+	startRote_.z = j["startRote"][2];
+
+	endRote_.x = j["endRote"][0];
+	endRote_.y = j["endRote"][1];
+	endRote_.z = j["endRote"][2];
+
+	rotateVelocityMin_.x = j["rotateVelocityMin"][0];
+	rotateVelocityMin_.y = j["rotateVelocityMin"][1];
+	rotateVelocityMin_.z = j["rotateVelocityMin"][2];
+
+	rotateVelocityMax_.x = j["rotateVelocityMax"][0];
+	rotateVelocityMax_.y = j["rotateVelocityMax"][1];
+	rotateVelocityMax_.z = j["rotateVelocityMax"][2];
+
+	allScaleMin_.x = j["allScaleMin"][0];
+	allScaleMin_.y = j["allScaleMin"][1];
+	allScaleMin_.z = j["allScaleMin"][2];
+
+	allScaleMax_.x = j["allScaleMax"][0];
+	allScaleMax_.y = j["allScaleMax"][1];
+	allScaleMax_.z = j["allScaleMax"][2];
+
+	isRandomScale_ = j["isRandomScale"];
+	isAllRamdomScale_ = j["isAllRamdomScale"];
+	isRandomColor_ = j["isRandomColor"];
+	isRandomRotate_ = j["isRandomRotate"];
+	isVisible_ = j["isVisible"];
+	isBillBoard_ = j["isBillBoard"];
+	isActive_ = j["isActive"];
+	isAcceMultiply_ = j["isAcceMultiply"];
+	isSinMove_ = j["isSinMove"];
 }
 
-void ParticleEmitter::AddItem()
-{
-	groupName = name_.c_str();
-	globalVariables = GlobalVariables::GetInstance();
-	globalVariables->CreateGroup(groupName);
-	globalVariables->AddItem(groupName, "emitFrequency", emitFrequency_);
-	globalVariables->AddItem(groupName, "count", count_);
-	globalVariables->AddItem(groupName, "Emit translation", transform_.translation_);
-	globalVariables->AddItem(groupName, "Emit scale", transform_.scale_);
-	globalVariables->AddItem(groupName, "Emit rotation", transform_.rotation_);
-	globalVariables->AddItem(groupName, "Particle StartScale", startScale_);
-	globalVariables->AddItem(groupName, "Particle EndScale", endScale_);
-	globalVariables->AddItem(groupName, "Particle StartRote", startRote_);
-	globalVariables->AddItem(groupName, "Particle EndRote", endRote_);
-	globalVariables->AddItem(groupName, "Particle StartAcce", startAcce_);
-	globalVariables->AddItem(groupName, "Particle EndAcce", endAcce_);
-	globalVariables->AddItem(groupName, "minVelocity", velocityMin_);
-	globalVariables->AddItem(groupName, "maxVelocity", velocityMax_);
-	globalVariables->AddItem(groupName, "lifeTimeMax", lifeTimeMax_);
-	globalVariables->AddItem(groupName, "lifeTimeMin", lifeTimeMin_);
-	globalVariables->AddItem(groupName, "isRamdomColor", isRandomColor);
-	globalVariables->AddItem(groupName, "alphaMin", alphaMin_);
-	globalVariables->AddItem(groupName, "alphaMax", alphaMax_);
-	globalVariables->AddItem(groupName, "AllScale Max", allScaleMax);
-	globalVariables->AddItem(groupName, "AllScale Min", allScaleMin);
-	globalVariables->AddItem(groupName, "Scale Min", scaleMin);
-	globalVariables->AddItem(groupName, "Scale Max", scaleMax);
-	globalVariables->AddItem(groupName, "isVisible", isVisible);
-	globalVariables->AddItem(groupName, "isBillBoard", isBillBoard);
-	globalVariables->AddItem(groupName, "isRandomRotate", isRandomRotate);
-	globalVariables->AddItem(groupName, "isAcceMultiply", isAcceMultiply);
-	globalVariables->AddItem(groupName, "RotationVelo Min", rotateVelocityMin);
-	globalVariables->AddItem(groupName, "RotationVelo Max", rotateVelocityMax);
-	globalVariables->AddItem(groupName, "isRandomScale", isRandomScale);
-	globalVariables->AddItem(groupName, "isAllRamdomScale", isAllRamdomScale);
-	globalVariables->AddItem(groupName, "isSinMove", isSinMove);
-}
 
 // ImGuiで値を動かす関数
 void ParticleEmitter::imgui() {
@@ -290,7 +313,7 @@ void ParticleEmitter::imgui() {
 		ImGui::Separator();
 
 		// 可視性フラグ
-		ImGui::Checkbox("表示", &isVisible);
+		ImGui::Checkbox("表示", &isVisible_);
 	}
 
 	// パーティクルデータセクション
@@ -322,7 +345,7 @@ void ParticleEmitter::imgui() {
 			ImGui::Text("加速度:");
 			ImGui::DragFloat3("最初", &startAcce_.x, 0.001f);
 			ImGui::DragFloat3("最後", &endAcce_.x, 0.001f);
-			ImGui::Checkbox("乗算", &isAcceMultiply);
+			ImGui::Checkbox("乗算", &isAcceMultiply_);
 			ImGui::TreePop();
 		}
 
@@ -331,34 +354,34 @@ void ParticleEmitter::imgui() {
 		// サイズ
 		if (ImGui::TreeNode("大きさ")) {
 			ImGui::Text("大きさ:");
-			if (isAllRamdomScale) {
-				ImGui::DragFloat3("最大値", &allScaleMax.x, 0.1f, 0.0f);
-				ImGui::DragFloat3("最小値", &allScaleMin.x, 0.1f, 0.0f);
-				allScaleMin.x = std::clamp(allScaleMin.x, -FLT_MAX, allScaleMax.x);
-				allScaleMax.x = std::clamp(allScaleMax.x, allScaleMin.x, FLT_MAX);
-				allScaleMin.y = std::clamp(allScaleMin.y, -FLT_MAX, allScaleMax.y);
-				allScaleMax.y = std::clamp(allScaleMax.y, allScaleMin.y, FLT_MAX);
-				allScaleMin.z = std::clamp(allScaleMin.z, -FLT_MAX, allScaleMax.z);
-				allScaleMax.z = std::clamp(allScaleMax.z, allScaleMin.z, FLT_MAX);
+			if (isAllRamdomScale_) {
+				ImGui::DragFloat3("最大値", &allScaleMax_.x, 0.1f, 0.0f);
+				ImGui::DragFloat3("最小値", &allScaleMin_.x, 0.1f, 0.0f);
+				allScaleMin_.x = std::clamp(allScaleMin_.x, -FLT_MAX, allScaleMax_.x);
+				allScaleMax_.x = std::clamp(allScaleMax_.x, allScaleMin_.x, FLT_MAX);
+				allScaleMin_.y = std::clamp(allScaleMin_.y, -FLT_MAX, allScaleMax_.y);
+				allScaleMax_.y = std::clamp(allScaleMax_.y, allScaleMin_.y, FLT_MAX);
+				allScaleMin_.z = std::clamp(allScaleMin_.z, -FLT_MAX, allScaleMax_.z);
+				allScaleMax_.z = std::clamp(allScaleMax_.z, allScaleMin_.z, FLT_MAX);
 			}
-			else if (isRandomScale) {
-				ImGui::DragFloat("最大値", &scaleMax, 0.1f, 0.0f);
-				ImGui::DragFloat("最小値", &scaleMin, 0.1f, 0.0f);
-				scaleMax = std::clamp(scaleMax, scaleMin, FLT_MAX);
-				scaleMin = std::clamp(scaleMin, 0.0f, scaleMax);
+			else if (isRandomScale_) {
+				ImGui::DragFloat("最大値", &scaleMax_, 0.1f, 0.0f);
+				ImGui::DragFloat("最小値", &scaleMin_, 0.1f, 0.0f);
+				scaleMax_ = std::clamp(scaleMax_, scaleMin_, FLT_MAX);
+				scaleMin_ = std::clamp(scaleMin_, 0.0f, scaleMax_);
 			}
-			else if (isSinMove) {
+			else if (isSinMove_) {
 				ImGui::DragFloat3("最初", &startScale_.x, 0.1f, 0.0f);
 			}
 			else {
 				ImGui::DragFloat3("最初", &startScale_.x, 0.1f, 0.0f);
 			}
-			if (!isSinMove) {
+			if (!isSinMove_) {
 				ImGui::DragFloat3("最後", &endScale_.x, 0.1f);
 			}
-			ImGui::Checkbox("均等にランダムな大きさ", &isRandomScale);
-			ImGui::Checkbox("ばらばらにランダムな大きさ", &isAllRamdomScale);
-			ImGui::Checkbox("sin波の動き", &isSinMove);
+			ImGui::Checkbox("均等にランダムな大きさ", &isRandomScale_);
+			ImGui::Checkbox("ばらばらにランダムな大きさ", &isAllRamdomScale_);
+			ImGui::Checkbox("sin波の動き", &isSinMove_);
 			ImGui::TreePop();
 		}
 
@@ -366,7 +389,7 @@ void ParticleEmitter::imgui() {
 
 		// 回転
 		if (ImGui::TreeNode("回転")) {
-			if (!isRandomRotate) {
+			if (!isRandomRotate_) {
 				float startRotationDegrees[3] = {
 				  radiansToDegrees(startRote_.x),
 				  radiansToDegrees(startRote_.y),
@@ -388,17 +411,17 @@ void ParticleEmitter::imgui() {
 					endRote_.z = degreesToRadians(endRotationDegrees[2]);
 				}
 			}
-			if (isRandomRotate) {
-				ImGui::DragFloat3("最大値", &rotateVelocityMax.x, 0.01f);
-				ImGui::DragFloat3("最小値", &rotateVelocityMin.x, 0.01f);
-				rotateVelocityMin.x = std::clamp(rotateVelocityMin.x, -FLT_MAX, rotateVelocityMax.x);
-				rotateVelocityMax.x = std::clamp(rotateVelocityMax.x, rotateVelocityMin.x, FLT_MAX);
-				rotateVelocityMin.y = std::clamp(rotateVelocityMin.y, -FLT_MAX, rotateVelocityMax.y);
-				rotateVelocityMax.y = std::clamp(rotateVelocityMax.y, rotateVelocityMin.y, FLT_MAX);
-				rotateVelocityMin.z = std::clamp(rotateVelocityMin.z, -FLT_MAX, rotateVelocityMax.z);
-				rotateVelocityMax.z = std::clamp(rotateVelocityMax.z, rotateVelocityMin.z, FLT_MAX);
+			if (isRandomRotate_) {
+				ImGui::DragFloat3("最大値", &rotateVelocityMax_.x, 0.01f);
+				ImGui::DragFloat3("最小値", &rotateVelocityMin_.x, 0.01f);
+				rotateVelocityMin_.x = std::clamp(rotateVelocityMin_.x, -FLT_MAX, rotateVelocityMax_.x);
+				rotateVelocityMax_.x = std::clamp(rotateVelocityMax_.x, rotateVelocityMin_.x, FLT_MAX);
+				rotateVelocityMin_.y = std::clamp(rotateVelocityMin_.y, -FLT_MAX, rotateVelocityMax_.y);
+				rotateVelocityMax_.y = std::clamp(rotateVelocityMax_.y, rotateVelocityMin_.y, FLT_MAX);
+				rotateVelocityMin_.z = std::clamp(rotateVelocityMin_.z, -FLT_MAX, rotateVelocityMax_.z);
+				rotateVelocityMax_.z = std::clamp(rotateVelocityMax_.z, rotateVelocityMin_.z, FLT_MAX);
 			}
-			ImGui::Checkbox("ランダムな回転", &isRandomRotate);
+			ImGui::Checkbox("ランダムな回転", &isRandomRotate_);
 			ImGui::TreePop();
 		}
 
@@ -424,10 +447,14 @@ void ParticleEmitter::imgui() {
 
 	// その他の設定セクション
 	if (ImGui::CollapsingHeader("各状態の設定")) {
-		ImGui::Checkbox("ビルボード", &isBillBoard);
-		ImGui::Checkbox("ランダムカラー", &isRandomColor);
+		ImGui::Checkbox("ビルボード", &isBillBoard_);
+		ImGui::Checkbox("ランダムカラー", &isRandomColor_);
 	}
-
+	if (ImGui::Button("セーブ")) {
+		SaveToJson();
+		std::string message = std::format("ParticleData saved.");
+		MessageBoxA(nullptr, message.c_str(), "Particle", 0);
+	}
 	ImGui::End();
 
 #endif

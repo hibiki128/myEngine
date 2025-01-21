@@ -3,19 +3,18 @@
 #include"WorldTransform.h"
 #include"Object3d.h"
 #include"ViewProjection.h"
-#include"GlobalVariables.h"
-struct AABB {
-	Vector3 min; //!< 最小点
-	Vector3 max; //!< 最大点
-};
-struct OBB {
-	Vector3 rotationCenter;  // 回転中心
-	Vector3 scaleCenter;     // スケール中心
-	Vector3 scaleCenterRotated; // 回転後のスケール中心
-	Vector3 size;            // サイズ
-	Vector3 orientations[3]; // 各軸の方向ベクトル
-};
+#include <fstream>
+#include <filesystem>
+#include "externals/nlohmann/json.hpp"
+
 class Collider {
+public:
+	enum class CollisionType {
+		Sphere,
+		AABB,
+		OBB
+	};
+
 public:
 
 	Collider();
@@ -28,33 +27,16 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const std::string className);
 
 	/// <summary>
 	/// ワールドトランスフォームの更新
 	/// </summary>
 	void UpdateWorldTransform();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="model"></param>
-	/// <param name="viewProjection"></param>
-	void DrawSphere(const ViewProjection& viewProjection);
+	void DebugDraw(const ViewProjection& viewProjection);
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="model"></param>
-	/// <param name="viewProjection"></param>
-	void DrawAABB(const ViewProjection& viewProjection);
-
-	void DrawOBB(const ViewProjection& viewProjection);
-
-	void DrawRotationCenter(const ViewProjection& viewProjection);
-
-	// 球を描画する関数
-	void DrawSphereAtCenter(const ViewProjection& viewProjection, const Vector3& center, float radius);
+	void OffsetImgui();
 
 	/// <summary>
 	/// 当たってる間
@@ -74,6 +56,7 @@ public:
 	/// <param name="other"></param>
 	virtual void OnCollisionOut([[maybe_unused]] Collider* other) {};
 
+#pragma region ゲッター
 	/// <summary>
 	/// getter
 	/// </summary>
@@ -83,12 +66,23 @@ public:
 	// 中心座標を取得
 	virtual Vector3 GetCenterPosition() const = 0;
 	virtual Vector3 GetCenterRotation() const = 0;
-	Vector3 GetCenter() { return Cubewt_.translation_; }
-	AABB GetAABB() { return aabb; }
-	OBB GetOBB() { return obb; }
+
+	AABB GetAABB() { return aabb_; }
+	OBB GetOBB() { return obb_; }
+	Sphere GetSphere() { return sphere_; }
 	bool IsCollisionEnabled() const { return isCollisionEnabled_; }
-	bool IsColliding() const { return isColliding; }
-	bool WasColliding() const { return wasColliding; }
+	bool IsColliding() const { return isColliding_; }
+	bool WasColliding() const { return wasColliding_; }
+	bool IsOBB() { return isOBB_; }
+	bool IsSphere() { return isSphere_; }
+	bool IsAABB() { return isAABB_; }
+	bool IsVisible() { return isVisible_; }
+
+
+#pragma endregion
+
+#pragma region セッター
+
 
 	void SetIsCollidingInCurrentFrame(bool isColliding) {
 		isCollidingInCurrentFrame_ = isColliding;
@@ -107,46 +101,63 @@ public:
 	/// </summary>
 	/// <param name="radius"></param>
 	void SetRadius(float radius) { radius_ = radius; }
-	void SetIsColliding(bool colliding) { wasColliding = isColliding; isColliding = colliding; }
+	void SetIsColliding(bool colliding) { isColliding_ = colliding; }
+	void SetWasColliding(bool wasColliding) { wasColliding_ = wasColliding; }
 	void SetCollisionEnabled(bool enabled) { isCollisionEnabled_ = enabled; }
-	void SetAABBScale(Vector3 scale) { scale_ = scale; }
 	void SetHitColor() { color_ = { 1.0f,0.0f,0.0f,1.0f }; }
 	void SetDefaultColor() { color_ = { 1.0f,1.0f,1.0f,1.0f }; }
+	void SetCollisionType(CollisionType collisionType);
+	void SetVisible(bool isVisible) { isVisible_ = isVisible; }
+
+#pragma endregion
 
 private:
-	void ApplyVariables();
 	void MakeOBBOrientations(OBB& obb, const Vector3& rotate);
 	void UpdateOBB();
+	void SaveToJson();
+	void LoadFromJson();
+
+#pragma region デバッグ描画
+	void DrawSphere(const ViewProjection& viewProjection);
+
+	void DrawAABB(const ViewProjection& viewProjection);
+
+	void DrawOBB(const ViewProjection& viewProjection);
+
+	void DrawRotationCenter(const ViewProjection& viewProjection);
+
+	// 球を描画する関数
+	void DrawSphereAtCenter(const ViewProjection& viewProjection, const Vector3& center, float radius);
+#pragma endregion
 
 private:
+	using json = nlohmann::json;
 
 	// 衝突半径
 	float radius_ = 1.0f;
-	// ワールドトランスフォーム
-	WorldTransform Cubewt_;
-	WorldTransform AABBwt_;
-	WorldTransform OBBwt_;
-	// 種別ID
-	std::unique_ptr<Object3d>sphere_;
+
+	std::unique_ptr<Object3d>Sphere_;
 	std::unique_ptr<Object3d>AABB_;
 	std::unique_ptr<Object3d>OBB_;
 
-	GlobalVariables* variables_;
-	std::string groupName;
-	AABB aabb;
-	OBB obb;
-	Vector3 aabbCenter;
-	Vector3 aabbScale;
-	Vector3 scale_ = { 1.0f,1.0f,1.0f };
+	AABB aabb_;
+	OBB obb_;
+	Sphere sphere_;
 	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 	static int counter; // 静的カウンタ
-	Vector3 SphereOffset = { 0.0f,0.0f,0.0f };
-	AABB AABBOffset;
-	OBB OBBOffset;
+	Sphere SphereOffset_;
+	AABB AABBOffset_;
+	OBB OBBOffset_;
+	std::string className_;
 
 	bool isCollisionEnabled_ = true;  // デフォルトではコリジョンを有効化
-	bool isColliding = false;   // 現在のフレームの衝突状態
-	bool wasColliding = false;  // 前フレームの衝突状態
+	bool isColliding_ = false;   // 現在のフレームの衝突状態
+	bool wasColliding_ = false;  // 前フレームの衝突状態
 	bool isCollidingInCurrentFrame_ = false; // 現フレームで衝突しているか
+
+	bool isAABB_ = true;
+	bool isOBB_ = true;
+	bool isSphere_ = true;
+	bool isVisible_ = true;
 };

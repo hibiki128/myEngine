@@ -3,10 +3,12 @@
 #include <myEngine/Frame/Frame.h>
 #include"application/Player/Weapon/Weapon.h"
 
-void Enemy::Init()
+void Enemy::Init(const std::string className)
 {
-	BaseObject::Init();
+	BaseObject::Init(className);
 	BaseObject::CreateModel("debug/Cube.obj");
+	BaseObject::CreateCollider();
+	Collider::SetCollisionType(CollisionType::AABB);
 	objColor_.SetColor({ 1.0f,0.0f,0.0f,1.0f });
 	transform_.translation_ += transform_.scale_.y;
 	HP = 10;
@@ -57,11 +59,6 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 	
 		BaseObject::Draw(viewProjection);
 	}
-}
-
-void Enemy::DebugTransform(const std::string className)
-{
-	BaseObject::DebugTransform(className);
 }
 
 void Enemy::Move()

@@ -8,7 +8,7 @@ public:
 	///public method
 	/// ===================================================
 
-	void Init()override;
+	void Init(const std::string className)override;
 
 	void Update()override;
 
@@ -16,9 +16,9 @@ public:
 
 	void DrawParticle();
 
-	void ParticleUpdate(const ViewProjection& viewProjection);
+	void Debug();
 
-	void DebugTransform(const std::string className)override;
+	void ParticleUpdate(const ViewProjection& viewProjection);
 
 	void SetParent(const WorldTransform& worldTransform) { transform_.parent_ = &worldTransform; }
 

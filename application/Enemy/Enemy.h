@@ -13,13 +13,11 @@ public:
 	///public method
 	/// ===================================================
 
-	void Init()override;
+	void Init(const std::string className)override;
 
 	void Update()override;
 
 	void Draw(const ViewProjection& viewProjection)override;
-
-	void DebugTransform(const std::string className)override;
 
 	void SetPlayer(Player* player) { player_ = player; }
 

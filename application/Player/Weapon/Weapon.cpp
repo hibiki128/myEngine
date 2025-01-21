@@ -1,9 +1,10 @@
 #include "Weapon.h"
 
-void Weapon::Init()
+void Weapon::Init(const std::string className)
 {
-	BaseObject::Init();
+	BaseObject::Init(className);
 	BaseObject::CreateModel("Player/Weapon/Weapon.obj");
+	BaseObject::CreateCollider();
 	transform_.translation_ = { 0.0f,0.2f,0.0f };
 	afterImageEmitter_ = std::make_unique<ParticleEmitter>();
 	afterImageEmitter_->Initialize("afterImageWeapon", "Player/Weapon/Weapon.obj");
@@ -26,6 +27,11 @@ void Weapon::DrawParticle()
 	afterImageEmitter_->Draw();
 }
 
+void Weapon::Debug()
+{
+	BaseObject::DebugImGui();
+}
+
 void Weapon::ParticleUpdate(const ViewProjection& viewProjection)
 {
 	afterImageEmitter_->Update(viewProjection);
@@ -33,11 +39,6 @@ void Weapon::ParticleUpdate(const ViewProjection& viewProjection)
 	afterImageEmitter_->SetStartRotate(GetCenterRotation());
 	afterImageEmitter_->SetEndRotate(GetCenterRotation());
 
-}
-
-void Weapon::DebugTransform(const std::string className)
-{
-	BaseObject::DebugTransform(className);
 }
 
 // 子オブジェクトのワールド座標を計算する
