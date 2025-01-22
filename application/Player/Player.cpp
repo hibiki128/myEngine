@@ -102,8 +102,7 @@ void Player::Update()
 		comboTimer_ = 1.0f;
 		behaviorRequest_ = Behavior::kAttack;
 	}
-	// 残像処理
-	AffterEffect();
+	
 	// 基礎更新
 	BaseObject::Update();
 	// 腕追従
@@ -229,6 +228,11 @@ void Player::BehaviorRootUpdate()
 			fallSpeed = 0.0f;  // 着地時に速度をリセット
 		}
 	}
+
+
+	// 残像処理
+	AffterEffect();
+
 }
 
 
@@ -251,6 +255,8 @@ void Player::BehaviorAttackUpdate()
 		comboStage_ = 0;
 		behaviorRequest_ = Behavior::kRoot;
 	}
+
+	afterImageEmitter_->SetCount(0);
 }
 
 #pragma endregion

@@ -154,6 +154,7 @@ void GameScene::Debug()
 	player_->Debug();
 	followCamera_->imgui();
 	ui_->Debug();
+	enemyManager_->Debug();
 }
 
 void GameScene::CameraUpdate()

@@ -9,6 +9,7 @@ public:
 	void Update(const int maxEnemy);
 	void Draw(const ViewProjection& vp);
 	void DrawParticle(const ViewProjection& vp);
+	void Debug();
 	int GetDeadCount() { return deadEnemiesCount_; }
 
 private:
@@ -23,6 +24,7 @@ private:
 	// 敵
 	std::list<std::unique_ptr<Enemy>> enemies_;
 	std::vector<std::unique_ptr<ParticleEmitter>> spawnEffects_;
+	std::vector<std::unique_ptr<ParticleEmitter>> deathParticles_;
 
 	float spawnTimer_ = 0.0f;  // 敵を追加するためのタイマー
 	const float spawnInterval_ = 1.0f; // 敵を追加する間隔（1秒）

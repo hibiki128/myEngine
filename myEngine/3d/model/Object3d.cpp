@@ -94,6 +94,7 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	}
 	// マテリアルCBufferの場所を設定
 	if (model) {
+		model->SetAnimator(modelAnimation_->GetAnimator());
 		model->Draw();
 	}
 }

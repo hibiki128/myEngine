@@ -33,9 +33,19 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 
 void Model::Draw()
 {
+	D3D12_VERTEX_BUFFER_VIEW influenceBufferView;
+	uint32_t SrvIndex;
+	if (isGltf) {
+		influenceBufferView = skin_->GetSkinCluster().influenceBufferView;
+		SrvIndex = skin_->GetSrvIndex();
+	}
+	else {
+		influenceBufferView = {};
+		SrvIndex = {};
+	}
 	D3D12_VERTEX_BUFFER_VIEW vbvs[2] = {
 	vertexBufferView, // VertexDataのVBV
-	skin_->GetSkinCluster().influenceBufferView
+    influenceBufferView
 	};
 	if (!animator_->HaveAnimation()) {
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs); // VBVを設定
@@ -48,7 +58,7 @@ void Model::Draw()
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
 		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
-		srvManager_->SetGraphicsRootDescriptorTable(6, skin_->GetSrvIndex());
+		srvManager_->SetGraphicsRootDescriptorTable(6, SrvIndex);
 	}
 	// 描画！（DrawCall/ドローコール）
 	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);

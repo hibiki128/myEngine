@@ -41,6 +41,12 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 
 	// 発生頻度に基づいてパーティクルを発生させる
 	while (elapsedTime_ >= emitFrequency_) {
+		Manager_->SetRandomRotate(isRandomRotate_);
+		Manager_->SetAcceMultipy(isAcceMultiply_);
+		Manager_->SetBillBorad(isBillBoard_);
+		Manager_->SetRandomSize(isRandomScale_);
+		Manager_->SetAllRandomSize(isAllRamdomScale_);
+		Manager_->SetSinMove(isSinMove_);
 		Emit();  // パーティクルを発生させる
 		elapsedTime_ -= emitFrequency_;  // 過剰に進んだ時間を考慮
 	}
@@ -51,6 +57,12 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 {
 	if (!isActive_) {
+		Manager_->SetRandomRotate(isRandomRotate_);
+		Manager_->SetAcceMultipy(isAcceMultiply_);
+		Manager_->SetBillBorad(isBillBoard_);
+		Manager_->SetRandomSize(isRandomScale_);
+		Manager_->SetAllRandomSize(isAllRamdomScale_);
+		Manager_->SetSinMove(isSinMove_);
 		Emit();  // パーティクルを発生させる
 		isActive_ = true;
 	}
@@ -60,12 +72,6 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 
 void ParticleEmitter::Draw()
 {
-	Manager_->SetRandomRotate(isRandomRotate_);
-	Manager_->SetAcceMultipy(isAcceMultiply_);
-	Manager_->SetBillBorad(isBillBoard_);
-	Manager_->SetRandomSize(isRandomScale_);
-	Manager_->SetAllRandomSize(isAllRamdomScale_);
-	Manager_->SetSinMove(isSinMove_);
 	Manager_->Draw();
 }
 
@@ -430,8 +436,8 @@ void ParticleEmitter::imgui() {
 		// Alphaを折りたたみ可能にする
 		if (ImGui::TreeNode("透明度")) {
 			ImGui::Text("透明度の設定:");
-			ImGui::DragFloat("最大値", &alphaMax_, 0.1f, 0.0f, 1.0f);
-			ImGui::DragFloat("最小値", &alphaMin_, 0.1f, 0.0f, 1.0f);
+			ImGui::DragFloat("最大値", &alphaMax_, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("最小値", &alphaMin_, 0.01f, 0.0f, 1.0f);
 			alphaMin_ = std::clamp(alphaMin_, 0.0f, alphaMax_);
 			alphaMax_ = std::clamp(alphaMax_, alphaMin_, 1.0f);
 			ImGui::TreePop();
@@ -440,7 +446,7 @@ void ParticleEmitter::imgui() {
 
 	// エミット設定セクション
 	if (ImGui::CollapsingHeader("パーティクルの数、間隔")) {
-		ImGui::DragFloat("間隔", &emitFrequency_, 0.01f, 0.01f, 100.0f);
+		ImGui::DragFloat("間隔", &emitFrequency_, 0.001f, 0.001f, 100.0f);
 		ImGui::InputInt("数", &count_, 1, 100);
 		count_ = std::clamp(count_, 0, 10000);
 	}

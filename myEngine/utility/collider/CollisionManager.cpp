@@ -121,13 +121,14 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 
 	colliderA->SetIsColliding(isCollidingNow);
 	colliderB->SetIsColliding(isCollidingNow);
-	colliderA->SetIsCollidingInCurrentFrame(isCollidingNow);
-	colliderB->SetIsCollidingInCurrentFrame(isCollidingNow);
+
 
 	bool wasColliding = collisionStates[key];
 
 	// 衝突状態の変化に応じたコールバックの呼び出し
 	if (isCollidingNow) {
+		colliderA->SetIsCollidingInCurrentFrame(true);
+		colliderB->SetIsCollidingInCurrentFrame(true);
 		// 前フレームで衝突していなかった場合に発生
 		if (!wasColliding) {
 			colliderA->OnCollisionEnter(colliderB);

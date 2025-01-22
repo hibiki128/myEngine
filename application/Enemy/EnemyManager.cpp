@@ -6,7 +6,7 @@ void EnemyManager::Init(const Vector3& position, Player* player)
 {
 	position_ = position;
 	player_ = player;
-	
+
 }
 
 void EnemyManager::Update(const int maxEnemy)
@@ -23,10 +23,36 @@ void EnemyManager::Draw(const ViewProjection& vp)
 
 void EnemyManager::DrawParticle(const ViewProjection& vp)
 {
+	for (auto& enemy : enemies_) {
+		enemy->DrawParticle(vp);
+	}
 	for (auto& spawnEffect : spawnEffects_) {
 		spawnEffect->UpdateOnce(vp);
 		spawnEffect->Draw();
 	}
+	ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
+	for (auto& deathParticle : deathParticles_) {
+		deathParticle->UpdateOnce(vp);
+		deathParticle->Draw();
+	}
+}
+
+void EnemyManager::Debug()
+{
+	ImGui::Begin("敵達");
+	if (ImGui::BeginTabBar("敵")) {
+
+		int index = 0;
+		for (auto& enemy : enemies_) {
+			std::string name = "敵" + std::to_string(index); // 敵0, 敵1, 敵2, ...
+			enemy->Debug(name); // EnemyクラスのDebug関数を呼び出して名前を設定する
+
+			index++;
+		}
+
+		ImGui::EndTabBar();
+	}
+	ImGui::End();
 }
 
 void EnemyManager::AddEnemy(std::unique_ptr<Enemy> enemy)
@@ -49,7 +75,7 @@ void EnemyManager::SpawnEnemy(const Vector3& enemyPosition)
 	// パーティクル
 	std::unique_ptr<ParticleEmitter> spawnEffect_;
 	spawnEffect_ = std::make_unique<ParticleEmitter>();
-	spawnEffect_->Initialize("spawnEffect", "debug/cube.obj");
+	spawnEffect_->Initialize("spawnEffect", "debug/ICO.obj");
 	spawnEffect_->SetPosition(enemyPosition);
 	spawnEffect_->SetActive(false);
 	spawnEffects_.push_back(std::move(spawnEffect_));
@@ -94,11 +120,11 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy)
 	{
 		spawnTimer_ = 0.0f;  // タイマーリセット
 
-		// 敵の数が5以下の場合に追加
+		// 敵の数が maxEnemies 以下の場合に追加
 		if (enemies_.size() < maxEnemies)
 		{
 			Vector3 playerPosition = position_;
-			SpawnEnemies({ playerPosition.x,1.0f,playerPosition.z }); // プレイヤー周囲に敵を生成
+			SpawnEnemies({ playerPosition.x, 1.0f, playerPosition.z }); // プレイヤー周囲に敵を生成
 		}
 	}
 
@@ -108,6 +134,13 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy)
 	{
 		if ((*it)->IsDead())  // 死亡している場合
 		{
+			std::unique_ptr<ParticleEmitter> deathParticle;
+			deathParticle = std::make_unique<ParticleEmitter>();
+			deathParticle->Initialize("death", "Enemy/deathParticle.obj");
+			deathParticle->SetPosition((*it)->GetWorldPosition());
+			deathParticle->SetActive(false);
+			deathParticles_.push_back(std::move(deathParticle));
+
 			it = enemies_.erase(it);  // リストから削除
 			++deadEnemiesCount_;  // 死亡した敵をカウント
 		}
@@ -116,6 +149,8 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy)
 			++it;
 		}
 	}
+
+	// 残りの敵を更新
 	for (auto& enemy : enemies_)
 	{
 		enemy->Update();

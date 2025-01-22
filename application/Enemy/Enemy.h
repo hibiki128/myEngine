@@ -1,5 +1,6 @@
 #pragma once
 #include"application/Base/BaseObject.h"
+#include"ParticleEmitter.h"
 class Player;
 class Enemy :public BaseObject
 {
@@ -19,6 +20,10 @@ public:
 
 	void Draw(const ViewProjection& viewProjection)override;
 
+	void DrawParticle(const ViewProjection& viewProjection);
+
+	void Debug(std::string& name);
+
 	void SetPlayer(Player* player) { player_ = player; }
 
 	void SetPosition(const Vector3& position) { transform_.translation_ = position; }
@@ -28,6 +33,12 @@ public:
 private:
 
 	void Move();
+
+	void Rotation();
+
+	void KnockBack();
+
+	void BehaviorUpdate();
 
 	void BehaviorRootInitialize();
 
@@ -46,11 +57,23 @@ private:
 private:
 	// 次の振るまいリクエスト
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	std::unique_ptr<ParticleEmitter> hitParticle_ = nullptr;
+
 	Behavior behavior_ = Behavior::kRoot;
 
 	Player* player_ = nullptr;
-	int HP = 10;
-	bool isDead_ = false;
 
+	int HP_ = 10;
+
+	bool isHit_ = false;
+	bool isDead_ = false;
+	bool isStop_ = false;
+	
+	float coolTime_ = 0.0f;
+	float knockbackTimer_ = 0.0f;
+	float fallSpeed = 0.0f;
+
+	const float knockbackTMax_ = 0.2f;
 };
 

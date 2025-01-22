@@ -9,10 +9,10 @@
         1.0,
         1.0
     ],
-    "alphaMax": 0.27000001072883606,
-    "alphaMin": 0.27000001072883606,
-    "count": 0,
-    "emitFrequency": 0.017999999225139618,
+    "alphaMax": 1.0,
+    "alphaMin": 0.30000001192092896,
+    "count": 40,
+    "emitFrequency": 0.10000000149011612,
     "emitter": {
         "rotation": [
             0.0,
@@ -21,41 +21,41 @@
         ],
         "scale": [
             0.0,
-            0.0,
+            3.0,
             0.0
         ],
         "translate": [
-            36.919769287109375,
-            0.800000011920929,
-            -335.98895263671875
+            0.0,
+            0.0,
+            0.0
         ]
     },
     "endAcce": [
-        0.0,
-        0.0,
-        0.0
+        0.30000001192092896,
+        1.0,
+        0.30000001192092896
     ],
     "endRote": [
         0.0,
-        1.5271573066711426,
+        0.0,
         0.0
     ],
     "endScale": [
-        1.0,
-        1.0,
-        1.0
+        0.0,
+        0.0,
+        0.0
     ],
     "isAcceMultiply": true,
     "isActive": true,
     "isAllRamdomScale": false,
     "isBillBoard": false,
-    "isRandomColor": false,
+    "isRandomColor": true,
     "isRandomRotate": false,
-    "isRandomScale": false,
+    "isRandomScale": true,
     "isSinMove": false,
     "isVisible": true,
-    "lifeTimeMax": 0.5,
-    "lifeTimeMin": 0.5,
+    "lifeTimeMax": 1.2999999523162842,
+    "lifeTimeMin": 0.699999988079071,
     "rotateVelocityMax": [
         0.07000000029802322,
         0.07000000029802322,
@@ -66,31 +66,31 @@
         -0.07000000029802322,
         -0.07000000029802322
     ],
-    "scaleMax": 0.0,
-    "scaleMin": 0.0,
+    "scaleMax": 2.0,
+    "scaleMin": 0.5,
     "startAcce": [
-        0.0,
-        0.0,
-        0.0
-    ],
-    "startRote": [
-        0.0,
-        1.5271573066711426,
-        0.0
-    ],
-    "startScale": [
         1.0,
         1.0,
         1.0
     ],
-    "velocityMax": [
+    "startRote": [
         0.0,
         0.0,
         0.0
     ],
+    "startScale": [
+        2.0,
+        2.0,
+        2.0
+    ],
+    "velocityMax": [
+        30.0,
+        15.0,
+        30.0
+    ],
     "velocityMin": [
-        0.0,
-        0.0,
-        0.0
+        -30.0,
+        1.0,
+        -30.0
     ]
 }

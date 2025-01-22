@@ -23,7 +23,7 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("spawnEffect", "debug/cube.obj");
+	emitter_->Initialize("death", "Enemy/deathParticle.obj");
 }
 
 void TitleScene::Finalize()
