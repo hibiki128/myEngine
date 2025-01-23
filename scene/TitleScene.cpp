@@ -23,7 +23,7 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("demo", "debug/plane.obj");
+	emitter_->Initialize("demo", "debug/cube.obj");
 }
 
 void TitleScene::Finalize()
@@ -72,8 +72,8 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	//emitter_->UpdateOnce(vp_);
-	emitter_->Update(vp_);
+	emitter_->UpdateOnce(vp_);
+	//emitter_->Update(vp_);
 	emitter_->Draw();
 	//-----------------------------
 

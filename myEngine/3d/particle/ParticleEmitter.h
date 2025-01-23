@@ -82,6 +82,7 @@ private:
     bool isActive_ = false;
     bool isAcceMultiply_ = false;
     bool isSinMove_ = false;
+    bool isFaceDirection_ = false;
 
     std::unique_ptr<ParticleManager> Manager_;
 };

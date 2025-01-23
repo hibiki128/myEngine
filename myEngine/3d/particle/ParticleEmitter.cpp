@@ -47,6 +47,7 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 		Manager_->SetRandomSize(isRandomScale_);
 		Manager_->SetAllRandomSize(isAllRamdomScale_);
 		Manager_->SetSinMove(isSinMove_);
+		Manager_->SetFaceDirection(isFaceDirection_);
 		Emit();  // パーティクルを発生させる
 		elapsedTime_ -= emitFrequency_;  // 過剰に進んだ時間を考慮
 	}
@@ -63,6 +64,7 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 		Manager_->SetRandomSize(isRandomScale_);
 		Manager_->SetAllRandomSize(isAllRamdomScale_);
 		Manager_->SetSinMove(isSinMove_);
+		Manager_->SetFaceDirection(isFaceDirection_);
 		Emit();  // パーティクルを発生させる
 		isActive_ = true;
 	}
@@ -184,6 +186,7 @@ void ParticleEmitter::SaveToJson() {
 	j["isActive"] = isActive_;
 	j["isAcceMultiply"] = isAcceMultiply_;
 	j["isSinMove"] = isSinMove_;
+	j["isFaceDirection"] = isFaceDirection_;
 
 	// ディレクトリを作成し、JSONファイルを保存
 	std::filesystem::create_directories("resources/jsons/Particle/");
@@ -280,6 +283,7 @@ void ParticleEmitter::LoadFromJson() {
 	isActive_ = j["isActive"];
 	isAcceMultiply_ = j["isAcceMultiply"];
 	isSinMove_ = j["isSinMove"];
+	isFaceDirection_ = j["isFaceDirection"];
 }
 
 
@@ -428,6 +432,7 @@ void ParticleEmitter::imgui() {
 				rotateVelocityMax_.z = std::clamp(rotateVelocityMax_.z, rotateVelocityMin_.z, FLT_MAX);
 			}
 			ImGui::Checkbox("ランダムな回転", &isRandomRotate_);
+			ImGui::Checkbox("進行方向に向ける", &isFaceDirection_);
 			ImGui::TreePop();
 		}
 
