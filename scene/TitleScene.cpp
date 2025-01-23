@@ -23,7 +23,12 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("demo", "debug/cube.obj");
+	emitter_->Initialize("reverse", "debug/cube.obj");
+
+	obj_ = std::make_unique<Object3d>();
+	obj_->Initialize("debug/cube.obj");
+
+	wt_.Initialize();
 }
 
 void TitleScene::Finalize()
@@ -48,10 +53,14 @@ void TitleScene::Update()
 
 	ImGui::Begin("パーティクル");
 	if (ImGui::Button("生成")) {
-	emitter_->UpdateOnce();
+		emitter_->UpdateOnce();
 	}
-	emitter_->Update();
+	if (isAuto_) {
+		emitter_->Update();
+	}
 	ImGui::End();
+
+	wt_.UpdateMatrix();
 
 }
 
@@ -68,12 +77,13 @@ void TitleScene::Draw()
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	emitter_->DrawEmitter();
+	obj_->Draw(wt_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	
+
 	emitter_->Draw(vp_);
 	//-----------------------------
 
@@ -117,7 +127,11 @@ void TitleScene::DrawForOffScreen()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
-
+	ImGui::Checkbox("パーティクルの自動更新", &isAuto_);
+	if (ImGui::Button("変更")) {
+		obj_->SetTexture("uvChecker.png");
+	}
+	debugCamera_->imgui();
 	ImGui::End();
 }
 

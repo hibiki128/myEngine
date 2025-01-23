@@ -68,6 +68,7 @@ public:
 	void SetAnimator(Animator* animator) { animator_ = animator; }
 	void SetSkin(Skin* skin) { skin_ = skin; }
 	void SetBone(Bone* bone) { bone_ = bone; }
+	void SetTextureIndex(const std::string& filePath);
 
 	ModelData GetModelData() { return modelData; }
 
@@ -81,8 +82,8 @@ private:
 	void CreateVartexData();
 
 	/// <summary>
-    /// indexの作成
-    /// </summary>
+	/// indexの作成
+	/// </summary>
 	void CreateIndexResource();
 
 	/// <summary>
