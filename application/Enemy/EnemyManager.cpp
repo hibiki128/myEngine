@@ -27,12 +27,12 @@ void EnemyManager::DrawParticle(const ViewProjection& vp)
 		enemy->DrawParticle(vp);
 	}
 	for (auto& spawnEffect : spawnEffects_) {
-		spawnEffect->UpdateOnce(vp);
-		spawnEffect->Draw();
+	
+		spawnEffect->Draw(vp);
 	}
 	for (auto& deathParticle : deathParticles_) {
-		deathParticle->UpdateOnce(vp);
-		deathParticle->Draw();
+		
+		deathParticle->Draw(vp);
 	}
 }
 
@@ -76,7 +76,7 @@ void EnemyManager::SpawnEnemy(const Vector3& enemyPosition)
 	spawnEffect_ = std::make_unique<ParticleEmitter>();
 	spawnEffect_->Initialize("spawnEffect", "debug/ICO.obj");
 	spawnEffect_->SetPosition(enemyPosition);
-	spawnEffect_->SetActive(false);
+	spawnEffect_->UpdateOnce();
 	spawnEffects_.push_back(std::move(spawnEffect_));
 }
 
@@ -137,7 +137,7 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy)
 			deathParticle = std::make_unique<ParticleEmitter>();
 			deathParticle->Initialize("death", "Enemy/deathParticle.obj");
 			deathParticle->SetPosition((*it)->GetWorldPosition());
-			deathParticle->SetActive(false);
+			deathParticle->UpdateOnce();
 			deathParticles_.push_back(std::move(deathParticle));
 
 			it = enemies_.erase(it);  // リストから削除

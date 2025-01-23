@@ -107,6 +107,8 @@ void Player::Update()
 	BaseObject::Update();
 	// 腕追従
 	ArmFollow();
+	afterImageEmitter_->Update();
+	weapon_->ParticleUpdate();
 
 	Shadow_.translation_ = Vector3(transform_.translation_.x, 0.1f, transform_.translation_.z);
 	// 武器更新
@@ -132,10 +134,9 @@ void Player::DrawParticle(const ViewProjection& viewProjection)
 	if (behavior_ == Behavior::kAttack) {
 		weapon_->SetCount(1);
 	}
-	afterImageEmitter_->Update(viewProjection);
-	afterImageEmitter_->Draw();
-	weapon_->ParticleUpdate(viewProjection);
-	weapon_->DrawParticle();
+	
+	afterImageEmitter_->Draw(viewProjection);
+	weapon_->DrawParticle(viewProjection);
 }
 
 void Player::imgui()

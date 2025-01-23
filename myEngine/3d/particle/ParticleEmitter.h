@@ -21,11 +21,11 @@ public:
     void Initialize(const std::string& name, const std::string& fileName);
 
     // 更新処理を行うUpdate関数
-    void Update(const ViewProjection& vp_);
+    void Update();
 
-    void UpdateOnce(const ViewProjection& vp_);
+    void UpdateOnce();
 
-    void Draw();
+    void Draw(const ViewProjection& vp_);
 
     void DrawEmitter();
 

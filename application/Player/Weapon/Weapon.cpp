@@ -22,9 +22,9 @@ void Weapon::Draw(const ViewProjection& viewProjection)
 	BaseObject::Draw(viewProjection);
 }
 
-void Weapon::DrawParticle()
+void Weapon::DrawParticle(const ViewProjection& viewProjection)
 {
-	afterImageEmitter_->Draw();
+	afterImageEmitter_->Draw(viewProjection);
 }
 
 void Weapon::Debug()
@@ -32,9 +32,9 @@ void Weapon::Debug()
 	BaseObject::DebugImGui();
 }
 
-void Weapon::ParticleUpdate(const ViewProjection& viewProjection)
+void Weapon::ParticleUpdate()
 {
-	afterImageEmitter_->Update(viewProjection);
+	afterImageEmitter_->Update();
 	afterImageEmitter_->SetPosition(GetCenterPosition());
 	afterImageEmitter_->SetStartRotate(GetCenterRotation());
 	afterImageEmitter_->SetEndRotate(GetCenterRotation());

@@ -35,7 +35,7 @@ void ParticleEmitter::Initialize(const std::string& name, const std::string& fil
 }
 
 // Update関数
-void ParticleEmitter::Update(const ViewProjection& vp_) {
+void ParticleEmitter::Update() {
 	// 経過時間を進める
 	elapsedTime_ += Frame::DeltaTime();
 
@@ -51,12 +51,11 @@ void ParticleEmitter::Update(const ViewProjection& vp_) {
 		Emit();  // パーティクルを発生させる
 		elapsedTime_ -= emitFrequency_;  // 過剰に進んだ時間を考慮
 	}
-	Manager_->Update(vp_);
-	transform_.UpdateMatrix();
 }
 
-void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
+void ParticleEmitter::UpdateOnce()
 {
+	isActive_ = false;
 	if (!isActive_) {
 		Manager_->SetRandomRotate(isRandomRotate_);
 		Manager_->SetAcceMultipy(isAcceMultiply_);
@@ -68,12 +67,13 @@ void ParticleEmitter::UpdateOnce(const ViewProjection& vp_)
 		Emit();  // パーティクルを発生させる
 		isActive_ = true;
 	}
-	Manager_->Update(vp_);
-	transform_.UpdateMatrix();
+	
 }
 
-void ParticleEmitter::Draw()
+void ParticleEmitter::Draw(const ViewProjection& vp_)
 {
+	Manager_->Update(vp_);
+	transform_.UpdateMatrix();
 	Manager_->Draw();
 }
 

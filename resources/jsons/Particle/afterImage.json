@@ -49,6 +49,7 @@
     "isActive": true,
     "isAllRamdomScale": false,
     "isBillBoard": false,
+    "isFaceDirection": false,
     "isRandomColor": false,
     "isRandomRotate": false,
     "isRandomScale": false,

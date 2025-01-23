@@ -14,11 +14,11 @@ public:
 
 	void Draw(const ViewProjection& viewProjection)override;
 
-	void DrawParticle();
+	void DrawParticle(const ViewProjection& viewProjection);
 
 	void Debug();
 
-	void ParticleUpdate(const ViewProjection& viewProjection);
+	void ParticleUpdate();
 
 	void SetParent(const WorldTransform& worldTransform) { transform_.parent_ = &worldTransform; }
 

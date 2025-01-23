@@ -46,7 +46,7 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 void Enemy::DrawParticle(const ViewProjection& viewProjection)
 {
 	if (!isDead_) {
-		hitParticle_->UpdateOnce(viewProjection);
+		
 	}
 	//hitParticle_->Draw();
 }
@@ -192,7 +192,7 @@ void Enemy::BehaviorUpdate()
 		BaseObject::Update();
 		hitParticle_->SetPosition(transform_.translation_);
 		if (isHit_) {
-			hitParticle_->SetActive(false);
+			hitParticle_->UpdateOnce();
 		}
 	}
 	else {

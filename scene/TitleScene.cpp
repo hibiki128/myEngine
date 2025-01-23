@@ -48,8 +48,9 @@ void TitleScene::Update()
 
 	ImGui::Begin("パーティクル");
 	if (ImGui::Button("生成")) {
-		emitter_->SetActive(false);
+	emitter_->UpdateOnce();
 	}
+	emitter_->Update();
 	ImGui::End();
 
 }
@@ -72,9 +73,8 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	emitter_->UpdateOnce(vp_);
-	//emitter_->Update(vp_);
-	emitter_->Draw();
+	
+	emitter_->Draw(vp_);
 	//-----------------------------
 
 	//-----線描画-----
