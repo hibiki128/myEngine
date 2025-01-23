@@ -9,6 +9,7 @@ void Enemy::Init(const std::string className)
 	BaseObject::CreateModel("debug/Cube.obj");
 	BaseObject::CreateCollider();
 	Collider::SetCollisionType(CollisionType::OBB);
+	Collider::SetVisible(false);
 	objColor_.SetColor({ 1.0f,0.0f,0.0f,1.0f });
 	transform_.translation_ += transform_.scale_.y;
 	HP_ = 10;

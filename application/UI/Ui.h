@@ -14,6 +14,8 @@ public:
 private:
 	using json = nlohmann::json;
 	std::unique_ptr<Sprite> explanation_;
+	std::unique_ptr<Sprite> explanation2_;
 	Vector2 spPos_;
+	Vector2 spPos2_;
 };
 

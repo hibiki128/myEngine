@@ -30,7 +30,6 @@ void EnemyManager::DrawParticle(const ViewProjection& vp)
 		spawnEffect->UpdateOnce(vp);
 		spawnEffect->Draw();
 	}
-	ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
 	for (auto& deathParticle : deathParticles_) {
 		deathParticle->UpdateOnce(vp);
 		deathParticle->Draw();

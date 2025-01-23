@@ -98,7 +98,7 @@ void Player::Update()
 		break;
 	}
 
-	if (Input::GetInstance()->TriggerKey(DIK_J)) {
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		comboTimer_ = 1.0f;
 		behaviorRequest_ = Behavior::kAttack;
 	}
@@ -267,14 +267,14 @@ void Player::HandleCombo()
 {
 	if (comboTimer_ > 0.0f) {
 		// コンボタイマーが残っている間はコンボ入力を受け付ける
-		if (Input::GetInstance()->TriggerKey(DIK_J) && isNextAttack_) {
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE) && isNextAttack_) {
 			// 攻撃入力があったらコンボを進める
 			ProcessComboInput();
 			isNextAttack_ = false;  // 次の攻撃が開始されたのでフラグをリセット
 			//R_arm_wt.rotation_.y = transform_.rotation_.y - 0.6f;
 			attackTimer_ = 0.0f;
 		}
-		else if (Input::GetInstance()->TriggerKey(DIK_J)) {
+		else if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 			// `J` が押されていて `isNextAttack_` が `false` の場合、入力をキープする
 			isJKeyPressed_ = true;
 		}
