@@ -23,12 +23,19 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("reverse", "debug/cube.obj");
+	emitter2_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize("reverse", "debug/sphere.obj");
+	emitter_->SetTexture("white1x1.png");
+	emitter2_->Initialize("reverse_black", "debug/sphere.obj");
+	emitter2_->SetTexture("black1x1.png");
 
 	obj_ = std::make_unique<Object3d>();
 	obj_->Initialize("debug/cube.obj");
-
+	obj2_ = std::make_unique<Object3d>();
+	obj2_->Initialize("debug/cube.obj");
 	wt_.Initialize();
+	wt2_.Initialize();
+	wt2_.translation_ = { 5.0f,0.0f,0.0f };
 }
 
 void TitleScene::Finalize()
@@ -50,17 +57,23 @@ void TitleScene::Update()
 	ChangeScene();
 
 	emitter_->imgui();
+	emitter2_->imgui();
 
 	ImGui::Begin("パーティクル");
 	if (ImGui::Button("生成")) {
 		emitter_->UpdateOnce();
 	}
+	if (ImGui::Button("生成2")) {
+		emitter2_->UpdateOnce();
+	}
 	if (isAuto_) {
 		emitter_->Update();
+		emitter2_->Update();
 	}
 	ImGui::End();
 
 	wt_.UpdateMatrix();
+	wt2_.UpdateMatrix();
 
 }
 
@@ -77,14 +90,17 @@ void TitleScene::Draw()
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	emitter_->DrawEmitter();
+	emitter2_->DrawEmitter();
 	obj_->Draw(wt_, vp_);
+	obj2_->Draw(wt2_, vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-
+	ptCommon_->SetBlendMode(BlendMode::kNormal);
 	emitter_->Draw(vp_);
+	emitter2_->Draw(vp_);
 	//-----------------------------
 
 	//-----線描画-----
@@ -129,8 +145,9 @@ void TitleScene::Debug()
 	ImGui::Begin("TitleScene:Debug");
 	ImGui::Checkbox("パーティクルの自動更新", &isAuto_);
 	if (ImGui::Button("変更")) {
-		obj_->SetTexture("uvChecker.png");
+		obj_->SetTexture("monsterBall.png");
 	}
+
 	debugCamera_->imgui();
 	ImGui::End();
 }

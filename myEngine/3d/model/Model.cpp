@@ -47,17 +47,17 @@ void Model::Draw()
 	vertexBufferView, // VertexDataのVBV
     influenceBufferView
 	};
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 	if (!animator_->HaveAnimation()) {
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs); // VBVを設定
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
-		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
+		//srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
 	}
 	else {
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs); // VBVを設定
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+		//modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 		// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である
-		srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
+		//srvManager_->SetGraphicsRootDescriptorTable(2, modelData.material.textureIndex);
 		srvManager_->SetGraphicsRootDescriptorTable(6, SrvIndex);
 	}
 	// 描画！（DrawCall/ドローコール）

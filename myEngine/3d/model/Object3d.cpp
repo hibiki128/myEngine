@@ -4,6 +4,7 @@
 #include "Object3d.h"
 #include"Object3dCommon.h"
 #include <line/DrawLine3D.h>
+#include"TextureManager.h"
 
 
 
@@ -21,6 +22,9 @@ void Object3d::Initialize(const std::string& filePath)
 
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
+
+	materialData->textureFilePath = model->GetModelData().material.textureFilePath;
+	materialData->textureIndex = model->GetModelData().material.textureIndex;
 
 	modelAnimation_ = std::make_unique<ModelAnimation>();
 	modelAnimation_->SetModelData(model->GetModelData());
@@ -89,6 +93,7 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// wvp用のCBufferの場所を設定
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	SrvManager::GetInstance()->SetGraphicsRootDescriptorTable(2, materialData->textureIndex);
 	if (materialData->enableLighting != 0 && lightGroup) {
 		lightGroup->Draw();
 	}
@@ -131,6 +136,14 @@ void Object3d::SetModel(const std::string& filePath)
 {
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
+}
+
+void Object3d::SetTexture(const std::string& filePath)
+{
+	materialData->textureFilePath = filePath;
+	TextureManager::GetInstance()->LoadTexture(filePath);
+	materialData->textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(filePath);
+	model->SetMaterialData({ materialData->textureFilePath ,materialData->textureIndex });
 }
 
 void Object3d::SetShininess(float shininess)

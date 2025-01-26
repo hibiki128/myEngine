@@ -363,6 +363,22 @@ Quaternion Slerp(Quaternion q0, Quaternion q1, float t)
 	}
 }
 
+Matrix4x4 MakeUVRotateMatrix(float angle)
+{
+	float cosTheta = cosf(angle);
+	float sinTheta = sinf(angle);
+
+	// UV座標の回転行列（Z成分は省略）
+	Matrix4x4 uvRotateMatrix = {
+		cosTheta, -sinTheta, 0.0f, 0.0f,
+		sinTheta,  cosTheta, 0.0f, 0.0f,
+		0.0f,      0.0f,    1.0f, 0.0f,
+		0.0f,      0.0f,    0.0f, 1.0f
+	};
+
+	return uvRotateMatrix;
+}
+
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
 //	Novice::ScreenPrintf(x, y, "%.02f", vector.x);
