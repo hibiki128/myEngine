@@ -10,9 +10,6 @@ void ParticleManager::Initialize(SrvManager* srvManager)
 	particleCommon = ParticleCommon::GetInstance();
 	srvManager_ = srvManager;
 	randomEngine.seed(seedGenerator());
-	accelerationField.acceleration = { 15.0f,0.0f,0.0f };
-	accelerationField.area.min = { -1.0f,-1.0f,-1.0f };
-	accelerationField.area.max = { 1.0f,1.0f,1.0f };
 }
 
 void ParticleManager::Update(const ViewProjection& viewProjection)

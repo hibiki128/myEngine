@@ -10,7 +10,6 @@
 #include"WorldTransform.h"
 #include"ParticleEmitter.h"
 
-
 class TitleScene :public BaseScene
 {
 public: // メンバ関数
@@ -58,14 +57,4 @@ private:
 
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
-
-	std::unique_ptr<ParticleEmitter> emitter_; 
-	std::unique_ptr<ParticleEmitter> emitter2_; 
-
-	std::unique_ptr<Object3d> obj_;
-	std::unique_ptr<Object3d> obj2_;
-	WorldTransform wt_;
-	WorldTransform wt2_;
-
-	bool isAuto_ = false;
 };

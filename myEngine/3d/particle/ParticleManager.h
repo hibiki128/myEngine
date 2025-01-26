@@ -10,11 +10,6 @@
 #include"ParticleCommon.h"
 class ParticleManager
 {
-private:
-	struct AABB {
-		Vector3 min; //!< 最小点
-		Vector3 max; //!< 最大点
-	};
 public:
 	/// <summary>
 	/// 初期化
@@ -47,19 +42,6 @@ public:
 	void SetFaceDirection(bool flag) { isFaceDirection_ = flag; }
 	void SetTexture(const std::string& filePath);
 
-	// AABBとVector3の当たり判定
-	bool IsCollision(const AABB& aabb, const Vector3& point) {
-		// 点がAABBの範囲内にあるかをチェック
-		if (point.x >= aabb.min.x && point.x <= aabb.max.x &&
-			point.y >= aabb.min.y && point.y <= aabb.max.y &&
-			point.z >= aabb.min.z && point.z <= aabb.max.z) {
-			return true; // 当たっている
-		}
-		return false; // 当たっていない
-	}
-
-	void imgui();
-
 private:
 	/// <summary>
 	/// 頂点データ作成
@@ -67,10 +49,6 @@ private:
 	void CreateVartexData(const std::string& filename);
 
 private:
-	struct AccelerationField {
-		Vector3 acceleration;
-		AABB area;
-	};
 
 	struct ParticleForGPU {
 		Matrix4x4 WVP;

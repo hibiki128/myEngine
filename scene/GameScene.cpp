@@ -22,33 +22,6 @@ void GameScene::Initialize()
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
-
-	/// ===================================================
-	/// 生成
-	/// ===================================================
-	player_ = std::make_unique<Player>();
-	enemyManager_ = std::make_unique<EnemyManager>();
-	followCamera_ = std::make_unique<FollowCamera>();
-	skyDome_ = std::make_unique<SkyDome>();
-	ground_ = std::make_unique<Ground>();
-	ui_ = std::make_unique<UI>();
-
-	/// ===================================================
-	/// 初期化
-	/// ===================================================
-	player_->Init("Player");
-	enemyManager_->Init(player_->GetPosition(),player_.get());
-	followCamera_->Init();
-	skyDome_->Init("SkyDome");
-	ground_->Init("Ground");
-	ui_->Init();
-
-	/// ===================================================
-	/// セット
-	/// ===================================================
-
-	followCamera_->SetTarget(&player_->GetWorldTransform());
-	player_->SetCamera(followCamera_.get());
 }
 
 void GameScene::Update()
@@ -64,12 +37,6 @@ void GameScene::Update()
 	// シーン切り替え
 	ChangeScene();
 
-	// 他のオブジェクトの更新処理
-	player_->Update();
-	enemyManager_->Update(10);
-	skyDome_->Update();
-	ground_->Update();
-	ui_->Update();
 }
 
 
@@ -80,15 +47,12 @@ void GameScene::Draw()
 	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
-	ui_->Draw();
+	
 	//------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	
-	player_->Draw(vp_);
-	enemyManager_->Draw(vp_);
-
 	//--------------------------
 
 	/// Particleの描画準備
@@ -118,15 +82,13 @@ void GameScene::DrawForOffScreen()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	skyDome_->Draw(vp_);
-	ground_->Draw(vp_);
+
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	player_->DrawParticle(vp_);
-	enemyManager_->DrawParticle(vp_);
+	
 	//-----------------------------
 
 
@@ -146,15 +108,7 @@ void GameScene::Debug()
 		ImGui::EndTabBar();
 	}
 
-	ImGui::End(); // ダイアログの終了
-	ImGui::Begin("ObjData");
-	player_->imgui();
 	ImGui::End();
-	// その他のデバッグ情報
-	player_->Debug();
-	followCamera_->imgui();
-	ui_->Debug();
-	enemyManager_->Debug();
 }
 
 void GameScene::CameraUpdate()
@@ -163,17 +117,13 @@ void GameScene::CameraUpdate()
 		debugCamera_->Update();
 	}
 	else {
-		followCamera_->Update();
-		vp_.matWorld_ = followCamera_->GetViewProjection().matWorld_;
-		vp_.matView_ = followCamera_->GetViewProjection().matView_;
-		vp_.matProjection_ = followCamera_->GetViewProjection().matProjection_;
-		//vp_.UpdateMatrix();
+		vp_.UpdateMatrix();
 	}
 }
 
 void GameScene::ChangeScene()
 {
-	if (enemyManager_->GetDeadCount() > 5) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneManager_->NextSceneReservation("TITLE");
 	}
 }

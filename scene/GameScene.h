@@ -7,12 +7,6 @@
 #include "ParticleCommon.h"
 #include"ViewProjection.h"
 #include"DebugCamera.h"
-#include"application/Enemy/EnemyManager.h"
-#include"application/Player/Player.h"
-#include"application/Camera/FollowCamera.h"
-#include"application/Field/SkyDome/SkyDome.h"
-#include"application/Field/Ground/Ground.h"
-#include"application/UI/Ui.h"
 
 class GameScene : public BaseScene
 {
@@ -61,26 +55,4 @@ private:
 	// ビュープロジェクション
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
-
-	/// ===================================================
-	/// オブジェクト
-	/// ===================================================
-
-	// プレイヤー
-	std::unique_ptr<Player> player_;
-
-	// エネミーマネージャ
-	std::unique_ptr<EnemyManager> enemyManager_;
-
-	// 追従カメラ
-	std::unique_ptr<FollowCamera> followCamera_;
-
-	// 天球
-	std::unique_ptr<SkyDome>skyDome_;
-
-	// 地面
-	std::unique_ptr<Ground>ground_;
-
-	// UI
-	std::unique_ptr<UI> ui_;
 };

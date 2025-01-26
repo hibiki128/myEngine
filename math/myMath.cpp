@@ -379,29 +379,6 @@ Matrix4x4 MakeUVRotateMatrix(float angle)
 	return uvRotateMatrix;
 }
 
-
-// 行列から回転成分をオイラー角に変換して取得
-Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat) {
-	Vector3 eulerAngles;
-
-	// Gimbal lock を考慮しながらオイラー角を計算
-	if (std::abs(mat.m[2][0]) < 1.0f) {
-		// 通常の場合
-		eulerAngles.x = std::atan2(-mat.m[2][1], mat.m[2][2]); // Pitch (X軸回転)
-		eulerAngles.y = std::asin(mat.m[2][0]);                // Yaw (Y軸回転)
-		eulerAngles.z = std::atan2(-mat.m[1][0], mat.m[0][0]); // Roll (Z軸回転)
-	}
-	else {
-		// Gimbal lock の場合
-		eulerAngles.x = std::atan2(mat.m[1][2], mat.m[1][1]);
-		eulerAngles.y = (mat.m[2][0] > 0.0f) ? std::numbers::pi_v<float> / 2 : -std::numbers::pi_v<float> / 2;
-		eulerAngles.z = 0.0f; // 任意の値が取れるため0に設定
-	}
-
-	return eulerAngles;
-}
-
-
 //
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
 //	Novice::ScreenPrintf(x, y, "%.02f", vector.x);

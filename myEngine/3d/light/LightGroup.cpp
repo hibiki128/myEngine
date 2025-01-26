@@ -58,7 +58,6 @@ void LightGroup::Draw()
 }
 
 void LightGroup::imgui() {
-	//ImGui::Begin("Light");
 	
 
 	if (ImGui::BeginTabBar("Direction")) {

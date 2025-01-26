@@ -41,14 +41,6 @@ private:
 	//マウス
 	static std::unique_ptr<Mouse>mouse_;
 
-class Mouse {
-private:
-	//マウス
-	Microsoft::WRL::ComPtr<IDirectInputDevice8> devMouse_;
-	DIMOUSESTATE2 mouse_;
-	DIMOUSESTATE2 mousePre_;
-	Vector2 mousePosition_;
-	HWND hWnd_;
 public:
 	// シングルトンインスタンスの取得
 	static Input* GetInstance();
@@ -164,4 +156,3 @@ public:
 	const BYTE* GetKeyState() const { return key_.data(); }
 	const BYTE* GetPreviousKeyState() const { return keyPre_.data(); }
 };
-

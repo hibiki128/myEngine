@@ -170,10 +170,10 @@
     <ClCompile Include="math\myMath.cpp">
       <Filter>ソースファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\ModelManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\model\ModelManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\TextureManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\texture\TextureManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\camera\Camera.cpp">
@@ -200,7 +200,7 @@
     <ClCompile Include="myEngine\utility\string\StringUtility.cpp">
       <Filter>ソースファイル\myEngine\utility\string</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\SrvManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\srv\SrvManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\utility\debug\ImGuiManager.cpp">
@@ -230,7 +230,7 @@
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp">
       <Filter>ソースファイル\myEngine\utility\scene</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\pso\PipeLineManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
@@ -308,38 +308,14 @@
     <ClCompile Include="myEngine\3d\model\animation\Skin.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
-    <ClCompile Include="application\Enemy\Enemy.cpp">
-      <Filter>ソースファイル\application\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Camera\FollowCamera.cpp">
-      <Filter>ソースファイル\application\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Field\Ground\Ground.cpp">
-      <Filter>ソースファイル\application\Field\Ground</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
-      <Filter>ソースファイル\application\Field\SkyDome</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Player\Player.cpp">
-      <Filter>ソースファイル\application\Player</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Player\Weapon\Weapon.cpp">
-      <Filter>ソースファイル\application\Player\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル\myEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="application\UI\Ui.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Enemy\EnemyManager.cpp">
-      <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -358,9 +334,6 @@
     </None>
     <None Include="resources\shaders\OffScreen\FullScreen.hlsli">
       <Filter>リソース ファイル\OffScreen</Filter>
-    </None>
-    <None Include="resources\shaders\Primitive.hlsli">
-      <Filter>シェーダー ファイル</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -475,16 +448,16 @@
     <ClInclude Include="myEngine\utility\edit\LevelData.h">
       <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\ModelManager.h">
+    <ClInclude Include="myEngine\utility\graphics\model\ModelManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h">
+    <ClInclude Include="myEngine\utility\graphics\pso\PipeLineManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\SrvManager.h">
+    <ClInclude Include="myEngine\utility\graphics\srv\SrvManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\TextureManager.h">
+    <ClInclude Include="myEngine\utility\graphics\texture\TextureManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h">
@@ -568,29 +541,9 @@
     <ClInclude Include="application\Base\BaseObject.h">
       <Filter>ソースファイル\application\Base</Filter>
     </ClInclude>
-    <ClInclude Include="application\Enemy\Enemy.h">
-      <Filter>ソースファイル\application\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Camera\FollowCamera.h">
-      <Filter>ソースファイル\application\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Field\Ground\Ground.h">
-      <Filter>ソースファイル\application\Field\Ground</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Field\SkyDome\SkyDome.h">
-      <Filter>ソースファイル\application\Field\SkyDome</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Player\Player.h">
-      <Filter>ソースファイル\application\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="application\Player\Weapon\Weapon.h">
-      <Filter>ソースファイル\application\Player\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
-    <ClInclude Include="application\UI\Ui.h" />
-    <ClInclude Include="application\Enemy\EnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">

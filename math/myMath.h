@@ -110,10 +110,6 @@ Quaternion Slerp(Quaternion q0, Quaternion q1, float t);
 Matrix4x4 MakeUVRotateMatrix(float angle);
 
 
-
-// 行列から回転成分をオイラー角に変換して取得
-Vector3 GetEulerAnglesFromMatrix(const Matrix4x4& mat);
-
 //// デバッグ用
 //void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label);
 //void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label);
