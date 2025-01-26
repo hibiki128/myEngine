@@ -22,7 +22,7 @@ public: // メンバ関数
 	/// <param name="isFlipX">左右反転</param>
 	/// <param name="isFlipY">上下反転</param>
 	void Initialize(const std::string& textureFilePath, Vector2 position, Vector4 color = { 1,1,1,1 }, Vector2 anchorpoint = { 0.0f,0.0f }, bool isFlipX = false, bool isFlipY = false);
-	
+
 	/// <summary>
 	/// 描画
 	/// </summary>

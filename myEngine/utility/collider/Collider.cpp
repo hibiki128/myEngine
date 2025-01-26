@@ -1,48 +1,12 @@
+#define NOMINMAX
 #include "Collider.h"
 #include"CollisionManager.h"
+#include <line/DrawLine3D.h>
 
 int Collider::counter = -1;  // 初期値を-1に変更
 
 Collider::Collider() {
-	Cubewt_.Initialize();
-	AABBwt_.Initialize();
-	OBBwt_.Initialize();
-	CollisionManager::AddCollider(this);
-	sphere_ = std::make_unique<Object3d>();
-	sphere_->Initialize("debug/Collider.obj");
-	AABB_ = std::make_unique<Object3d>();
-	AABB_->Initialize("debug/AABB.obj");
-	OBB_ = std::make_unique<Object3d>();
-	OBB_->Initialize("debug/OBB.obj");
-	variables_ = GlobalVariables::GetInstance();
 
-	// 派生クラス名を取得して整形
-	std::string className = typeid(*this).name();
-	size_t pos = className.find("Collider");
-	if (pos != std::string::npos) {
-		className.replace(pos, 8, ""); // "Collider"部分を削除
-	}
-
-	counter++;
-	groupName = className + " Collider" + std::to_string(counter);
-
-	// 初期化
-	SphereOffset = { 0.0f, 0.0f, 0.0f };
-	AABBOffset.min = { 0.0f, 0.0f, 0.0f };
-	AABBOffset.max = { 0.0f, 0.0f, 0.0f };
-	OBBOffset.center = { 0.0f,0.0f,0.0f };
-	OBBOffset.size = { 0.0f,0.0f,0.0f };
-
-	// グループがまだ存在しない場合のみ作成
-	if (!variables_->GroupExists(groupName)) {
-		variables_->CreateGroup(groupName);
-		variables_->AddItem(groupName, "Cube Translation", SphereOffset);
-		variables_->AddItem(groupName, "AABB Min", AABBOffset.min);
-		variables_->AddItem(groupName, "AABB Max", AABBOffset.max);
-		variables_->AddItem(groupName, "OBB center", OBBOffset.center);
-		variables_->AddItem(groupName, "OBB size", OBBOffset.size);
-	}
-	color_.SetColor({ 0.0f,0.0f,0.0f,1.0f });
 }
 
 Collider::~Collider()
@@ -51,68 +15,337 @@ Collider::~Collider()
 	counter--;  // カウンターをデクリメント
 }
 
-void Collider::Initialize() {
+void Collider::Initialize(const std::string className) {
+	CollisionManager::AddCollider(this);
+
+	counter++;
+
+	// 初期化
+	SphereOffset_.center = { 0.0f, 0.0f, 0.0f };
+	SphereOffset_.radius = 0.0f;
+	AABBOffset_.min = { 0.0f, 0.0f, 0.0f };
+	AABBOffset_.max = { 0.0f, 0.0f, 0.0f };
+	OBBOffset_.rotationCenter = { 0.0f,0.0f,0.0f };
+	OBBOffset_.scaleCenter = { 0.0f,0.0f,0.0f };
+	OBBOffset_.size = { 1.0f,1.0f,1.0f };
+
+	className_ = className;
+	LoadFromJson();
 }
 
 void Collider::UpdateWorldTransform() {
-	ApplyVariables();
 
 	// 球用のワールドトランスフォームを更新
-	Cubewt_.translation_ = GetCenterPosition() + SphereOffset;
-	Cubewt_.scale_ = { radius_, radius_, radius_ };
-	Cubewt_.UpdateMatrix();
+	sphere_.center = GetCenterPosition() + SphereOffset_.center;
+	sphere_.radius = radius_ + SphereOffset_.radius;
 
 	// AABBの現在の最小点と最大点を取得
-	aabb = GetAABB();
-	aabb.min = aabb.min + AABBOffset.min;
-	aabb.max = aabb.max + AABBOffset.max;
+	aabb_.min = GetCenterPosition() - Vector3(1.0f, 1.0f, 1.0f);
+	aabb_.max = GetCenterPosition() + Vector3(1.0f, 1.0f, 1.0f);
+	aabb_.min = aabb_.min + AABBOffset_.min;
+	aabb_.max = aabb_.max + AABBOffset_.max;
 
-	// AABBの最小点と最大点からスケールと中心位置を計算
-	aabbCenter = (aabb.min + aabb.max) * 0.5f;
-	aabbScale = (aabb.max - aabb.min) * 0.5f;
+	// OBBの各プロパティを更新
+	obb_.rotationCenter = GetCenterPosition() + OBBOffset_.rotationCenter; // 回転中心
+	obb_.scaleCenter = GetCenterPosition() + OBBOffset_.scaleCenter;       // スケール中心
 
-	// AABB用ワールドトランスフォームの更新
-	AABBwt_.translation_ = aabbCenter;
-	AABBwt_.scale_ = aabbScale;
-	AABBwt_.UpdateMatrix();
+	// OBBの向きベクトルを計算
+	MakeOBBOrientations(obb_, GetCenterRotation());
 
-	obb.center = GetCenterPos();
-	obb.center = obb.center + OBBOffset.center;
-	MakeOBBOrientations(obb, GetCenterRotation());
-	obb.size = { 1.0f,1.0f,1.0f };
-	obb.size = obb.size + OBBOffset.size;
+	// サイズを更新
+	obb_.size = OBBOffset_.size;
 
-	OBBwt_.translation_ = obb.center;
-	OBBwt_.rotation_ = GetCenterRotation();
-	OBBwt_.scale_ = obb.size;
-	OBBwt_.UpdateMatrix();
+	UpdateOBB();
+
+}
+
+void Collider::DebugDraw(const ViewProjection& viewProjection)
+{
+	if (!isVisible_ || !isCollisionEnabled_) {
+		return;
+	}
+	if (isSphere_) {
+		DrawSphere(viewProjection);
+	}
+	if (isAABB_) {
+		DrawAABB(viewProjection);
+	}
+	if (isOBB_) {
+		DrawOBB(viewProjection);
+	}
 }
 
 void Collider::DrawSphere(const ViewProjection& viewProjection) {
-	sphere_->Draw(Cubewt_, viewProjection, &color_, true);
+	const uint32_t kSubdivision = 10;                                        // 分割数
+	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / kSubdivision; // 経度分割1つ分の角度
+	const float kLatEvery = std::numbers::pi_v<float> / kSubdivision;        // 緯度分割1つ分の角度
+
+	// 緯度の方向に分割　-π/2 ～ π/2
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex; // 現在の緯度
+
+		// 経度の方向に分割 0 ～ 2π
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+			float lon = lonIndex * kLonEvery; // 現在の経度
+
+			// 現在の点を求める
+			Vector3 start = {
+				sphere_.center.x + sphere_.radius * std::cosf(lat) * std::cosf(lon),
+				sphere_.center.y + sphere_.radius * std::sinf(lat),
+				sphere_.center.z + sphere_.radius * std::cosf(lat) * std::sinf(lon)
+			};
+
+			// 次の点を求める（経度方向）
+			Vector3 end1 = {
+				sphere_.center.x + sphere_.radius * std::cosf(lat) * std::cosf(lon + kLonEvery),
+				sphere_.center.y + sphere_.radius * std::sinf(lat),
+				sphere_.center.z + sphere_.radius * std::cosf(lat) * std::sinf(lon + kLonEvery),
+			};
+
+			// 次の点を求める（緯度方向）
+			Vector3 end2 = {
+				sphere_.center.x + sphere_.radius * std::cosf(lat + kLatEvery) * std::cosf(lon),
+				sphere_.center.y + sphere_.radius * std::sinf(lat + kLatEvery),
+				sphere_.center.z + sphere_.radius * std::cosf(lat + kLatEvery) * std::sinf(lon),
+			};
+
+			// 線を描画（経度方向）
+			DrawLine3D::GetInstance()->SetPoints(start, end1, color_);
+			// 線を描画（緯度方向）
+			DrawLine3D::GetInstance()->SetPoints(start, end2, color_);
+		}
+	}
 }
+
 
 void Collider::DrawAABB(const ViewProjection& viewProjection)
 {
-	AABB_->Draw(AABBwt_, viewProjection, &color_, false);
+	// AABBの頂点リスト
+	std::array<Vector3, 8> vertices = {
+		aabb_.min,
+		{ aabb_.max.x, aabb_.min.y, aabb_.min.z },
+		{ aabb_.min.x, aabb_.max.y, aabb_.min.z },
+		{ aabb_.max.x, aabb_.max.y, aabb_.min.z },
+		{ aabb_.min.x, aabb_.min.y, aabb_.max.z },
+		{ aabb_.max.x, aabb_.min.y, aabb_.max.z },
+		{ aabb_.min.x, aabb_.max.y, aabb_.max.z },
+		{ aabb_.max.x, aabb_.max.y, aabb_.max.z }
+	};
+
+	// エッジ接続リスト
+	const std::array<std::pair<int, int>, 12> edges = {
+		std::make_pair(0, 1), std::make_pair(1, 3), std::make_pair(3, 2), std::make_pair(2, 0), // 前面
+		std::make_pair(4, 5), std::make_pair(5, 7), std::make_pair(7, 6), std::make_pair(6, 4), // 背面
+		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
+	};
+
+	// 線を描画
+	for (const auto& edge : edges) {
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
+	}
 }
 
 void Collider::DrawOBB(const ViewProjection& viewProjection) {
-	// OBBの描画処理（AABBと似た形で描画）
-	OBB_->Draw(OBBwt_, viewProjection, &color_, false);
+	// OBBの8つの頂点を計算
+	std::array<Vector3, 8> vertices;
+	Vector3 halfSize = obb_.size; // サイズの半分を計算
+
+	// OBBの8頂点を計算するループ
+	for (int i = 0; i < 8; i++) {
+		// 各頂点のローカル座標を計算
+		Vector3 localPosition = Vector3(
+			(i & 1) ? halfSize.x : -halfSize.x,
+			(i & 2) ? halfSize.y : -halfSize.y,
+			(i & 4) ? halfSize.z : -halfSize.z
+		);
+
+		// scaleCenter を基準にスケール変換
+		Vector3 scaledPosition = localPosition + (obb_.scaleCenter - obb_.rotationCenter);
+
+		// 回転中心を基準に回転を適用
+		Vector3 rotatedPosition =
+			obb_.orientations[0] * scaledPosition.x +
+			obb_.orientations[1] * scaledPosition.y +
+			obb_.orientations[2] * scaledPosition.z;
+
+		// ワールド座標へ変換
+		vertices[i] = obb_.rotationCenter + rotatedPosition;
+	}
+
+	// scaleCenterに球を描画
+	DrawSphereAtCenter(viewProjection, obb_.scaleCenterRotated, 0.1f);  // 半径0.1fで球を描画
+
+	// エッジ接続リスト
+	const std::array<std::pair<int, int>, 12> edges = {
+		std::make_pair(0, 1), std::make_pair(1, 3), std::make_pair(3, 2), std::make_pair(2, 0), // 前面
+		std::make_pair(4, 5), std::make_pair(5, 7), std::make_pair(7, 6), std::make_pair(6, 4), // 背面
+		std::make_pair(0, 4), std::make_pair(1, 5), std::make_pair(2, 6), std::make_pair(3, 7)  // 側面
+	};
+
+	// 線を描画
+	for (const auto& edge : edges) {
+		DrawLine3D::GetInstance()->SetPoints(vertices[edge.first], vertices[edge.second], color_);
+	}
+
+	DrawRotationCenter(viewProjection);
 }
 
-void Collider::ApplyVariables()
+// 球を描画する関数
+void Collider::DrawSphereAtCenter(const ViewProjection& viewProjection, const Vector3& center, float radius) {
+	const int slices = 16;  // 球の横方向の分割数
+	const int stacks = 8;   // 球の縦方向の分割数
+
+	for (int i = 0; i < slices; i++) {
+		float theta1 = (i * 2.0f * std::numbers::pi_v<float>) / slices;
+		float theta2 = ((i + 1) * 2.0f * std::numbers::pi_v<float>) / slices;
+
+		for (int j = 0; j < stacks; j++) {
+			float phi1 = (j * std::numbers::pi_v<float>) / stacks;
+			float phi2 = ((j + 1) * std::numbers::pi_v<float>) / stacks;
+
+			// 球の4つの頂点を計算
+			Vector3 p1 = Vector3(
+				center.x + radius * sin(phi1) * cos(theta1),
+				center.y + radius * cos(phi1),
+				center.z + radius * sin(phi1) * sin(theta1)
+			);
+
+			Vector3 p2 = Vector3(
+				center.x + radius * sin(phi1) * cos(theta2),
+				center.y + radius * cos(phi1),
+				center.z + radius * sin(phi1) * sin(theta2)
+			);
+
+			Vector3 p3 = Vector3(
+				center.x + radius * sin(phi2) * cos(theta1),
+				center.y + radius * cos(phi2),
+				center.z + radius * sin(phi2) * sin(theta1)
+			);
+
+			Vector3 p4 = Vector3(
+				center.x + radius * sin(phi2) * cos(theta2),
+				center.y + radius * cos(phi2),
+				center.z + radius * sin(phi2) * sin(theta2)
+			);
+
+			// 4つの三角形で球の断片を描画
+			DrawLine3D::GetInstance()->SetPoints(p1, p2);
+			DrawLine3D::GetInstance()->SetPoints(p2, p4);
+			DrawLine3D::GetInstance()->SetPoints(p4, p3);
+			DrawLine3D::GetInstance()->SetPoints(p3, p1);
+		}
+	}
+}
+
+void Collider::OffsetImgui() {
+	if (ImGui::BeginTabItem("コライダー")) {
+		ImGui::Checkbox("可視化", &isVisible_);
+		ImGui::Checkbox("コライダーの有無", &isCollisionEnabled_);
+
+		if (isCollisionEnabled_) {
+			ImGui::Checkbox("球判定を使用する", &isSphere_);
+			if (isSphere_) {
+				ImGui::DragFloat3("中心点", &SphereOffset_.center.x, 0.1f);
+				ImGui::DragFloat("半径", &SphereOffset_.radius, 0.1f);
+			}
+			ImGui::Separator();
+
+			ImGui::Checkbox("AABB判定を使用する", &isAABB_);
+			if (isAABB_) {
+				ImGui::DragFloat3("最大値", &AABBOffset_.max.x, 0.1f);
+				ImGui::DragFloat3("最小値", &AABBOffset_.min.x, 0.1f);
+			}
+			ImGui::Separator();
+
+			ImGui::Checkbox("OBB判定を使用する", &isOBB_);
+			if (isOBB_) {
+				ImGui::DragFloat3("中心", &OBBOffset_.scaleCenter.x, 0.1f);
+				ImGui::DragFloat3("大きさ", &OBBOffset_.size.x, 0.1f);
+			}
+			ImGui::Separator();
+		}
+
+		if (ImGui::Button("セーブ")) {
+			SaveToJson();
+			std::string message = std::format("Collider saved.");
+			MessageBoxA(nullptr, message.c_str(), "Object", 0);
+		}
+
+		ImGui::EndTabItem();
+	}
+}
+
+void Collider::DrawRotationCenter(const ViewProjection& viewProjection) {
+	// 回転中心を表す球の半径
+	float rotationCenterRadius = 0.1f;
+
+	// 球を構成する点を描画
+	const uint32_t kSubdivision = 10; // 分割数
+	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / kSubdivision;
+	const float kLatEvery = std::numbers::pi_v<float> / kSubdivision;
+
+	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
+		float lat = -std::numbers::pi_v<float> / 2.0f + kLatEvery * latIndex;
+
+		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
+			float lon = lonIndex * kLonEvery;
+
+			Vector3 start = {
+				obb_.rotationCenter.x + rotationCenterRadius * std::cosf(lat) * std::cosf(lon),
+				obb_.rotationCenter.y + rotationCenterRadius * std::sinf(lat),
+				obb_.rotationCenter.z + rotationCenterRadius * std::cosf(lat) * std::sinf(lon)
+			};
+
+			Vector3 end1 = {
+				obb_.rotationCenter.x + rotationCenterRadius * std::cosf(lat) * std::cosf(lon + kLonEvery),
+				obb_.rotationCenter.y + rotationCenterRadius * std::sinf(lat),
+				obb_.rotationCenter.z + rotationCenterRadius * std::cosf(lat) * std::sinf(lon + kLonEvery),
+			};
+
+			Vector3 end2 = {
+				obb_.rotationCenter.x + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::cosf(lon),
+				obb_.rotationCenter.y + rotationCenterRadius * std::sinf(lat + kLatEvery),
+				obb_.rotationCenter.z + rotationCenterRadius * std::cosf(lat + kLatEvery) * std::sinf(lon),
+			};
+
+			DrawLine3D::GetInstance()->SetPoints(start, end1);
+			DrawLine3D::GetInstance()->SetPoints(start, end2);
+		}
+	}
+}
+
+void Collider::SetCollisionType(CollisionType collisionType)
 {
-	SphereOffset = variables_->GetVector3Value(groupName, "Cube Translation");
-	AABBOffset.min = variables_->GetVector3Value(groupName, "AABB Min");
-	AABBOffset.max = variables_->GetVector3Value(groupName, "AABB Max");
-	OBBOffset.center = variables_->GetVector3Value(groupName, "OBB center");
-	OBBOffset.size = variables_->GetVector3Value(groupName, "OBB size");
+	switch (collisionType)
+	{
+	case Collider::CollisionType::Sphere:
+		isSphere_ = true;
+		isAABB_ = false;
+		isOBB_ = false;
+		break;
+	case Collider::CollisionType::AABB:
+		isSphere_ = false;
+		isAABB_ = true;
+		isOBB_ = false;
+		break;
+	case Collider::CollisionType::OBB:
+		isSphere_ = false;
+		isAABB_ = false;
+		isOBB_ = true;
+		break;
+	default:
+		isSphere_ = false;
+		isAABB_ = false;
+		isOBB_ = false;
+		break;
+	}
 }
 
 void Collider::MakeOBBOrientations(OBB& obb, const Vector3& rotate) {
-	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * (MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z));
+	// 回転行列を作成
+	Matrix4x4 rotateMatrix = MakeRotateXMatrix(rotate.x) * MakeRotateYMatrix(rotate.y) * MakeRotateZMatrix(rotate.z);
+
+	// 各方向ベクトルを計算
 	obb.orientations[0].x = rotateMatrix.m[0][0];
 	obb.orientations[0].y = rotateMatrix.m[0][1];
 	obb.orientations[0].z = rotateMatrix.m[0][2];
@@ -124,4 +357,61 @@ void Collider::MakeOBBOrientations(OBB& obb, const Vector3& rotate) {
 	obb.orientations[2].x = rotateMatrix.m[2][0];
 	obb.orientations[2].y = rotateMatrix.m[2][1];
 	obb.orientations[2].z = rotateMatrix.m[2][2];
+}
+
+void Collider::UpdateOBB()
+{
+	// 回転後にscaleCenterの位置を計算
+	obb_.scaleCenterRotated = obb_.orientations[0] * (obb_.scaleCenter.x - obb_.rotationCenter.x) +
+		obb_.orientations[1] * (obb_.scaleCenter.y - obb_.rotationCenter.y) +
+		obb_.orientations[2] * (obb_.scaleCenter.z - obb_.rotationCenter.z) + obb_.rotationCenter;
+}
+
+void Collider::SaveToJson() {
+	json j;
+
+	// 各種フラグをJSONに保存
+	j["isVisible"] = isVisible_;
+	j["isCollisionEnabled"] = isCollisionEnabled_;
+	j["isSphere"] = isSphere_;
+	j["isAABB"] = isAABB_;
+	j["isOBB"] = isOBB_;
+
+	// 各オフセット値をJSONに保存
+	j["SphereOffset"]["center"] = { SphereOffset_.center.x, SphereOffset_.center.y, SphereOffset_.center.z };
+	j["SphereOffset"]["radius"] = SphereOffset_.radius;
+	j["AABBOffset"]["min"] = { AABBOffset_.min.x, AABBOffset_.min.y, AABBOffset_.min.z };
+	j["AABBOffset"]["max"] = { AABBOffset_.max.x, AABBOffset_.max.y, AABBOffset_.max.z };
+	j["OBBOffset"]["scaleCenter"] = { OBBOffset_.scaleCenter.x, OBBOffset_.scaleCenter.y, OBBOffset_.scaleCenter.z };
+	j["OBBOffset"]["size"] = { OBBOffset_.size.x, OBBOffset_.size.y, OBBOffset_.size.z };
+
+	// ディレクトリを作成し、JSONファイルを保存
+	std::filesystem::create_directories("resources/jsons/Collider/");
+	std::ofstream outFile("resources/jsons/Collider/" + className_ + ".json");
+	outFile << j.dump(4);
+}
+
+void Collider::LoadFromJson() {
+	std::ifstream inFile("resources/jsons/Collider/" + className_ + ".json");
+	if (!inFile.is_open()) {
+		return; // JSONファイルがない場合は早期リターン
+	}
+
+	json j;
+	inFile >> j;
+
+	// 各種フラグをJSONから読み込み
+	isVisible_ = j["isVisible"].get<bool>();
+	isCollisionEnabled_ = j["isCollisionEnabled"].get<bool>();
+	isSphere_ = j["isSphere"].get<bool>();
+	isAABB_ = j["isAABB"].get<bool>();
+	isOBB_ = j["isOBB"].get<bool>();
+
+	// 各オフセット値をJSONから読み込み
+	SphereOffset_.center = { j["SphereOffset"]["center"][0], j["SphereOffset"]["center"][1], j["SphereOffset"]["center"][2] };
+	SphereOffset_.radius = j["SphereOffset"]["radius"];
+	AABBOffset_.min = { j["AABBOffset"]["min"][0], j["AABBOffset"]["min"][1], j["AABBOffset"]["min"][2] };
+	AABBOffset_.max = { j["AABBOffset"]["max"][0], j["AABBOffset"]["max"][1], j["AABBOffset"]["max"][2] };
+	OBBOffset_.scaleCenter = { j["OBBOffset"]["scaleCenter"][0], j["OBBOffset"]["scaleCenter"][1], j["OBBOffset"]["scaleCenter"][2] };
+	OBBOffset_.size = { j["OBBOffset"]["size"][0], j["OBBOffset"]["size"][1], j["OBBOffset"]["size"][2] };
 }

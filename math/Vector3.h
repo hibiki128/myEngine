@@ -1,6 +1,5 @@
 #pragma once
 #include"cmath"
-
 /// <summary>
 /// 3次元ベクトル
 /// </summary>
@@ -103,6 +102,9 @@ struct Vector3 final {
 	// ベクトルの長さを計算
 	float Length() const { return std::sqrt(x * x + y * y + z * z); }
 
+	// ベクトルの長さの二乗を計算
+	float LengthSq() const { return x * x + y * y + z * z; }
+
 	// ベクトルを正規化（単位ベクトルにする）
 	Vector3 Normalize() const {
 		float len = Length();
@@ -126,5 +128,4 @@ struct Vector3 final {
 			x * other.y - y * other.x
 		);
 	}
-
 };

@@ -41,6 +41,11 @@ public:
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
 	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
 	void SetAcceMultipy(bool isAcceMultipy) { isAcceMultipy_ = isAcceMultipy; }
+	void SetRandomSize(bool isRandomSize) { isRandomSize_ = isRandomSize; }
+	void SetAllRandomSize(bool isAllRandomSize) { isRandomAllSize_ = isAllRandomSize; }
+	void SetSinMove(bool isSinMove) { isSinMove_ = isSinMove; }
+	void SetFaceDirection(bool flag) { isFaceDirection_ = flag; }
+	void SetTexture(const std::string& filePath);
 
 	// AABBとVector3の当たり判定
 	bool IsCollision(const AABB& aabb, const Vector3& point) {
@@ -82,6 +87,7 @@ private:
 	struct MaterialData
 	{
 		std::string textureFilePath;
+		uint32_t textureIndex;
 	};
 
 	struct ModelData
@@ -94,9 +100,6 @@ private:
 		WorldTransform transform; // 位置
 		Vector3 velocity;  // 速度
 		Vector3 Acce;
-		Vector4 color;     // 色
-		float lifeTime;    // ライフタイム
-		float currentTime; // 現在の時間
 		Vector3 startScale;
 		Vector3 endScale;
 		Vector3 startAcce;
@@ -104,6 +107,10 @@ private:
 		Vector3 startRote;
 		Vector3 endRote;
 		Vector3 rotateVelocity;
+		Vector3 fixedDirection;
+		Vector4 color;     // 色
+		float lifeTime;    // ライフタイム
+		float currentTime; // 現在の時間
 		float initialAlpha;
 	};
 
@@ -150,7 +157,6 @@ private:
 	std::unordered_map<std::string, ParticleGroup>particleGroups;
 
 	// Δtを定義
-	const float kDeltaTime = 1.0f / 60.0f;
 	static const uint32_t kNumMaxInstance = 10000; // 最大インスタンス数の制限
 
 	std::random_device seedGenerator;
@@ -159,18 +165,20 @@ private:
 	bool isBillboard = false;
 	bool isRandomRotate_ = false;
 	bool isAcceMultipy_ = false;
-
-	AccelerationField accelerationField;
+	bool isRandomSize_ = false;
+	bool isRandomAllSize_ = false;
+	bool isSinMove_ = false;
+	bool isFaceDirection_ = false;
 	
-
-	bool isArea = false;
-
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
 	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax, float lifeTimeMin, float lifeTimeMax,
 		const Vector3& particleStartScale, const Vector3& particleEndScale, const Vector3& startAcce, const Vector3& endAcce,
-		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax);
+		const Vector3& startRote, const Vector3& endRote, bool isRandomColor, float alphaMin, float alphaMax,
+		const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+		const Vector3& allScaleMax, const Vector3& allScaleMin,
+		const float& scaleMin, const float& scaleMax, const Vector3& rotation);
 
 
 private:
@@ -198,10 +206,13 @@ private:
 
 	Particle MakeNewParticle(std::mt19937& randomEngine,
 		const Vector3& translate,
+		const Vector3& rotation,
 		const Vector3& scale,
 		const Vector3& velocityMin, const Vector3& velocityMax,
 		float lifeTimeMin, float lifeTimeMax, const Vector3& particleStartScale, const Vector3& particleEndScale,
 		const Vector3& startAcce, const Vector3& endAcce, const Vector3& startRote, const Vector3& endRote
-		, bool isRamdomColor, float alphaMin, float alphaMax);
+		, bool isRamdomColor, float alphaMin, float alphaMax, const Vector3& rotateVelocityMin, const Vector3& rotateVelocityMax,
+		const Vector3& allScaleMax, const Vector3& allScaleMin,
+		const float& scaleMin, const float& scaleMax);
 };
 

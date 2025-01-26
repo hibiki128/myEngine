@@ -32,21 +32,32 @@ void SceneManager::Finalize()
 
 void SceneManager::Update()
 {
-	ImGui::Begin("シーン選択");
-	if (ImGui::Button("タイトルシーン")) {
+#ifdef _DEBUG
+
+	ImGui::Begin("scene");
+	if (ImGui::Button("TitleScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
 		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("TITLE");
 		transition_->SetFadeInStart(true);
 	}
-	if (ImGui::Button("ゲームシーン")) {
+	if (ImGui::Button("GameScene") && (transition_->IsEnd() && !transition_->FadeInStart())) {
+		if (!transition_->IsEnd() && transition_->FadeInStart()) {
+			return; // すでに遷移中なので、次の遷移予約はしない
+		}
 		transition_->Reset();
 		nextScene_ = sceneFactory_->CreateScene("GAME");
 		transition_->SetFadeInStart(true);
 	}
 	ImGui::End();
 
+#endif // _DEBUG
+
 	// 次のシーンの予約があるなら
 	if (nextScene_) {
+		if (!firstChange) {
+			transition_->SetFadeInFinish(true);
+			firstChange = true;
+		}
 		SceneChange();
 	}
 	if (!transition_->IsEnd()) {
@@ -69,6 +80,13 @@ void SceneManager::Draw()
 	}
 }
 
+void SceneManager::DrawForOffScreen()
+{
+	if (scene_) {
+		scene_->DrawForOffScreen();
+	}
+}
+
 void SceneManager::DrawTransition()
 {
 	if (!transition_->IsEnd()) {
@@ -82,21 +100,19 @@ void SceneManager::NextSceneReservation(const std::string& sceneName)
 	if (!transition_->IsEnd() && transition_->FadeInStart()) {
 		return; // すでに遷移中なので、次の遷移予約はしない
 	}
-
-	transition_->Reset(); // トランジションをリセット
+	transition_->Reset();
+	assert(sceneFactory_);
+	assert(nextScene_ == nullptr);
 
 	// 次シーンを生成
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
-
 	if (!firstChange) {
-		firstChange = true;
-		transition_->SetInFinish(true);
+		transition_->SetFadeOutStart(true);
 	}
 	else {
 		transition_->SetFadeInStart(true);
 	}
 }
-
 
 void SceneManager::SceneChange()
 {

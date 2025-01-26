@@ -1,5 +1,8 @@
 #include "Framework.h"
 #include"GlobalVariables.h"
+#include"ImGuiManager.h"
+#include <D3DResourceLeakChecker.h>
+#include"myEngine/Frame/Frame.h"
 
 void Framework::Run()
 {
@@ -50,6 +53,11 @@ void Framework::Initialize()
 	srvManager->Initialize();
 	///--------------------------
 
+	// offscreenのSRV作成
+	dxCommon->CreateOffscreenSRV();
+	// depthのSRV作成
+	dxCommon->CreateDepthSRV();
+
 	///----------Input-----------
 	// 入力の初期化
 	input = Input::GetInstance();
@@ -57,11 +65,13 @@ void Framework::Initialize()
 	///--------------------------
 
 	///-----------TextureManager----------
-	TextureManager::GetInstance()->Initialize(srvManager);
+	textureManager_ = TextureManager::GetInstance();
+	textureManager_->Initialize(srvManager);
 	///-----------------------------------
 
 	///-----------ModelManager------------
-	ModelManager::GetInstance()->Initialize(srvManager);
+	modelManager_ = ModelManager::GetInstance();
+	modelManager_->Initialize(srvManager);
 	///----------------------------------
 
 	///----------SpriteCommon------------
@@ -91,11 +101,28 @@ void Framework::Initialize()
 	collisionManager_->Initialize();
 	///-------------------------------------
 
+	///-------SceneManager--------
 	sceneManager_ = SceneManager::GetInstance();
 	sceneManager_->Initialize();
+	///---------------------------
+
+	///-------OffScreen--------
+	offscreen_ = std::make_unique<OffScreen>();
+	offscreen_->Initialize();
+	///------------------------
+	
+	///-------DrawLine3D-------
+	line3d_ = DrawLine3D::GetInstance();
+	line3d_->Initialize();
+	///------------------------
+
+	LightGroup::GetInstance()->Initialize();
 
 	GlobalVariables::GetInstance()->LoadFiles();
 	
+	/// 時間の初期化
+	Frame::Init();
+
 }
 
 void Framework::Finalize()
@@ -106,16 +133,17 @@ void Framework::Finalize()
 	winApp->Finalize();
 
 	/// -------TextureManager-------
-	TextureManager::GetInstance()->Finalize();
+	textureManager_->Finalize();
 	///-----------------------------
 
 	/// -------ModelCommon-------
-	ModelManager::GetInstance()->Finalize();
+	modelManager_->Finalize();
 	///---------------------------
 
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Finalize();
 #endif // _DEBUG
+	line3d_->Finalize();
 	srvManager->Finalize();
 	audio->Finalize();
 	LightGroup::GetInstance()->Finalize();
@@ -128,14 +156,17 @@ void Framework::Finalize()
 
 void Framework::Update()
 {
+	/// deltaTimeの更新
+	Frame::Update();
 #ifdef _DEBUG
-
 	ImGuiManager::GetInstance()->Begin();
 	GlobalVariables::GetInstance()->Update();
 #endif // _DEBUG
+	offscreen_->DrawCommonSetting();
 	sceneManager_->Update();
 	collisionManager_->Update();
 #ifdef _DEBUG
+	DisplayFPS();
 	ImGuiManager::GetInstance()->End();
 #endif // _DEBUG
 
@@ -150,7 +181,45 @@ void Framework::Update()
 	endRequest_ = winApp->ProcessMessage();
 }
 
+void Framework::LoadResource()
+{
+	
+}
+
+void  Framework::PlaySounds() {
+	
+}
+
 void Framework::Draw()
 {
 
+}
+
+void Framework::DisplayFPS()
+{
+#ifdef _DEBUG
+	ImGuiIO& io = ImGui::GetIO();
+
+	// ウィンドウ固定
+	ImGui::SetNextWindowPos(ImVec2(1230, 0), ImGuiCond_Always);
+	ImGui::SetNextWindowBgAlpha(0.0f); // 背景を完全透明に設定
+
+	// ウィンドウフラグを設定
+	ImGui::Begin("FPS Overlay", nullptr,
+		ImGuiWindowFlags_NoTitleBar |         // タイトルバーを非表示
+		ImGuiWindowFlags_NoResize |          // リサイズを禁止
+		ImGuiWindowFlags_NoMove |            // ウィンドウの移動を禁止
+		ImGuiWindowFlags_NoScrollbar |       // スクロールバーを非表示
+		ImGuiWindowFlags_NoCollapse |        // 折りたたみボタンを非表示
+		ImGuiWindowFlags_AlwaysAutoResize |  // 必要なサイズに自動調整
+		ImGuiWindowFlags_NoBackground        // 背景を非表示
+	);
+
+	// 文字色を緑に設定
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(50, 255, 50, 255));
+	ImGui::Text("%.1f", io.Framerate);
+	ImGui::PopStyleColor();
+
+	ImGui::End();
+#endif // _DEBUG
 }

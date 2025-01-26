@@ -5,10 +5,10 @@
 #include"Object3dCommon.h"
 #include "SpriteCommon.h"
 #include"ParticleCommon.h"
-#include"ViewProjection.h"
 #include"DebugCamera.h"
 #include"Object3d.h"
 #include"WorldTransform.h"
+#include"ParticleEmitter.h"
 
 
 class TitleScene :public BaseScene
@@ -35,7 +35,19 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	/// <summary>
+	/// オフスクリーン上に描画
+	/// </summary>
+	void DrawForOffScreen()override;
+
 	ViewProjection* GetViewProjection()override { return &vp_; }
+
+private:
+	void Debug();
+
+	void CameraUpdate();
+
+	void ChangeScene();
 
 private:
 	Audio* audio_;
@@ -43,10 +55,17 @@ private:
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
-	
-	std::unique_ptr<DebugCamera>debugCamera_;
-	std::unique_ptr<Object3d> obj_;
 
 	ViewProjection vp_;
+	std::unique_ptr<DebugCamera> debugCamera_;
+
+	std::unique_ptr<ParticleEmitter> emitter_; 
+	std::unique_ptr<ParticleEmitter> emitter2_; 
+
+	std::unique_ptr<Object3d> obj_;
+	std::unique_ptr<Object3d> obj2_;
 	WorldTransform wt_;
+	WorldTransform wt2_;
+
+	bool isAuto_ = false;
 };

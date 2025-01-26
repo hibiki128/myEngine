@@ -20,7 +20,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// グラフィックスパイプライン
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState[5];
 
 	BlendMode blendMode_ = BlendMode::kNormal;
 
@@ -46,7 +46,7 @@ public: // メンバ関数
 	/// 共通描画設定
 	/// </summary>
 	void DrawCommonSetting();
-	
+
 	/// <summary>
 	///  getter
 	/// </summary>

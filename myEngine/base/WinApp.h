@@ -28,7 +28,7 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
-	
+
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -57,7 +57,7 @@ public: // 定数
 	static const int32_t kClientWidth = 1280; // 横
 	static const int32_t kClientHeight = 720; // 縦
 private: // メンバ変数
-	
+
 	HWND hwnd = nullptr; // ウィンドウハンドル
 	WNDCLASS wc{}; // ウィンドウクラスの設定
 };

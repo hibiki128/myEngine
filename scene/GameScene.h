@@ -1,11 +1,19 @@
 #pragma once
 #include "Audio.h"
-#include"BaseScene.h"
+#include "BaseScene.h"
 #include "Input.h"
-#include"Object3dCommon.h"
+#include "Object3dCommon.h"
 #include "SpriteCommon.h"
-#include"ParticleCommon.h"
+#include "ParticleCommon.h"
 #include"ViewProjection.h"
+#include"DebugCamera.h"
+#include"application/Enemy/EnemyManager.h"
+#include"application/Player/Player.h"
+#include"application/Camera/FollowCamera.h"
+#include"application/Field/SkyDome/SkyDome.h"
+#include"application/Field/Ground/Ground.h"
+#include"application/UI/Ui.h"
+
 class GameScene : public BaseScene
 {
 public: // メンバ関数
@@ -30,12 +38,49 @@ public: // メンバ関数
 	/// </summary>
 	void Draw()override;
 
+	/// <summary>
+	/// オフスクリーン上に描画
+	/// </summary>
+	void DrawForOffScreen()override;
+
 	ViewProjection* GetViewProjection()override { return &vp_; }
 private:
+	void Debug();
+
+	void CameraUpdate();
+
+	void ChangeScene();
+private:
+
 	Audio* audio_;
 	Input* input_;
 	Object3dCommon* objCommon_;
 	SpriteCommon* spCommon_;
 	ParticleCommon* ptCommon_;
+
+	// ビュープロジェクション
 	ViewProjection vp_;
+	std::unique_ptr<DebugCamera> debugCamera_;
+
+	/// ===================================================
+	/// オブジェクト
+	/// ===================================================
+
+	// プレイヤー
+	std::unique_ptr<Player> player_;
+
+	// エネミーマネージャ
+	std::unique_ptr<EnemyManager> enemyManager_;
+
+	// 追従カメラ
+	std::unique_ptr<FollowCamera> followCamera_;
+
+	// 天球
+	std::unique_ptr<SkyDome>skyDome_;
+
+	// 地面
+	std::unique_ptr<Ground>ground_;
+
+	// UI
+	std::unique_ptr<UI> ui_;
 };

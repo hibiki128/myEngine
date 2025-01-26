@@ -11,7 +11,8 @@
 #include"wrl.h"
 #include"ViewProjection.h"
 #include"ObjColor.h"
-#include"LightGroup.h"
+#include"light/LightGroup.h"
+#include"animation/ModelAnimation.h"
 
 class ModelCommon;
 class Object3dCommon;
@@ -39,6 +40,8 @@ private: // メンバ変数
 		float padding[3];
 		Matrix4x4 uvTransform;
 		float shininess;
+		std::string textureFilePath;
+		uint32_t textureIndex = 0;
 	};
 
 	Object3dCommon* obj3dCommon = nullptr;
@@ -56,6 +59,7 @@ private: // メンバ変数
 	Transform transform;
 
 	Model* model = nullptr;
+	std::unique_ptr<ModelAnimation> modelAnimation_ = nullptr;
 	ModelCommon* modelCommon = nullptr;
 	LightGroup* lightGroup = nullptr;
 
@@ -77,9 +81,31 @@ public: // メンバ関数
 	void Update(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
+	/// アニメーションの更新
+	/// </summary>
+	void AnimationUpdate(bool roop);
+
+	/// <summary>
+	/// アニメーションの有無
+	/// </summary>
+	/// <param name="anime"></param>
+	void SetStopAnimation(bool anime) { modelAnimation_->SetIsAnimation(anime); }
+
+	/// <summary>
+	/// アニメーションのセット
+	/// </summary>
+	/// <param name="fileName"></param>
+	void SetAnimation(const std::string& fileName);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw(const WorldTransform& worldTransform, const ViewProjection& viewProjection, ObjColor* color = nullptr, bool Lighting = true);
+
+	/// <summary>
+	/// スケルトン描画
+	/// </summary>
+	void DrawSkeleton(const WorldTransform& worldTransform, const ViewProjection& viewProjection);
 
 	/// <summary>
 	/// getter
@@ -98,6 +124,8 @@ public: // メンバ関数
 	void SetRotation(const Vector3& rotation) { this->rotation = rotation; }
 	void SetSize(const Vector3& size) { this->size = size; }
 	void SetModel(const std::string& filePath);
+	void SetTexture(const std::string& filePath);
+	void SetUVTransform(const Matrix4x4& mat) { materialData->uvTransform = mat; }
 
 	/// <summary>
 	/// 光沢度の設定
@@ -116,5 +144,11 @@ private: // メンバ関数
 	/// マテリアルデータ作成
 	/// </summary>
 	void CreateMaterial();
+
+
+	Vector3 ExtractTranslation(const Matrix4x4& matrix)
+	{
+		return Vector3(matrix.m[3][0], matrix.m[3][1], matrix.m[3][2]);
+	}
 };
 

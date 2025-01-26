@@ -1,10 +1,12 @@
 #include "MyGame.h"
 #include"SceneFactory.h"
+#include <ImGuiManager.h>
 
 void MyGame::Initialize()
 {
 	Framework::Initialize();
-
+	Framework::LoadResource();
+	Framework::PlaySounds();
 	// -----ゲーム固有の処理-----
 
 	// 最初のシーンの生成
@@ -36,7 +38,7 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
-	dxCommon->PreDraw();
+	dxCommon->PreRenderTexture();
 	srvManager->PreDraw();
 	// -----描画開始-----
 
@@ -49,8 +51,15 @@ void MyGame::Draw()
 	}
 	sceneManager_->Draw();
 
+
+	dxCommon->PreDraw();
+	offscreen_->SetProjection(sceneManager_->GetBaseScene()->GetViewProjection()->matProjection_);
+	offscreen_->Draw();
+	dxCommon->TransitionDepthBarrier();
+	sceneManager_->DrawForOffScreen();
 	spriteCommon->DrawCommonSetting();
 	sceneManager_->DrawTransition();
+
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Draw();
 #endif // _DEBUG

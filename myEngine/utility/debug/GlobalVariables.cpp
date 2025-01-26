@@ -345,7 +345,10 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 
 int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::string& key) const {
 	// 指定グループが存在するか確認
-	assert(datas_.find(groupName) != datas_.end());
+	if (datas_.find(groupName) == datas_.end()) {
+		// グループが存在しない場合は、デフォルト値を返す
+		return 0;
+	}
 	// グループの参照を取得
 	const Group& group = datas_.at(groupName);
 	// 指定グループに指定のキーが存在するか確認
@@ -360,7 +363,10 @@ int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::st
 
 float GlobalVariables::GetFloatValue(const std::string& groupName, const std::string& key) const {
 	// 指定グループが存在するか確認
-	assert(datas_.find(groupName) != datas_.end());
+	if (datas_.find(groupName) == datas_.end()) {
+		// グループが存在しない場合は、デフォルト値を返す
+		return 0;
+	}
 	// グループの参照を取得
 	const Group& group = datas_.at(groupName);
 	// 指定グループに指定のキーが存在するか確認
@@ -376,7 +382,10 @@ float GlobalVariables::GetFloatValue(const std::string& groupName, const std::st
 Vector2 GlobalVariables::GetVector2Value(const std::string& groupName, const std::string& key) const
 {
 	// 指定グループが存在するか確認
-	assert(datas_.find(groupName) != datas_.end());
+	if (datas_.find(groupName) == datas_.end()) {
+		// グループが存在しない場合は、デフォルト値を返す
+		return Vector2(0);
+	}
 	// グループの参照を取得
 	const Group& group = datas_.at(groupName);
 	// 指定グループに指定のキーが存在するか確認
@@ -391,7 +400,10 @@ Vector2 GlobalVariables::GetVector2Value(const std::string& groupName, const std
 
 Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std::string& key) const {
 	// 指定グループが存在するか確認
-	assert(datas_.find(groupName) != datas_.end());
+	if (datas_.find(groupName) == datas_.end()) {
+		// グループが存在しない場合は、デフォルト値を返す
+		return Vector3(0);
+	}
 	// グループの参照を取得
 	const Group& group = datas_.at(groupName);
 	// 指定グループに指定のキーが存在するか確認
@@ -406,7 +418,10 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 
 bool GlobalVariables::GetBoolValue(const std::string& groupName, const std::string& key) const {
 	// 指定グループが存在するか確認
-	assert(datas_.find(groupName) != datas_.end());
+	if (datas_.find(groupName) == datas_.end()) {
+		// グループが存在しない場合は、デフォルト値を返す
+		return 0;
+	}
 	// グループの参照を取得
 	const Group& group = datas_.at(groupName);
 	// 指定グループに指定のキーが存在するか確認

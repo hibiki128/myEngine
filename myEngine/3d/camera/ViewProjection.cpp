@@ -36,21 +36,22 @@ void ViewProjection::UpdateMatrix()
 {
 	UpdateViewMatrix();
 	UpdateProjectionMatrix();
+
+	TransferMatrix();
 }
 
 void ViewProjection::TransferMatrix()
 {
 	if (constMap) {
-		constMap->world = matWorld_;
 		constMap->view = matView_;
 		constMap->projection = matProjection_;
+		constMap->cameraPos = translation_;
 	}
 }
 
 void ViewProjection::UpdateViewMatrix()
 {
-	matWorld_ = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_);
-	matView_ = Inverse(matWorld_);
+	matView_ = Inverse(MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotation_, translation_));
 }
 
 void ViewProjection::UpdateProjectionMatrix()

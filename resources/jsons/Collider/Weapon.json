@@ -1,0 +1,39 @@
+{
+    "AABBOffset": {
+        "max": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "min": [
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    "OBBOffset": {
+        "scaleCenter": [
+            0.0,
+            4.199999809265137,
+            0.0
+        ],
+        "size": [
+            1.0,
+            2.799999952316284,
+            1.600000023841858
+        ]
+    },
+    "SphereOffset": {
+        "center": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "radius": 0.0
+    },
+    "isAABB": false,
+    "isCollisionEnabled": true,
+    "isOBB": true,
+    "isSphere": false,
+    "isVisible": true
+}

@@ -1,58 +1,94 @@
 #include "GameScene.h"
-#include "ImGuiManager.h"
-#include "SceneManager.h"
-#include "ParticleManager.h"
-#include <ModelManager.h>
+#include <LightGroup.h>
 #include"SceneManager.h"
-#include"ModelManager.h"
+#include <line/DrawLine3D.h>
+#include <random>
+#include"myEngine/Frame/Frame.h"
 
-void GameScene::Initialize()
-{
-	audio_ = Audio::GetInstance();
-	objCommon_ = Object3dCommon::GetInstance();
-	spCommon_ = SpriteCommon::GetInstance();
-	ptCommon_ = ParticleCommon::GetInstance();
-	input_ = Input::GetInstance();
-
-	vp_.Initialize();
-}
 
 void GameScene::Finalize()
 {
 
 }
 
+void GameScene::Initialize()
+{
+
+	audio_ = Audio::GetInstance();
+	objCommon_ = Object3dCommon::GetInstance();
+	spCommon_ = SpriteCommon::GetInstance();
+	ptCommon_ = ParticleCommon::GetInstance();
+	input_ = Input::GetInstance();
+
+	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_->Initialize(&vp_);
+
+	/// ===================================================
+	/// 生成
+	/// ===================================================
+	player_ = std::make_unique<Player>();
+	enemyManager_ = std::make_unique<EnemyManager>();
+	followCamera_ = std::make_unique<FollowCamera>();
+	skyDome_ = std::make_unique<SkyDome>();
+	ground_ = std::make_unique<Ground>();
+	ui_ = std::make_unique<UI>();
+
+	/// ===================================================
+	/// 初期化
+	/// ===================================================
+	player_->Init("Player");
+	enemyManager_->Init(player_->GetPosition(),player_.get());
+	followCamera_->Init();
+	skyDome_->Init("SkyDome");
+	ground_->Init("Ground");
+	ui_->Init();
+
+	/// ===================================================
+	/// セット
+	/// ===================================================
+
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+	player_->SetCamera(followCamera_.get());
+}
+
 void GameScene::Update()
 {
+	// デバッグモード時の処理
 #ifdef _DEBUG
-	ImGui::Begin("gameScene");
-	
-	ImGui::End();
+	Debug();
 #endif // _DEBUG
 
-	//-----シーン切り替え-----
-	if (input_->TriggerKey(DIK_RETURN)) {
-		sceneManager_->NextSceneReservation("TITLE");
-	}
+	// カメラ更新
+	CameraUpdate();
 
-	//----------------------
+	// シーン切り替え
+	ChangeScene();
 
-	vp_.UpdateMatrix();
+	// 他のオブジェクトの更新処理
+	player_->Update();
+	enemyManager_->Update(10);
+	skyDome_->Update();
+	ground_->Update();
+	ui_->Update();
 }
+
 
 void GameScene::Draw()
 {
 	/// -------描画処理開始-------
 
-		/// Spriteの描画準備
+	/// Spriteの描画準備
 	spCommon_->DrawCommonSetting();
 	//-----Spriteの描画開始-----
-	
+	ui_->Draw();
 	//------------------------
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
 	
+	player_->Draw(vp_);
+	enemyManager_->Draw(vp_);
+
 	//--------------------------
 
 	/// Particleの描画準備
@@ -61,5 +97,83 @@ void GameScene::Draw()
 	
 	//-----------------------------
 
+	//-----線描画-----
+	DrawLine3D::GetInstance()->Draw(vp_);
+	//---------------
+
+	/// ----------------------------------
+
 	/// -------描画処理終了-------
+}
+
+void GameScene::DrawForOffScreen()
+{
+	/// -------描画処理開始-------
+
+	/// Spriteの描画準備
+	spCommon_->DrawCommonSetting();
+	//-----Spriteの描画開始-----
+
+	//------------------------
+
+	objCommon_->DrawCommonSetting();
+	//-----3DObjectの描画開始-----
+	skyDome_->Draw(vp_);
+	ground_->Draw(vp_);
+	//--------------------------
+
+	/// Particleの描画準備
+	ptCommon_->DrawCommonSetting();
+	//------Particleの描画開始-------
+	player_->DrawParticle(vp_);
+	enemyManager_->DrawParticle(vp_);
+	//-----------------------------
+
+
+	/// ----------------------------------
+
+	/// -------描画処理終了-------
+}
+
+void GameScene::Debug()
+{
+	ImGui::Begin("GameScene:Debug");
+
+	// 最初のタブバー
+	if (ImGui::BeginTabBar("1")) {
+		debugCamera_->imgui();
+		LightGroup::GetInstance()->imgui();
+		ImGui::EndTabBar();
+	}
+
+	ImGui::End(); // ダイアログの終了
+	ImGui::Begin("ObjData");
+	player_->imgui();
+	ImGui::End();
+	// その他のデバッグ情報
+	player_->Debug();
+	followCamera_->imgui();
+	ui_->Debug();
+	enemyManager_->Debug();
+}
+
+void GameScene::CameraUpdate()
+{
+	if (debugCamera_->GetActive()) {
+		debugCamera_->Update();
+	}
+	else {
+		followCamera_->Update();
+		vp_.matWorld_ = followCamera_->GetViewProjection().matWorld_;
+		vp_.matView_ = followCamera_->GetViewProjection().matView_;
+		vp_.matProjection_ = followCamera_->GetViewProjection().matProjection_;
+		//vp_.UpdateMatrix();
+	}
+}
+
+void GameScene::ChangeScene()
+{
+	if (enemyManager_->GetDeadCount() > 5) {
+		sceneManager_->NextSceneReservation("TITLE");
+	}
 }
