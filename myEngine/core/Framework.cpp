@@ -200,9 +200,12 @@ void Framework::DisplayFPS()
 #ifdef _DEBUG
 	ImGuiIO& io = ImGui::GetIO();
 
-	// ウィンドウ固定
+	// FPSを取得
+	float fps = Frame::GetFPS();  // FPSの取得
+
+	// FPSを表示するウィンドウを固定位置に設定
 	ImGui::SetNextWindowPos(ImVec2(1230, 0), ImGuiCond_Always);
-	ImGui::SetNextWindowBgAlpha(0.0f); // 背景を完全透明に設定
+	ImGui::SetNextWindowBgAlpha(0.0f); // 背景を透明に設定
 
 	// ウィンドウフラグを設定
 	ImGui::Begin("FPS Overlay", nullptr,
@@ -211,15 +214,16 @@ void Framework::DisplayFPS()
 		ImGuiWindowFlags_NoMove |            // ウィンドウの移動を禁止
 		ImGuiWindowFlags_NoScrollbar |       // スクロールバーを非表示
 		ImGuiWindowFlags_NoCollapse |        // 折りたたみボタンを非表示
-		ImGuiWindowFlags_AlwaysAutoResize |  // 必要なサイズに自動調整
+		ImGuiWindowFlags_AlwaysAutoResize |  // 自動サイズ調整
 		ImGuiWindowFlags_NoBackground        // 背景を非表示
 	);
 
-	// 文字色を緑に設定
-	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(50, 255, 50, 255));
-	ImGui::Text("%.1f", io.Framerate);
+	// FPSを緑色で表示
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(50, 255, 50, 255));  // 緑色に設定
+	ImGui::Text("%.1f", fps);  // FPSを表示
 	ImGui::PopStyleColor();
 
 	ImGui::End();
+
 #endif // _DEBUG
 }
