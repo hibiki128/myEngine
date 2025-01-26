@@ -9,6 +9,7 @@ void Bone::Initialize(ModelData modelData)
 
 void Bone::Update(const Animation& animation, float animationTime)
 {
+	ApplyAnimation(animation, animationTime);
 	// すべてのJointを更新。親が若いので通常ループで処理可能
 	for (Joint& joint : skeleton_.joints) {
 		joint.localMatrix = MakeAffineMatrix(joint.transform.scale, joint.transform.rotate, joint.transform.translate);
@@ -19,7 +20,6 @@ void Bone::Update(const Animation& animation, float animationTime)
 			joint.skeletonSpaceMatrix = joint.localMatrix;
 		}
 	}
-	ApplyAnimation(animation, animationTime);
 }
 
 int32_t Bone::CreateJoint(const Node& node, const std::optional<int32_t>& parent, std::vector<Joint>& joints)

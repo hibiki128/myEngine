@@ -9,6 +9,7 @@
 #include"Object3d.h"
 #include"WorldTransform.h"
 #include"ParticleEmitter.h"
+#include"application/Base/BaseObject.h"
 
 class TitleScene :public BaseScene
 {
@@ -57,4 +58,8 @@ private:
 
 	ViewProjection vp_;
 	std::unique_ptr<DebugCamera> debugCamera_;
+
+	std::unique_ptr<BaseObject> sphere_;
+	std::unique_ptr<BaseObject> anima_;
+
 };

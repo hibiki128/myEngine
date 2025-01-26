@@ -23,6 +23,9 @@ void Object3d::Initialize(const std::string& filePath)
 	// モデルを検索してセットする
 	model = ModelManager::GetInstance()->FindModel(filePath);
 
+	materialData->textureFilePath = model->GetModelData().material.textureFilePath;
+	materialData->textureIndex = model->GetModelData().material.textureIndex;
+
 	modelAnimation_ = std::make_unique<ModelAnimation>();
 	modelAnimation_->SetModelData(model->GetModelData());
 	modelAnimation_->Initialize("resources/models/", filePath);
@@ -82,12 +85,17 @@ void Object3d::Draw(const WorldTransform& worldTransform, const ViewProjection& 
 	Update(worldTransform, viewProjection);
 
 	if (modelAnimation_->GetAnimator()->HaveAnimation()) {
+		HaveAnimation = true;
 		Object3dCommon::GetInstance()->skinningDrawCommonSetting();
+	}
+	else {
+		HaveAnimation= false;
 	}
 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// wvp用のCBufferの場所を設定
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	SrvManager::GetInstance()->SetGraphicsRootDescriptorTable(2, materialData->textureIndex);
 	if (materialData->enableLighting != 0 && lightGroup) {
 		lightGroup->Draw();
 	}
