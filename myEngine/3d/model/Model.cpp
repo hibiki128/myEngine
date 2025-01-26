@@ -53,7 +53,7 @@ void Model::Draw()
 	}
 	else {
 		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs); // VBVを設定
-		srvManager_->SetGraphicsRootDescriptorTable(6, SrvIndex);
+		srvManager_->SetGraphicsRootDescriptorTable(7, SrvIndex);
 	}
 	// 描画！（DrawCall/ドローコール）
 	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
