@@ -15,7 +15,8 @@ void Enemy::Init(const std::string className)
 	HP_ = 10;
 
 	hitParticle_ = std::make_unique<ParticleEmitter>();
-	hitParticle_->Initialize("hit", "debug/plane.obj");
+	hitParticle_->Initialize("hit", "debug/cube.obj");
+	hitParticle_->SetTexture("game/blue1x1.png");
 }
 
 void Enemy::Update()
@@ -48,7 +49,8 @@ void Enemy::DrawParticle(const ViewProjection& viewProjection)
 	if (!isDead_) {
 		
 	}
-	//hitParticle_->Draw();
+	ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
+	hitParticle_->Draw(viewProjection);
 }
 
 void Enemy::Debug(std::string& name)

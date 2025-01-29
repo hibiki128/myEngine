@@ -16,7 +16,7 @@ void GameScene::Initialize()
 
 	audio_ = Audio::GetInstance();
 	objCommon_ = Object3dCommon::GetInstance();
-	spCommon_ = SpriteCommon::GetInstance();
+   	spCommon_ = SpriteCommon::GetInstance();
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 

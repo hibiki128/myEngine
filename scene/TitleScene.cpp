@@ -22,14 +22,8 @@ void TitleScene::Initialize()
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
 
-	sphere_ = std::make_unique<BaseObject>();
-	sphere_->Init("sphere");
-	sphere_->CreateModel("debug/sphere.obj");
-	sphere_->SetTexture("debug/monsterBall.png");
-	anima_ = std::make_unique<BaseObject>();
-	anima_->Init("walk");
-	anima_->CreateModel("animation/walk.gltf");
-	
+	emitter_ = std::make_unique<ParticleEmitter>();
+	emitter_->Initialize("hit", "debug/cube.obj");
 }
 
 void TitleScene::Finalize()
@@ -50,8 +44,7 @@ void TitleScene::Update()
 	// シーン切り替え
 	ChangeScene();
 
-	sphere_->Update();
-	anima_->Update();
+	emitter_->Update();
 }
 
 void TitleScene::Draw()
@@ -66,14 +59,13 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	sphere_->Draw(vp_);
-	anima_->Draw(vp_);
+
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	
+	emitter_->Draw(vp_);
 	//-----------------------------
 
 	//-----線描画-----
@@ -119,8 +111,7 @@ void TitleScene::Debug()
 	debugCamera_->imgui();
 	LightGroup::GetInstance()->imgui();
 	ImGui::End();
-	sphere_->DebugImGui();
-	anima_->DebugImGui();
+	emitter_->imgui();
 }
 
 void TitleScene::CameraUpdate()

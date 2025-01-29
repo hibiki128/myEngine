@@ -23,7 +23,7 @@ void Player::Init(const std::string className)
 	L_armModel_->Initialize("debug/Cube.obj");
 
 	shadow_ = std::make_unique<Object3d>();
-	shadow_->Initialize("shadow.obj");
+	shadow_->Initialize("shadow/shadow.obj");
 	Shadow_.scale_ = { 1.5f,1.5f,1.5f };
 
 	weapon_ = std::make_unique<Weapon>();

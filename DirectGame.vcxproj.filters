@@ -317,6 +317,30 @@
     <ClCompile Include="main.cpp">
       <Filter>ソースファイル\myEngine</Filter>
     </ClCompile>
+    <ClCompile Include="application\Camera\FollowCamera.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Enemy\Enemy.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Enemy\EnemyManager.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Field\Ground\Ground.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Player\Player.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\Player\Weapon\Weapon.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\UI\Ui.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -544,6 +568,14 @@
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
+    <ClInclude Include="application\Camera\FollowCamera.h" />
+    <ClInclude Include="application\Enemy\Enemy.h" />
+    <ClInclude Include="application\Enemy\EnemyManager.h" />
+    <ClInclude Include="application\Field\Ground\Ground.h" />
+    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
+    <ClInclude Include="application\Player\Player.h" />
+    <ClInclude Include="application\Player\Weapon\Weapon.h" />
+    <ClInclude Include="application\UI\Ui.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">

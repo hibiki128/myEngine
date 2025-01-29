@@ -107,6 +107,14 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application\Camera\FollowCamera.cpp" />
+    <ClCompile Include="application\Enemy\Enemy.cpp" />
+    <ClCompile Include="application\Enemy\EnemyManager.cpp" />
+    <ClCompile Include="application\Field\Ground\Ground.cpp" />
+    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="application\Player\Player.cpp" />
+    <ClCompile Include="application\Player\Weapon\Weapon.cpp" />
+    <ClCompile Include="application\UI\Ui.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Bone.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Animator.cpp" />
@@ -192,6 +200,14 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application\Camera\FollowCamera.h" />
+    <ClInclude Include="application\Enemy\Enemy.h" />
+    <ClInclude Include="application\Enemy\EnemyManager.h" />
+    <ClInclude Include="application\Field\Ground\Ground.h" />
+    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
+    <ClInclude Include="application\Player\Player.h" />
+    <ClInclude Include="application\Player\Weapon\Weapon.h" />
+    <ClInclude Include="application\UI\Ui.h" />
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h" />
     <ClInclude Include="myEngine\3d\model\animation\Bone.h" />
     <ClInclude Include="myEngine\3d\model\animation\Animator.h" />

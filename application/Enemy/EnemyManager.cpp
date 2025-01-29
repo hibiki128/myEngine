@@ -26,6 +26,7 @@ void EnemyManager::DrawParticle(const ViewProjection& vp)
 	for (auto& enemy : enemies_) {
 		enemy->DrawParticle(vp);
 	}
+	ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
 	for (auto& spawnEffect : spawnEffects_) {
 	
 		spawnEffect->Draw(vp);

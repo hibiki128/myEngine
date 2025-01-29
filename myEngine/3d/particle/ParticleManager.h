@@ -41,6 +41,7 @@ public:
 	void SetSinMove(bool isSinMove) { isSinMove_ = isSinMove; }
 	void SetFaceDirection(bool flag) { isFaceDirection_ = flag; }
 	void SetTexture(const std::string& filePath);
+	void SetColor(const Vector4& color) { materialData->color = color; }
 
 private:
 	/// <summary>
@@ -147,7 +148,7 @@ private:
 	bool isRandomAllSize_ = false;
 	bool isSinMove_ = false;
 	bool isFaceDirection_ = false;
-	
+
 public:
 	// nameで指定した名前のパーティクルグループにパーティクルを発生させる関数
 	std::list<Particle> Emit(const std::string name, const Vector3& position, uint32_t count, const Vector3& scale,

@@ -5,10 +5,10 @@
 void UI::Init()
 {
 	explanation_ = std::make_unique<Sprite>();
-	explanation_->Initialize("explanation.png", spPos_, { 1,1,1,1 }, { 0.5f,0.5f });
+	explanation_->Initialize("game/explanation.png", spPos_, { 1,1,1,1 }, { 0.5f,0.5f });
 	explanation_->SetSize(explanation_->GetSize() / 1.25f);
 	explanation2_ = std::make_unique<Sprite>();
-	explanation2_->Initialize("explanation2.png", spPos2_, { 1,1,1,1 }, { 0.5f,0.5f });
+	explanation2_->Initialize("game/explanation2.png", spPos2_, { 1,1,1,1 }, { 0.5f,0.5f });
 	explanation2_->SetSize(explanation2_->GetSize() / 1.25f);
 	LoadFromJson();
 }
@@ -18,7 +18,7 @@ void UI::Update()
 	explanation_->SetPosition(spPos_);
 	explanation2_->SetPosition(spPos2_);
 }
-
+ 
 void UI::Draw()
 {
 	explanation_->Draw();

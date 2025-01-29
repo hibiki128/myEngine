@@ -118,7 +118,7 @@ void Framework::Initialize()
 
 	LightGroup::GetInstance()->Initialize();
 
-	//GlobalVariables::GetInstance()->LoadFiles();
+	GlobalVariables::GetInstance()->LoadFiles();
 	
 	/// 時間の初期化
 	Frame::Init();
@@ -160,7 +160,7 @@ void Framework::Update()
 	Frame::Update();
 #ifdef _DEBUG
 	ImGuiManager::GetInstance()->Begin();
-	//GlobalVariables::GetInstance()->Update();
+	GlobalVariables::GetInstance()->Update();
 #endif // _DEBUG
 	offscreen_->DrawCommonSetting();
 	sceneManager_->Update();

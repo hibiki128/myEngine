@@ -1,18 +1,18 @@
 {
     "allScaleMax": [
-        1.0,
-        1.0,
-        1.0
+        0.05000000074505806,
+        0.5,
+        0.05000000074505806
     ],
     "allScaleMin": [
-        1.0,
-        1.0,
-        1.0
+        0.019999999552965164,
+        0.10000000149011612,
+        0.019999999552965164
     ],
-    "alphaMax": 1.0,
-    "alphaMin": 0.30000001192092896,
-    "count": 30,
-    "emitFrequency": 1.0,
+    "alphaMax": 0.75,
+    "alphaMin": 0.5,
+    "count": 15,
+    "emitFrequency": 0.5,
     "emitter": {
         "rotation": [
             0.0,
@@ -21,7 +21,7 @@
         ],
         "scale": [
             0.0,
-            3.0,
+            0.0,
             0.0
         ],
         "translate": [
@@ -31,9 +31,9 @@
         ]
     },
     "endAcce": [
-        0.30000001192092896,
-        1.0,
-        0.30000001192092896
+        0.25,
+        0.25,
+        0.25
     ],
     "endRote": [
         0.0,
@@ -47,16 +47,16 @@
     ],
     "isAcceMultiply": true,
     "isActive": true,
-    "isAllRamdomScale": false,
+    "isAllRamdomScale": true,
     "isBillBoard": false,
-    "isFaceDirection": false,
+    "isFaceDirection": true,
     "isRandomColor": true,
     "isRandomRotate": false,
     "isRandomScale": false,
-    "isSinMove": true,
+    "isSinMove": false,
     "isVisible": true,
-    "lifeTimeMax": 1.0,
-    "lifeTimeMin": 0.30000001192092896,
+    "lifeTimeMax": 0.5,
+    "lifeTimeMin": 0.10000000149011612,
     "rotateVelocityMax": [
         0.07000000029802322,
         0.07000000029802322,
@@ -67,8 +67,8 @@
         -0.07000000029802322,
         -0.07000000029802322
     ],
-    "scaleMax": 2.0,
-    "scaleMin": 0.5,
+    "scaleMax": 0.10000000149011612,
+    "scaleMin": 0.0,
     "startAcce": [
         1.0,
         1.0,
@@ -80,18 +80,18 @@
         0.0
     ],
     "startScale": [
-        1.5,
-        1.5,
-        1.5
+        1.0,
+        1.0,
+        1.0
     ],
     "velocityMax": [
-        30.0,
-        15.0,
-        30.0
+        25.0,
+        25.0,
+        25.0
     ],
     "velocityMin": [
-        -30.0,
-        1.0,
-        -30.0
+        -25.0,
+        -25.0,
+        -25.0
     ]
 }
