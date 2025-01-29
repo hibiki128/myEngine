@@ -10,7 +10,7 @@ uint32_t TextureManager::kSRVIndexTop = 1;
 void TextureManager::LoadTexture(const std::string& filePath)
 {
     // ファイル名を取り出して、resources/images/を付ける
-    std::string newFilePath = "resources/images/" + filePath.substr(filePath.find_last_of("/\\") + 1);
+    std::string newFilePath = "resources/images/" + filePath;
 
     // 読み込み済みテクスチャを検索
     if (textureDatas.contains(newFilePath)) {
@@ -52,18 +52,18 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
 void TextureManager::Initialize(SrvManager* srvManager)
 {
-	dxCommon_ = DirectXCommon::GetInstance();
-	srvManager_ = srvManager;
-	// SRVの数と同数
-	textureDatas.reserve(SrvManager::kMaxSRVCount);
+    dxCommon_ = DirectXCommon::GetInstance();
+    srvManager_ = srvManager;
+    // SRVの数と同数
+    textureDatas.reserve(SrvManager::kMaxSRVCount);
 }
 
 TextureManager* TextureManager::GetInstance()
 {
-	if (instance == nullptr) {
-		instance = new TextureManager;
-	}
-	return instance;
+    if (instance == nullptr) {
+        instance = new TextureManager;
+    }
+    return instance;
 }
 
 void TextureManager::Finalize()
@@ -81,7 +81,7 @@ void TextureManager::Finalize()
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath)
 {
     // ファイル名を取り出して、resources/images/を付ける
-    std::string newFilePath = "resources/images/" + filePath.substr(filePath.find_last_of("/\\") + 1);
+    std::string newFilePath = "resources/images/" + filePath;
 
     // unordered_mapを使って直接インデックスを取得
     auto it = textureDatas.find(newFilePath);
@@ -96,18 +96,19 @@ uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath)
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
 {
-	// 指定されたファイルパスが存在するかチェック
-	assert(textureDatas.find(filePath) != textureDatas.end());
+    // 指定されたファイルパスが存在するかチェック
+    assert(textureDatas.find(filePath) != textureDatas.end());
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.srvHandleGPU;
+    TextureData& textureData = textureDatas[filePath];
+    return textureData.srvHandleGPU;
 }
 
 const DirectX::TexMetadata& TextureManager::GetMetaData(const std::string& filePath)
 {
-	// 指定されたファイルパスが存在するかチェック
-	assert(textureDatas.find(filePath) != textureDatas.end());
+    std::string fullPath = ("resources/images/" + filePath);
+    // 指定されたファイルパスが存在するかチェック
+    assert(textureDatas.find(fullPath) != textureDatas.end());
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.metadata;
+    TextureData& textureData = textureDatas[fullPath];
+    return textureData.metadata;
 }

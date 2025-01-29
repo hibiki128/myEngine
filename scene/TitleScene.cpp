@@ -17,25 +17,19 @@ void TitleScene::Initialize()
 	ptCommon_ = ParticleCommon::GetInstance();
 	input_ = Input::GetInstance();
 	vp_.Initialize();
-	vp_.translation_ = { 0.0f,0.0f,-30.0f };
+	vp_.translation_ = { 0.0f,0.0f,-10.0f };
 
 	debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_->Initialize(&vp_);
 
-	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter2_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("reverse", "debug/sphere.obj");
-	emitter_->SetTexture("white1x1.png");
-	emitter2_->Initialize("reverse_black", "debug/sphere.obj");
-	emitter2_->SetTexture("black1x1.png");
-
-	obj_ = std::make_unique<Object3d>();
-	obj_->Initialize("debug/cube.obj");
-	obj2_ = std::make_unique<Object3d>();
-	obj2_->Initialize("debug/cube.obj");
-	wt_.Initialize();
-	wt2_.Initialize();
-	wt2_.translation_ = { 5.0f,0.0f,0.0f };
+	sphere_ = std::make_unique<BaseObject>();
+	sphere_->Init("sphere");
+	sphere_->CreateModel("debug/sphere.obj");
+	sphere_->SetTexture("debug/monsterBall.png");
+	anima_ = std::make_unique<BaseObject>();
+	anima_->Init("walk");
+	anima_->CreateModel("animation/walk.gltf");
+	
 }
 
 void TitleScene::Finalize()
@@ -56,25 +50,8 @@ void TitleScene::Update()
 	// シーン切り替え
 	ChangeScene();
 
-	emitter_->imgui();
-	emitter2_->imgui();
-
-	ImGui::Begin("パーティクル");
-	if (ImGui::Button("生成")) {
-		emitter_->UpdateOnce();
-	}
-	if (ImGui::Button("生成2")) {
-		emitter2_->UpdateOnce();
-	}
-	if (isAuto_) {
-		emitter_->Update();
-		emitter2_->Update();
-	}
-	ImGui::End();
-
-	wt_.UpdateMatrix();
-	wt2_.UpdateMatrix();
-
+	sphere_->Update();
+	anima_->Update();
 }
 
 void TitleScene::Draw()
@@ -89,18 +66,14 @@ void TitleScene::Draw()
 
 	objCommon_->DrawCommonSetting();
 	//-----3DObjectの描画開始-----
-	emitter_->DrawEmitter();
-	emitter2_->DrawEmitter();
-	obj_->Draw(wt_, vp_);
-	obj2_->Draw(wt2_, vp_);
+	sphere_->Draw(vp_);
+	anima_->Draw(vp_);
 	//--------------------------
 
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
-	ptCommon_->SetBlendMode(BlendMode::kNormal);
-	emitter_->Draw(vp_);
-	emitter2_->Draw(vp_);
+	
 	//-----------------------------
 
 	//-----線描画-----
@@ -143,13 +116,11 @@ void TitleScene::DrawForOffScreen()
 void TitleScene::Debug()
 {
 	ImGui::Begin("TitleScene:Debug");
-	ImGui::Checkbox("パーティクルの自動更新", &isAuto_);
-	if (ImGui::Button("変更")) {
-		obj_->SetTexture("monsterBall.png");
-	}
-
 	debugCamera_->imgui();
+	LightGroup::GetInstance()->imgui();
 	ImGui::End();
+	sphere_->DebugImGui();
+	anima_->DebugImGui();
 }
 
 void TitleScene::CameraUpdate()
