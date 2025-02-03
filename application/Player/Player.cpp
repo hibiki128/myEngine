@@ -46,6 +46,8 @@ void Player::Init(const std::string className) {
     crack_->SetLighting(false);
     crack_->SetObjColor({red_, 0.0f, 0.0f, alpha_});
 
+    shake_ = std::make_unique<Shake>();
+
     behaviorRequest_ = Behavior::kRoot;
     behavior_ = Behavior::kRoot;
 
@@ -120,6 +122,7 @@ void Player::Update() {
         red_ = 0.4f;
         quake_->SetPosition({GetCenterPosition().x, 0.0f, GetCenterPosition().z});
         quake_->UpdateOnce();
+        shake_->StartShake();
         isCrack_ = false;
     }
 
@@ -144,6 +147,7 @@ void Player::Update() {
     // 武器更新
     weapon_->Update();
     crack_->Update();
+    shake_->Update();
     R_arm_wt.UpdateMatrix();
     L_arm_wt.UpdateMatrix();
 }

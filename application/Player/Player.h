@@ -6,6 +6,7 @@
 #include "Vector3.h"
 #include "Weapon/Weapon.h"
 #include "application/Base/BaseObject.h"
+#include "application/Shake/Shake.h"
 
 class FollowCamera;
 class Player : public BaseObject {
@@ -46,6 +47,8 @@ class Player : public BaseObject {
     void OnCollision([[maybe_unused]] Collider *other) override;
     void OnCollisionEnter([[maybe_unused]] Collider *other) override;
     int GetComboStage() { return comboStage_; }
+
+    void SetVp(ViewProjection* vp) { shake_->Initialize(vp); }
 
   private:
     /// ===================================================
@@ -89,7 +92,9 @@ class Player : public BaseObject {
     std::unique_ptr<ParticleEmitter> quake_;
     std::unique_ptr<Object3d> shadow_;
     std::unique_ptr<BaseObject> crack_;
-    std::unique_ptr<BaseObject> crack2_;
+
+        // シェイク
+    std::unique_ptr<Shake> shake_;
 
     // プレイヤーの部位
     WorldTransform R_arm_wt;

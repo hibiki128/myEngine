@@ -341,6 +341,12 @@
     <ClCompile Include="application\UI\Ui.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
+    <ClCompile Include="application\Shake\Shake.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="application\HitStop\HitStop.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
@@ -577,6 +583,8 @@
     <ClInclude Include="application\Player\Player.h" />
     <ClInclude Include="application\Player\Weapon\Weapon.h" />
     <ClInclude Include="application\UI\Ui.h" />
+    <ClInclude Include="application\Shake\Shake.h" />
+    <ClInclude Include="application\HitStop\HitStop.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">

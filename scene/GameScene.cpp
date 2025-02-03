@@ -45,6 +45,7 @@ void GameScene::Initialize() {
 
     followCamera_->SetTarget(&player_->GetWorldTransform());
     player_->SetCamera(followCamera_.get());
+    player_->SetVp(&vp_);
 }
 
 void GameScene::Update() {
