@@ -86,5 +86,7 @@ class GameScene : public BaseScene {
 
     // HitStop
     std::unique_ptr<HitStop> hitStop_;
+    
+    bool isFinish_ = false;
 
 };

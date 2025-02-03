@@ -61,23 +61,24 @@ void GameScene::Update() {
 
     // シーン切り替え
     ChangeScene();
+    if (!isFinish_) {
+        if (hitStop_->IsActive()) {
+            hitStop_->Update();
+            return;
+        }
+        if (player_->IsHit()) {
+            hitStop_->Start();
+            player_->SetIsHit(false);
+        }
 
-    if (hitStop_->IsActive()) {
-        hitStop_->Update();
-        return;
+        // 他のオブジェクトの更新処理
+        player_->Update();
+        enemyManager_->Update();
+        enemyManager_->SetPosition(player_->GetCenterPosition());
+        skyDome_->Update();
+        ground_->Update();
     }
-    if (player_->IsHit()) {
-        hitStop_->Start(0.1f);
-        player_->SetIsHit(false);
-    }
-
-
-    // 他のオブジェクトの更新処理
-    player_->Update();
-    enemyManager_->Update(10);
-    skyDome_->Update();
-    ground_->Update();
-    ui_->Update();
+        ui_->Update();
 }
 
 void GameScene::Draw() {
@@ -175,7 +176,17 @@ void GameScene::CameraUpdate() {
 }
 
 void GameScene::ChangeScene() {
-    if (enemyManager_->GetDeadCount() > 5) {
+    if (enemyManager_->GetDeadCount() >= 10) {
+        isFinish_ = true;
+    }
+    if (!player_->IsAlive()) {
+        isFinish_ = true;
+        ui_->SetTexture("game/gameOver.png");
+    }
+    if (isFinish_) {
+        ui_->SetStart(true);
+    }
+    if (ui_->IsFinish()) {
         sceneManager_->NextSceneReservation("TITLE");
     }
 }

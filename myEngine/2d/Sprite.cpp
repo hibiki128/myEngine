@@ -111,6 +111,7 @@ void Sprite::Draw()
 void Sprite::SetTexturePath(std::string textureFilePath)
 {
 	fullpath = textureFilePath;
+    TextureManager::GetInstance()->LoadTexture(fullpath);
 	TextureManager::GetInstance()->GetTextureIndexByFilePath(fullpath);
 
 }

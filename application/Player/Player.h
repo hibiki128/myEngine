@@ -48,6 +48,7 @@ class Player : public BaseObject {
     void OnCollisionEnter([[maybe_unused]] Collider *other) override;
     int GetComboStage() { return comboStage_; }
     bool IsHit() { return weapon_->IsHit(); }
+    bool IsAlive() { return isAlive_; }
 
     void SetIsHit(bool flag) { weapon_->SetIsHit(flag); }
     void SetVp(ViewProjection *vp) { shake_->Initialize(vp); }
@@ -87,11 +88,14 @@ class Player : public BaseObject {
 
     void ProcessComboInput();
 
+    void Frash();
+
   private:
     FollowCamera *camera_;
     std::unique_ptr<Weapon> weapon_;
     std::unique_ptr<ParticleEmitter> afterImageEmitter_;
     std::unique_ptr<ParticleEmitter> quake_;
+    std::unique_ptr<ParticleEmitter> deathParticle_;
     std::unique_ptr<Object3d> shadow_;
     std::unique_ptr<BaseObject> crack_;
 
@@ -104,6 +108,8 @@ class Player : public BaseObject {
     WorldTransform Shadow_;
     std::unique_ptr<Object3d> R_armModel_;
     std::unique_ptr<Object3d> L_armModel_;
+    ObjColor objColor_;
+    Vector4 color_;
 
     // 次の振るまいリクエスト
     std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -121,7 +127,10 @@ class Player : public BaseObject {
     float kDashSpeed = 1.75f;
     float kDashDecay = 0.97f;
 
-    int comboStage_ = 0;      // 現在のコンボステージ
+    int comboStage_ = 0; // 現在のコンボステージ
+    int HP_ = 10;
+    float invincibleTime = 0.0f;
+    float startCoolTime_ = 1.0f;
     float comboTimer_ = 0.0f; // コンボ入力待機タイマー
     float attackTimer_ = 0.0f;
     float alpha_ = 0.0f;
@@ -129,7 +138,7 @@ class Player : public BaseObject {
     bool isNextAttack_ = false;
     bool isJKeyPressed_ = false;
     bool isCrack_ = false;
-    bool isHit_ = false;
+    bool isAlive_ = true;
     Vector3 startAngle;
     Vector3 endAngle;
     Vector3 startPosition;

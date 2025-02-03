@@ -129,7 +129,7 @@ void Enemy::KnockBack() {
         direction = direction.Normalize(); // ベクトルの正規化
 
         // ノックバックの目標位置と開始位置を設定
-        float knockbackDistance = 0.35f;
+        float knockbackDistance = 1.0f;
         Vector3 knockbackTarget = enemyPosition + (direction * knockbackDistance);
         knockbackTarget.y = enemyPosition.y; // y軸の位置は変更しない
         Vector3 knockbackStart = enemyPosition;
@@ -147,7 +147,7 @@ void Enemy::KnockBack() {
         transform_.translation_.z = knockbackMovement.z;
 
         if (!isStop_) {
-            coolTime_ = 0.3f;
+            coolTime_ = 1.0f;
         }
 
         // ノックバックが完了したらフラグをリセットする
@@ -270,7 +270,7 @@ void Enemy::OnCollision(Collider *other) {
         direction.Normalize();
 
         // 押し戻し距離の設定
-        float pushBackDistance = 0.1f;
+        float pushBackDistance = 0.09f;
 
         // 他の敵と自分を押し戻す処理
         Vector3 pushBackMovement = direction * pushBackDistance;

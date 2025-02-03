@@ -17,8 +17,7 @@ void HitStop::Update() {
     }
 }
 
-void HitStop::Start(float duration) {
-    stopDuration_ = duration;
+void HitStop::Start() {
     elapsedTime_ = 0.0f;
     isActive_ = true;
 }
@@ -57,7 +56,7 @@ void HitStop::imgui() {
         }
 
         if (ImGui::Button("ヒットストップ開始")) {
-            Start(stopDuration_);
+            Start();
         }
     }
     ImGui::End();

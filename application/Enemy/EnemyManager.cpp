@@ -7,8 +7,8 @@ void EnemyManager::Init(const Vector3 &position, Player *player) {
     player_ = player;
 }
 
-void EnemyManager::Update(const int maxEnemy) {
-    EnemiesUpdate(maxEnemy);
+void EnemyManager::Update() {
+    EnemiesUpdate();
 }
 
 void EnemyManager::Draw(const ViewProjection &vp) {
@@ -92,34 +92,41 @@ void EnemyManager::SpawnEnemies(const Vector3 &position) {
     Vector3 enemyPosition;
     enemyPosition.x = position_.x + dist * cosf(degreesToRadians(angle));
     enemyPosition.z = position_.z + dist * sinf(degreesToRadians(angle));
-    enemyPosition.y = position_.y;
+    enemyPosition.y = 1.0f;
 
     // 敵を生成
     SpawnEnemy(enemyPosition);
 }
 
-void EnemyManager::EnemiesUpdate(const int maxEnemy) {
-    const int maxEnemies = maxEnemy;
-
+void EnemyManager::EnemiesUpdate() {
     // 敵を追加するためのタイマー更新
     spawnTimer_ += Frame::DeltaTime();
 
-    // タイマーが spawnInterval_ を超えた場合に敵を追加
-    if (spawnTimer_ >= spawnInterval_) {
-        spawnTimer_ = 0.0f; // タイマーリセット
+    // ウェーブの進行管理
+    if (enemies_.empty() && currentWave_ < maxWaves_ && !isSpawning_) {
+        currentWave_++; // 次のウェーブへ
+        spawnCount_ = 0;
+        isSpawning_ = true;
+        nextSpawnTime_ = spawnTimer_ + spawnDelay_; // 最初のスポーン時間設定
+    }
 
-        // 敵の数が maxEnemies 以下の場合に追加
-        if (enemies_.size() < maxEnemies) {
-            Vector3 playerPosition = position_;
-            SpawnEnemies({playerPosition.x, 1.0f, playerPosition.z}); // プレイヤー周囲に敵を生成
+    // ウェーブ中の敵スポーン処理
+    if (isSpawning_ && spawnTimer_ >= nextSpawnTime_) {
+        Vector3 playerPosition = position_;
+        SpawnEnemies({playerPosition.x, 1.0f, playerPosition.z}); // 1体ずつスポーン
+        spawnCount_++;
+
+        if (spawnCount_ >= enemiesPerWave_) {
+            isSpawning_ = false; // 指定数スポーンしたら完了
+        } else {
+            nextSpawnTime_ = spawnTimer_ + spawnDelay_; // 次のスポーン時間設定
         }
     }
 
     // 死亡した敵をリストから削除し、カウントを更新
     auto it = enemies_.begin();
     while (it != enemies_.end()) {
-        if ((*it)->IsDead()) // 死亡している場合
-        {
+        if ((*it)->IsDead()) {
             std::unique_ptr<ParticleEmitter> deathParticle;
             deathParticle = std::make_unique<ParticleEmitter>();
             deathParticle->Initialize("death", "Enemy/deathParticle.obj");
@@ -139,4 +146,3 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy) {
         enemy->Update();
     }
 }
-

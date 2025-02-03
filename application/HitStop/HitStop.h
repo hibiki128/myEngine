@@ -7,7 +7,7 @@ class HitStop {
   public:
     void Initialize();
     void Update();
-    void Start(float duration);
+    void Start();
     void imgui();
     bool IsActive() const { return isActive_; }
 

@@ -51,8 +51,15 @@ void Player::Init(const std::string className) {
     behaviorRequest_ = Behavior::kRoot;
     behavior_ = Behavior::kRoot;
 
+    color_ = {1.0f, 1.0f, 1.0f, 1.0f};
+
+    objColor_.Initialize();
+    objColor_.SetColor(color_);
+
     startAngle = {0.0f, 0.0f, 0.0f};
     endAngle = {0.0f, 0.0f, 0.0f};
+    
+    startCoolTime_ = 1.0f;
 
     groupName = "NormalAttack";
     globalVariables = GlobalVariables::GetInstance();
@@ -82,101 +89,134 @@ void Player::Init(const std::string className) {
     globalVariables->AddItem(groupName, "startAngle", startAngle);
     globalVariables->AddItem(groupName, "endAngle", endAngle);
     globalVariables->AddItem(groupName, "easeTMax", easeTMax);
+
+    deathParticle_ = std::make_unique<ParticleEmitter>();
+    deathParticle_->Initialize("death", "Enemy/deathParticle.obj");
+    
 }
 
 void Player::Update() {
-    if (behaviorRequest_) {
-        // 振るまいを変更する
-        behavior_ = behaviorRequest_.value();
-        // 各振るまいごとの初期化を実行
+    if (HP_ <= 0&&isAlive_) {
+        deathParticle_->SetPosition(GetCenterPosition());
+        deathParticle_->UpdateOnce();
+        isAlive_ = false;
+    }
+    if (isAlive_) {
+
+        if (behaviorRequest_) {
+            // 振るまいを変更する
+            behavior_ = behaviorRequest_.value();
+            // 各振るまいごとの初期化を実行
+            switch (behavior_) {
+            case Behavior::kRoot:
+            default:
+                BehaviorRootInitialize();
+                break;
+            case Behavior::kAttack:
+                BehaviorAttackInitialize();
+                break;
+            }
+            // 振るまいリクエストをリセット
+            behaviorRequest_ = std::nullopt;
+        }
         switch (behavior_) {
         case Behavior::kRoot:
         default:
-            BehaviorRootInitialize();
+            BehaviorRootUpdate();
             break;
         case Behavior::kAttack:
-            BehaviorAttackInitialize();
+            BehaviorAttackUpdate();
             break;
         }
-        // 振るまいリクエストをリセット
-        behaviorRequest_ = std::nullopt;
-    }
-    switch (behavior_) {
-    case Behavior::kRoot:
-    default:
-        BehaviorRootUpdate();
-        break;
-    case Behavior::kAttack:
-        BehaviorAttackUpdate();
-        break;
-    }
 
-    if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-        comboTimer_ = 1.0f;
-        behaviorRequest_ = Behavior::kAttack;
-    }
+        if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+            comboTimer_ = 1.0f;
+            behaviorRequest_ = Behavior::kAttack;
+        }
 
-    if (isCrack_) {
-        crack_->SetWorldPosition({GetCenterPosition().x, 0.1f, GetCenterPosition().z});
-        alpha_ = 1.0f;
-        red_ = 0.4f;
-        quake_->SetPosition({GetCenterPosition().x, 0.0f, GetCenterPosition().z});
-        quake_->UpdateOnce();
-        shake_->StartShake();
-        isCrack_ = false;
-    }
+        if (isCrack_) {
+            crack_->SetWorldPosition({GetCenterPosition().x, 0.1f, GetCenterPosition().z});
+            alpha_ = 1.0f;
+            red_ = 0.4f;
+            quake_->SetPosition({GetCenterPosition().x, 0.0f, GetCenterPosition().z});
+            quake_->UpdateOnce();
+            shake_->StartShake();
+            isCrack_ = false;
+        }
 
-    if (alpha_ > 0.0f) {
-        alpha_ -= 1.0f / 60.0f;
-        red_ -= 5.0f / 60.0f;
+        if (alpha_ > 0.0f) {
+            alpha_ -= 1.0f / 60.0f;
+            red_ -= 5.0f / 60.0f;
+        } else {
+            alpha_ = 0.0f;
+            red_ = 0.0f;
+        }
+
+        crack_->SetObjColor({red_, 0.0f, 0.0f, alpha_});
+
+        if (invincibleTime > 0) {
+            invincibleTime -= 1.0f / 60.0f;
+        } else {
+            invincibleTime = 0;
+        }
+        if (startCoolTime_ > 0) {
+            startCoolTime_ -= 1.0f / 60.0f;
+        } 
+
+        // 基礎更新
+        BaseObject::Update();
+        // 腕追従
+        ArmFollow();
+        afterImageEmitter_->Update();
+        weapon_->ParticleUpdate();
+
+        Shadow_.translation_ = Vector3(transform_.translation_.x, 0.1f, transform_.translation_.z);
+        // 武器更新
+        weapon_->Update();
+        crack_->Update();
+        shake_->Update();
+        R_arm_wt.UpdateMatrix();
+        L_arm_wt.UpdateMatrix();
+        Frash();
     } else {
-        alpha_ = 0.0f;
-        red_ = 0.0f;
+        BaseObject::SetCollisionEnabled(false);
+        weapon_->SetCollisionEnabled(false);
     }
 
-    crack_->SetObjColor({red_, 0.0f, 0.0f, alpha_});
-
-    // 基礎更新
-    BaseObject::Update();
-    // 腕追従
-    ArmFollow();
-    afterImageEmitter_->Update();
-    weapon_->ParticleUpdate();
-
-    Shadow_.translation_ = Vector3(transform_.translation_.x, 0.1f, transform_.translation_.z);
-    // 武器更新
-    weapon_->Update();
-    crack_->Update();
-    shake_->Update();
-    R_arm_wt.UpdateMatrix();
-    L_arm_wt.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection &viewProjection) {
-    BaseObject::Draw(viewProjection);
-    R_armModel_->Draw(R_arm_wt, viewProjection);
-    L_armModel_->Draw(L_arm_wt, viewProjection);
-    shadow_->Draw(Shadow_, viewProjection);
-    weapon_->Draw(viewProjection);
+    if (isAlive_) {
+        BaseObject::Draw(viewProjection);
+        R_armModel_->Draw(R_arm_wt, viewProjection, &objColor_);
+        L_armModel_->Draw(L_arm_wt, viewProjection, &objColor_);
+        shadow_->Draw(Shadow_, viewProjection);
+        weapon_->Draw(viewProjection);
+    }
 }
 
 void Player::DrawParticle(const ViewProjection &viewProjection) {
-    if (behavior_ == Behavior::kRoot) {
-        weapon_->SetCount(0);
-    }
-    if (behavior_ == Behavior::kAttack) {
-        weapon_->SetCount(1);
-    }
+    if (isAlive_) {
+        if (behavior_ == Behavior::kRoot) {
+            weapon_->SetCount(0);
+        }
+        if (behavior_ == Behavior::kAttack) {
+            weapon_->SetCount(1);
+        }
 
-    afterImageEmitter_->Draw(viewProjection);
-    // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
-    quake_->Draw(viewProjection);
-    // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
-    weapon_->DrawParticle(viewProjection);
+        afterImageEmitter_->Draw(viewProjection);
+        // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
+        quake_->Draw(viewProjection);
+        // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
+        weapon_->DrawParticle(viewProjection);
+    }
+        deathParticle_->Draw(viewProjection);
 }
 
 void Player::DrawCrack(const ViewProjection &viewProjection) {
-    crack_->Draw(viewProjection);
+    if (isAlive_) {
+        crack_->Draw(viewProjection);
+    }
 }
 
 void Player::imgui() {
@@ -329,6 +369,21 @@ void Player::ProcessComboInput() {
         comboTimer_ = 1.0f; // コンボが続いているのでタイマーをリセット
     }
 }
+void Player::Frash() {
+    if (invincibleTime > 0) {
+        float blinkInterval = 0.1f; // チカチカする間隔（秒）
+        float alpha = (fmod(invincibleTime, blinkInterval * 2) < blinkInterval) ? 0.0f : 1.0f;
+
+        BaseObject::SetAlpha(alpha);
+        weapon_->SetAlpha(alpha);
+        objColor_.SetAlpha(alpha);
+    } else {
+        BaseObject::SetAlpha(1.0f);
+        weapon_->SetAlpha(1.0f);
+        objColor_.SetAlpha(1.0f);
+    }
+}
+
 void Player::Attack() {
     switch (comboStage_) {
     case 0:
@@ -638,7 +693,10 @@ void Player::OnCollision(Collider *other) {
 }
 
 void Player::OnCollisionEnter(Collider *other) {
- 
+    if (dynamic_cast<Enemy *>(other) && invincibleTime == 0 && startCoolTime_ < 0.0f) {
+        HP_--;
+        invincibleTime = 1.0f;
+    }
 }
 
 #pragma endregion
