@@ -28,6 +28,7 @@ void GameScene::Initialize() {
     skyDome_ = std::make_unique<SkyDome>();
     ground_ = std::make_unique<Ground>();
     ui_ = std::make_unique<UI>();
+    hitStop_ = std::make_unique<HitStop>();
 
     /// ===================================================
     /// 初期化
@@ -38,6 +39,7 @@ void GameScene::Initialize() {
     skyDome_->Init("SkyDome");
     ground_->Init("Ground");
     ui_->Init();
+    hitStop_->Initialize();
 
     /// ===================================================
     /// セット
@@ -59,6 +61,16 @@ void GameScene::Update() {
 
     // シーン切り替え
     ChangeScene();
+
+    if (hitStop_->IsActive()) {
+        hitStop_->Update();
+        return;
+    }
+    if (player_->IsHit()) {
+        hitStop_->Start(0.1f);
+        player_->SetIsHit(false);
+    }
+
 
     // 他のオブジェクトの更新処理
     player_->Update();
@@ -147,6 +159,7 @@ void GameScene::Debug() {
     followCamera_->imgui();
     ui_->Debug();
     enemyManager_->Debug();
+    hitStop_->imgui();
 }
 
 void GameScene::CameraUpdate() {

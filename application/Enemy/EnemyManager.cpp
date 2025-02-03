@@ -27,9 +27,9 @@ void EnemyManager::DrawParticle(const ViewProjection &vp) {
         spawnEffect->Draw(vp);
     }
     for (auto &deathParticle : deathParticles_) {
-       // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
+        // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
         deathParticle->Draw(vp);
-       // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
+        // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
     }
 }
 
@@ -139,3 +139,4 @@ void EnemyManager::EnemiesUpdate(const int maxEnemy) {
         enemy->Update();
     }
 }
+

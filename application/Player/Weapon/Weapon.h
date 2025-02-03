@@ -1,39 +1,44 @@
 #pragma once
-#include"application/Base/BaseObject.h"
-#include"ParticleEmitter.h"
-class Weapon : public BaseObject
-{
-public:
-	/// ===================================================
-	///public method
-	/// ===================================================
+#include "ParticleEmitter.h"
+#include "application/Base/BaseObject.h"
+class Weapon : public BaseObject {
+  public:
+    /// ===================================================
+    /// public method
+    /// ===================================================
 
-	void Init(const std::string className)override;
+    void Init(const std::string className) override;
 
-	void Update()override;
+    void Update() override;
 
-	void Draw(const ViewProjection& viewProjection)override;
+    void Draw(const ViewProjection &viewProjection) override;
 
-	void DrawParticle(const ViewProjection& viewProjection);
+    void DrawParticle(const ViewProjection &viewProjection);
 
-	void Debug();
+    void Debug();
 
-	void ParticleUpdate();
+    void ParticleUpdate();
 
-	void SetParent(const WorldTransform& worldTransform) { transform_.parent_ = &worldTransform; }
+    void SetParent(const WorldTransform &worldTransform) { transform_.parent_ = &worldTransform; }
 
-	void SetScale(const Vector3& scale) { transform_.scale_ = scale; }
+    void SetScale(const Vector3 &scale) { transform_.scale_ = scale; }
 
-	void SetPosition(const Vector3& position) { transform_.translation_ = position; }
+    void SetPosition(const Vector3 &position) { transform_.translation_ = position; }
 
-	void SetRotation(const Vector3& rotation) { transform_.rotation_ = rotation; }
-	
-	void SetCount(const int count) { afterImageEmitter_->SetCount(count); }
+    void SetRotation(const Vector3 &rotation) { transform_.rotation_ = rotation; }
 
-	Vector3 GetCenterPosition()const override;
-	Vector3 GetCenterRotation()const override;
+    void SetCount(const int count) { afterImageEmitter_->SetCount(count); }
 
-private:
-	std::unique_ptr<ParticleEmitter> afterImageEmitter_;
+    Vector3 GetCenterPosition() const override;
+    Vector3 GetCenterRotation() const override;
+
+    void OnCollisionEnter([[maybe_unused]] Collider *other) override;
+
+    bool IsHit() { return isHit_; }
+
+    void SetIsHit(bool flag) { isHit_ = flag; }
+
+  private:
+    std::unique_ptr<ParticleEmitter> afterImageEmitter_;
+    bool isHit_ = false;
 };
-

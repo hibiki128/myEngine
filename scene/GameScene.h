@@ -13,6 +13,7 @@
 #include "application/Field/SkyDome/SkyDome.h"
 #include "application/Player/Player.h"
 #include "application/UI/Ui.h"
+#include <application/HitStop/HitStop.h>
 
 class GameScene : public BaseScene {
   public: // メンバ関数
@@ -83,5 +84,7 @@ class GameScene : public BaseScene {
     // UI
     std::unique_ptr<UI> ui_;
 
+    // HitStop
+    std::unique_ptr<HitStop> hitStop_;
 
 };

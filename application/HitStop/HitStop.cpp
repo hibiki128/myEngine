@@ -1,4 +1,5 @@
 #include "HitStop.h"
+#include "filesystem"
 #include <chrono>
 
 void HitStop::Initialize() {
@@ -35,7 +36,10 @@ void HitStop::LoadSettings() {
 }
 
 void HitStop::SaveSettings() {
+    // フォルダが存在しなければ作成
+    std::filesystem::create_directories("resources/jsons/HitStop");
     nlohmann::json json;
+
     json["stopDuration"] = stopDuration_;
 
     std::ofstream file("resources/jsons/HitStop/hitstop.json");
@@ -48,7 +52,7 @@ void HitStop::imgui() {
     if (ImGui::Begin("ヒットストップ設定")) {
         ImGui::DragFloat("停止時間 (秒)", &stopDuration_, 0.01f, 0.01f, 5.0f);
 
-        if (ImGui::Button("設定を保存")) {
+        if (ImGui::Button("セーブ")) {
             SaveSettings();
         }
 

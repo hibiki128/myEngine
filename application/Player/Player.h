@@ -47,8 +47,10 @@ class Player : public BaseObject {
     void OnCollision([[maybe_unused]] Collider *other) override;
     void OnCollisionEnter([[maybe_unused]] Collider *other) override;
     int GetComboStage() { return comboStage_; }
+    bool IsHit() { return weapon_->IsHit(); }
 
-    void SetVp(ViewProjection* vp) { shake_->Initialize(vp); }
+    void SetIsHit(bool flag) { weapon_->SetIsHit(flag); }
+    void SetVp(ViewProjection *vp) { shake_->Initialize(vp); }
 
   private:
     /// ===================================================
@@ -93,7 +95,7 @@ class Player : public BaseObject {
     std::unique_ptr<Object3d> shadow_;
     std::unique_ptr<BaseObject> crack_;
 
-        // シェイク
+    // シェイク
     std::unique_ptr<Shake> shake_;
 
     // プレイヤーの部位
@@ -127,6 +129,7 @@ class Player : public BaseObject {
     bool isNextAttack_ = false;
     bool isJKeyPressed_ = false;
     bool isCrack_ = false;
+    bool isHit_ = false;
     Vector3 startAngle;
     Vector3 endAngle;
     Vector3 startPosition;
