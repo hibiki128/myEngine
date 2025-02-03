@@ -1,61 +1,63 @@
 #pragma once
-#include"Vector4.h"
-#include"d3d12.h"
-#include"wrl.h"
-#include"DirectXCommon.h"
+#include "DirectXCommon.h"
+#include "Vector4.h"
+#include "d3d12.h"
+#include "wrl.h"
 
 // 定数バッファ用データ構造体
 struct ConstBufferDataObjColor {
-	Vector4 color_;
+    Vector4 color_;
 };
 
-class ObjColor
-{
-public:
+class ObjColor {
+  public:
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    void Initialize();
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+    /// <summary>
+    /// 行列の転送
+    /// </summary>
+    void TransferMatrix();
 
-	/// <summary>
-	/// 行列の転送
-	/// </summary>
-	void TransferMatrix();
+    /// <summary>
+    /// グラフィックスコマンドを積む
+    /// </summary>
+    void SetGraphicCommand(UINT rootParameterIndex) const;
 
-	/// <summary>
-	/// グラフィックスコマンドを積む
-	/// </summary>
-	void SetGraphicCommand(UINT rootParameterIndex)const;
+    /// <summary>
+    /// セッター
+    /// </summary>
+    /// <param name="color"></param>
+    void SetColor(const Vector4 &color) {
+        color_ = color;
+    }
 
-	/// <summary>
-	/// セッター
-	/// </summary>
-	/// <param name="color"></param>
-	void SetColor(const Vector4& color) { color_ = color; }
+    void SetAlpha(const float& alpha) {
+        color_.w = alpha;
+    }
 
-	const Vector4& GetColor() const {
-		return color_;
-	}
+    const Vector4 &GetColor() const {
+        return color_;
+    }
 
-private:
+  private:
+    DirectXCommon *dxCommon_ = nullptr;
 
-	DirectXCommon* dxCommon_ = nullptr;
+    Vector4 color_ = {1.0f, 1.0f, 1.0f, 1.0f};
+    // 定数バッファ
+    Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;
+    // マッピング済みアドレス
+    ConstBufferDataObjColor *constMap_ = nullptr;
 
-	Vector4 color_ = { 1.0f,1.0f,1.0f,1.0f, };
-	// 定数バッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> constBuffer_;
-	// マッピング済みアドレス
-	ConstBufferDataObjColor* constMap_ = nullptr;
+    /// <summary>
+    /// 定数バッファ生成
+    /// </summary>
+    void CreateConstBuffer();
 
-	/// <summary>
-	/// 定数バッファ生成
-	/// </summary>
-	void CreateConstBuffer();
-
-	/// <summary>
-	/// マッピングする
-	/// </summary>
-	void Map();
+    /// <summary>
+    /// マッピングする
+    /// </summary>
+    void Map();
 };
-

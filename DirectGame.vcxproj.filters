@@ -359,6 +359,7 @@
     <None Include="resources\shaders\OffScreen\FullScreen.hlsli">
       <Filter>リソース ファイル\OffScreen</Filter>
     </None>
+    <None Include=".clang-format" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">

@@ -59,6 +59,7 @@ private:
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
 	std::unique_ptr<ParticleEmitter> hitParticle_ = nullptr;
+	std::unique_ptr<ParticleEmitter> slashParticle_ = nullptr;
 
 	Behavior behavior_ = Behavior::kRoot;
 
@@ -67,6 +68,7 @@ private:
 	int HP_ = 10;
 
 	bool isHit_ = false;
+	bool isEffect_ = false;
 	bool isDead_ = false;
 	bool isStop_ = false;
 	

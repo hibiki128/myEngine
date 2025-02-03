@@ -8,7 +8,7 @@ void FollowCamera::Init() {
 	worldTransform_.Initialize();
 	yaw_ = 0.0f; // 水平回転角度を初期化
 	distanceFromTarget_ = -25.0f; // ターゲットからの距離を初期化
-	heightOffset_ = 5.0f; // ターゲットの上方オフセット
+	heightOffset_ = 2.5f; // ターゲットの上方オフセット
 }
 
 void FollowCamera::Update() {

@@ -4,6 +4,7 @@ void SkyDome::Init(const std::string className)
 {
 	BaseObject::Init(className);
 	BaseObject::CreateModel("Field/skyDome.obj");
+        BaseObject::SetTexture("debug/black1x1.png");
 	Collider::SetCollisionEnabled(false);
 	transform_.scale_ = { 10.0f,10.0f,10.0f };
 }

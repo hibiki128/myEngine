@@ -23,7 +23,8 @@ void TitleScene::Initialize()
 	debugCamera_->Initialize(&vp_);
 
 	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("hit", "debug/cube.obj");
+	emitter_->Initialize("quake", "debug/cube.obj");
+	emitter_->SetTexture("game/ground1x1.png");
 }
 
 void TitleScene::Finalize()
@@ -65,6 +66,7 @@ void TitleScene::Draw()
 	/// Particleの描画準備
 	ptCommon_->DrawCommonSetting();
 	//------Particleの描画開始-------
+	ptCommon_->SetBlendMode(BlendMode::kAdd);
 	emitter_->Draw(vp_);
 	//-----------------------------
 

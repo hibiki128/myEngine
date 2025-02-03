@@ -1,63 +1,66 @@
 #pragma once
 #include "Audio.h"
-#include"BaseScene.h"
+#include "BaseScene.h"
+#include "DebugCamera.h"
 #include "Input.h"
-#include"Object3dCommon.h"
+#include "Object3d.h"
+#include "Object3dCommon.h"
+#include "ParticleCommon.h"
+#include "ParticleEmitter.h"
 #include "SpriteCommon.h"
-#include"ParticleCommon.h"
-#include"DebugCamera.h"
-#include"Object3d.h"
-#include"WorldTransform.h"
-#include"ParticleEmitter.h"
-#include"application/Base/BaseObject.h"
+#include "WorldTransform.h"
+#include "application/Base/BaseObject.h"
 
-class TitleScene :public BaseScene
-{
-public: // メンバ関数
+class TitleScene : public BaseScene {
+  public: // メンバ関数
+    /// <summary>
+    /// 初期化
+    /// </summary>
+    void Initialize() override;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize()override;
+    /// <summary>
+    /// 終了
+    /// </summary>
+    void Finalize() override;
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize()override;
+    /// <summary>
+    /// 更新
+    /// </summary>
+    void Update() override;
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update()override;
+    /// <summary>
+    /// 描画
+    /// </summary>
+    void Draw() override;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw()override;
+    /// <summary>
+    /// オフスクリーン上に描画
+    /// </summary>
+    void DrawForOffScreen() override;
 
-	/// <summary>
-	/// オフスクリーン上に描画
-	/// </summary>
-	void DrawForOffScreen()override;
+    ViewProjection *GetViewProjection() override { return &vp_; }
 
-	ViewProjection* GetViewProjection()override { return &vp_; }
+  private:
+    void Debug();
 
-private:
-	void Debug();
+    void CameraUpdate();
 
-	void CameraUpdate();
+    void ChangeScene();
 
-	void ChangeScene();
+  private:
+    Audio *audio_;
+    Input *input_;
+    Object3dCommon *objCommon_;
+    SpriteCommon *spCommon_;
+    ParticleCommon *ptCommon_;
 
-private:
-	Audio* audio_;
-	Input* input_;
-	Object3dCommon* objCommon_;
-	SpriteCommon* spCommon_;
-	ParticleCommon* ptCommon_;
+    ViewProjection vp_;
+    std::unique_ptr<DebugCamera> debugCamera_;
 
-	ViewProjection vp_;
-	std::unique_ptr<DebugCamera> debugCamera_;
+    std::unique_ptr<ParticleEmitter> emitter_;
 
-	std::unique_ptr<ParticleEmitter> emitter_;
+    std::unique_ptr<BaseObject> crack_;
+    std::unique_ptr<BaseObject> crack2_;
+    float alpha = 1.0f;
+    float alpha2 = 1.0f;
 };

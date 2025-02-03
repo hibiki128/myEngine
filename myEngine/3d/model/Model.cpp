@@ -31,6 +31,7 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 }
 
+
 void Model::Draw()
 {
 	D3D12_VERTEX_BUFFER_VIEW influenceBufferView;
@@ -48,12 +49,17 @@ void Model::Draw()
 	influenceBufferView
 	};
 	modelCommon_->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-	if (!animator_->HaveAnimation()) {
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs); // VBVを設定
+	if (isGltf) {
+		if (!animator_->HaveAnimation()) {
+			modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs); // VBVを設定
+		}
+		else {
+			modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs); // VBVを設定
+			srvManager_->SetGraphicsRootDescriptorTable(6, SrvIndex);
+		}
 	}
 	else {
-		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 2, vbvs); // VBVを設定
-		srvManager_->SetGraphicsRootDescriptorTable(7, SrvIndex);
+		modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, vbvs); // VBVを設定
 	}
 	// 描画！（DrawCall/ドローコール）
 	modelCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
@@ -61,6 +67,7 @@ void Model::Draw()
 		Object3dCommon::GetInstance()->DrawCommonSetting();
 	}
 }
+
 
 void Model::SetTextureIndex(const std::string& filePath)
 {
