@@ -10,6 +10,9 @@
 #include "SpriteCommon.h"
 #include "WorldTransform.h"
 #include "application/Base/BaseObject.h"
+#include <application/Field/SkyDome/SkyDome.h>
+#include <application/Field/Ground/Ground.h>
+#include"Sprite.h"
 
 class TitleScene : public BaseScene {
   public: // メンバ関数
@@ -57,10 +60,12 @@ class TitleScene : public BaseScene {
     ViewProjection vp_;
     std::unique_ptr<DebugCamera> debugCamera_;
 
-    std::unique_ptr<ParticleEmitter> emitter_;
+        // 天球
+    std::unique_ptr<SkyDome> skyDome_;
 
-    std::unique_ptr<BaseObject> crack_;
-    std::unique_ptr<BaseObject> crack2_;
-    float alpha = 1.0f;
-    float alpha2 = 1.0f;
+    // 地面
+    std::unique_ptr<Ground> ground_;
+
+    std::unique_ptr<Sprite> title_;
+    std::unique_ptr<Sprite> space_;
 };

@@ -47,11 +47,14 @@ class Player : public BaseObject {
     void OnCollision([[maybe_unused]] Collider *other) override;
     void OnCollisionEnter([[maybe_unused]] Collider *other) override;
     int GetComboStage() { return comboStage_; }
+    int GetDamage() { return damage; }
+    float GetknockValue() { return knockBackValue; }
     bool IsHit() { return weapon_->IsHit(); }
     bool IsAlive() { return isAlive_; }
 
     void SetIsHit(bool flag) { weapon_->SetIsHit(flag); }
     void SetVp(ViewProjection *vp) { shake_->Initialize(vp); }
+    void SetVpp(ViewProjection *vp) { vp_ = vp; }
 
   private:
     /// ===================================================
@@ -98,9 +101,13 @@ class Player : public BaseObject {
     std::unique_ptr<ParticleEmitter> deathParticle_;
     std::unique_ptr<Object3d> shadow_;
     std::unique_ptr<BaseObject> crack_;
+    std::unique_ptr<BaseObject> HPBar_;
+    std::unique_ptr<BaseObject> HPObj_;
 
     // シェイク
     std::unique_ptr<Shake> shake_;
+
+    ViewProjection *vp_;
 
     // プレイヤーの部位
     WorldTransform R_arm_wt;
@@ -127,8 +134,10 @@ class Player : public BaseObject {
     float kDashSpeed = 1.75f;
     float kDashDecay = 0.97f;
 
+    int damage = 1;
+    float knockBackValue = 1.0f;
     int comboStage_ = 0; // 現在のコンボステージ
-    int HP_ = 10;
+    int HP_ = 20;
     float invincibleTime = 0.0f;
     float startCoolTime_ = 1.0f;
     float comboTimer_ = 0.0f; // コンボ入力待機タイマー

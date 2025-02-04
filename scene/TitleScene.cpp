@@ -1,134 +1,131 @@
 #include "TitleScene.h"
 #include "ImGuiManager.h"
-#include"SceneManager.h"
-#include"SrvManager.h"
+#include "SceneManager.h"
+#include "SrvManager.h"
 
 #ifdef _DEBUG
-#include<imgui.h>
+#include <imgui.h>
 #endif // _DEBUG
+#include "line/DrawLine3D.h"
 #include <LightGroup.h>
-#include"line/DrawLine3D.h"
 
-void TitleScene::Initialize()
-{
-	audio_ = Audio::GetInstance();
-	objCommon_ = Object3dCommon::GetInstance();
-	spCommon_ = SpriteCommon::GetInstance();
-	ptCommon_ = ParticleCommon::GetInstance();
-	input_ = Input::GetInstance();
-	vp_.Initialize();
-	vp_.translation_ = { 0.0f,0.0f,-10.0f };
+void TitleScene::Initialize() {
+    audio_ = Audio::GetInstance();
+    objCommon_ = Object3dCommon::GetInstance();
+    spCommon_ = SpriteCommon::GetInstance();
+    ptCommon_ = ParticleCommon::GetInstance();
+    input_ = Input::GetInstance();
+    vp_.Initialize();
+    vp_.translation_ = {0.0f, 3.0f, -10.0f};
 
-	debugCamera_ = std::make_unique<DebugCamera>();
-	debugCamera_->Initialize(&vp_);
+    debugCamera_ = std::make_unique<DebugCamera>();
+    debugCamera_->Initialize(&vp_);
 
-	emitter_ = std::make_unique<ParticleEmitter>();
-	emitter_->Initialize("quake", "debug/cube.obj");
-	emitter_->SetTexture("game/ground1x1.png");
+    skyDome_ = std::make_unique<SkyDome>();
+    ground_ = std::make_unique<Ground>();
+
+    skyDome_->Init("SkyDome");
+    ground_->Init("Ground");
+
+    title_ = std::make_unique<Sprite>();
+    space_ = std::make_unique<Sprite>();
+
+    title_->Initialize("game/title.png", {640.0f, 200.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
+    space_->Initialize("game/space.png", {640.0f, 500.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 }
 
-void TitleScene::Finalize()
-{
-
+void TitleScene::Finalize() {
 }
 
-void TitleScene::Update()
-{
+void TitleScene::Update() {
 #ifdef _DEBUG
-	// デバッグ
-	Debug();
+    // デバッグ
+    Debug();
 #endif // _DEBUG
 
-	// カメラ更新
-	CameraUpdate();
+    // カメラ更新
+    CameraUpdate();
 
-	// シーン切り替え
-	ChangeScene();
+    // シーン切り替え
+    ChangeScene();
 
-	emitter_->Update();
+    skyDome_->Update();
+    ground_->Update();
 }
 
-void TitleScene::Draw()
-{
-	/// -------描画処理開始-------
+void TitleScene::Draw() {
+    /// -------描画処理開始-------
 
-	/// Spriteの描画準備
-	spCommon_->DrawCommonSetting();
-	//-----Spriteの描画開始-----
+    /// Spriteの描画準備
+    spCommon_->DrawCommonSetting();
+    //-----Spriteの描画開始-----
 
-	//------------------------
+    //------------------------
 
-	objCommon_->DrawCommonSetting();
-	//-----3DObjectの描画開始-----
+    objCommon_->DrawCommonSetting();
+    //-----3DObjectの描画開始-----
 
-	//--------------------------
+    //--------------------------
 
-	/// Particleの描画準備
-	ptCommon_->DrawCommonSetting();
-	//------Particleの描画開始-------
-	ptCommon_->SetBlendMode(BlendMode::kAdd);
-	emitter_->Draw(vp_);
-	//-----------------------------
+    /// Particleの描画準備
+    ptCommon_->DrawCommonSetting();
+    //------Particleの描画開始-------
 
-	//-----線描画-----
-	DrawLine3D::GetInstance()->Draw(vp_);
-	//---------------
+    //-----------------------------
 
-	/// ----------------------------------
+    //-----線描画-----
+    DrawLine3D::GetInstance()->Draw(vp_);
+    //---------------
 
-	/// -------描画処理終了-------
+    /// ----------------------------------
+
+    /// -------描画処理終了-------
 }
 
-void TitleScene::DrawForOffScreen()
-{
-	/// -------描画処理開始-------
+void TitleScene::DrawForOffScreen() {
+    /// -------描画処理開始-------
 
-	/// Spriteの描画準備
-	spCommon_->DrawCommonSetting();
-	//-----Spriteの描画開始-----
+    objCommon_->DrawCommonSetting();
+    //-----3DObjectの描画開始-----
+    skyDome_->Draw(vp_);
+    ground_->Draw(vp_);
+    //--------------------------
 
-	//------------------------
+    /// Particleの描画準備
+    ptCommon_->DrawCommonSetting();
+    //------Particleの描画開始-------
 
-	objCommon_->DrawCommonSetting();
-	//-----3DObjectの描画開始-----
+    //-----------------------------
 
-	//--------------------------
+    /// Spriteの描画準備
+    spCommon_->DrawCommonSetting();
+    //-----Spriteの描画開始-----
+    title_->Draw();
+    space_->Draw();
+    //------------------------
 
-	/// Particleの描画準備
-	ptCommon_->DrawCommonSetting();
-	//------Particleの描画開始-------
+    /// ----------------------------------
 
-	//-----------------------------
-
-
-	/// ----------------------------------
-
-	/// -------描画処理終了-------
+    /// -------描画処理終了-------
 }
 
-
-void TitleScene::Debug()
-{
-	ImGui::Begin("TitleScene:Debug");
-	debugCamera_->imgui();
-	LightGroup::GetInstance()->imgui();
-	ImGui::End();
-	emitter_->imgui();
+void TitleScene::Debug() {
+    ImGui::Begin("TitleScene:Debug");
+    debugCamera_->imgui();
+    LightGroup::GetInstance()->imgui();
+    ImGui::End();
 }
 
-void TitleScene::CameraUpdate()
-{
-	if (debugCamera_->GetActive()) {
-		debugCamera_->Update();
-	}
-	else {
-		vp_.UpdateMatrix();
-	}
+void TitleScene::CameraUpdate() {
+    if (debugCamera_->GetActive()) {
+        debugCamera_->Update();
+    } else {
+        vp_.UpdateMatrix();
+    }
 }
 
-void TitleScene::ChangeScene()
-{
-	if (input_->TriggerKey(DIK_SPACE)) {
-		sceneManager_->NextSceneReservation("GAME");
-	}
+void TitleScene::ChangeScene() {
+    if (input_->TriggerKey(DIK_SPACE)) {
+        sceneManager_->NextSceneReservation("GAME");
+    }
 }

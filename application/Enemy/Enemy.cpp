@@ -21,13 +21,25 @@ void Enemy::Init(const std::string className) {
     slashParticle_->Initialize("slash", "debug/plane.obj");
     slashParticle_->SetTexture("game/slash.png");
 
+    HPBar_ = std::make_unique<BaseObject>();
+    HPObj_ = std::make_unique<BaseObject>();
+    HPBar_->Init("HPBar");
+    HPObj_->Init("HPObj");
+    HPBar_->CreateModel("HP/HPBar.obj");
+    HPObj_->CreateModel("HP/HP.obj");
+    HPObj_->SetTexture("debug/white1x1.png");
+    HPObj_->SetObjColor({1.0f, 0.0f, 0.0f, 1.0f});
+    HPBar_->SetRotationY(degreesToRadians(90.0f));
+    HPObj_->SetRotationY(degreesToRadians(90.0f));
+
     isEffect_ = false;
 }
 
 void Enemy::Update() {
     BehaviorUpdate();
-
+    HPObj_->SetScale({2.0f, 1.0f, HP_ / 5.0f});
     if (HP_ <= 0) {
+        HPObj_->SetScale({2.0f, 1.0f, 0.0f});
         isDead_ = true;
     }
 
@@ -37,12 +49,19 @@ void Enemy::Update() {
             isStop_ = false;
         }
     }
+    HPBar_->Update();
+    HPObj_->Update();
+    HPBar_->SetWorldPosition({transform_.translation_.x, transform_.translation_.y + 2.0f, transform_.translation_.z});
+    HPObj_->SetWorldPosition({transform_.translation_.x - 2.0f, transform_.translation_.y + 2.0f, transform_.translation_.z});
 }
 
 void Enemy::Draw(const ViewProjection &viewProjection) {
     if (!isDead_) {
 
         BaseObject::Draw(viewProjection);
+
+        HPBar_->Draw(viewProjection);
+        HPObj_->Draw(viewProjection);
     }
 }
 
@@ -51,9 +70,9 @@ void Enemy::DrawParticle(const ViewProjection &viewProjection) {
     }
     ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
     hitParticle_->Draw(viewProjection);
-    //ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
+    // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kNormal);
     slashParticle_->Draw(viewProjection);
-   // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
+    // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
 }
 
 void Enemy::Debug(std::string &name) {
@@ -129,7 +148,7 @@ void Enemy::KnockBack() {
         direction = direction.Normalize(); // ベクトルの正規化
 
         // ノックバックの目標位置と開始位置を設定
-        float knockbackDistance = 1.0f;
+        float knockbackDistance = player_->GetknockValue();
         Vector3 knockbackTarget = enemyPosition + (direction * knockbackDistance);
         knockbackTarget.y = enemyPosition.y; // y軸の位置は変更しない
         Vector3 knockbackStart = enemyPosition;
@@ -282,8 +301,8 @@ void Enemy::OnCollision(Collider *other) {
 
 void Enemy::OnCollisionEnter(Collider *other) {
     if (HP_ > 0) {
-        if (dynamic_cast<Weapon *>(other)) {
-            --HP_;
+        if (dynamic_cast<Weapon*>(other)) {
+            HP_ -=player_->GetDamage();
             isHit_ = true;
             isEffect_ = true;
         }

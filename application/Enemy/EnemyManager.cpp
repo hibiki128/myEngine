@@ -135,7 +135,8 @@ void EnemyManager::EnemiesUpdate() {
             deathParticles_.push_back(std::move(deathParticle));
 
             it = enemies_.erase(it); // リストから削除
-            ++deadEnemiesCount_;     // 死亡した敵をカウント
+            ++deadEnemiesCount_; // 死亡した敵をカウント
+            --maxEnemy;
         } else {
             ++it;
         }

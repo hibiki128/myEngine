@@ -72,13 +72,15 @@ void GameScene::Update() {
         }
 
         // 他のオブジェクトの更新処理
+        player_->SetVpp(&followCamera_->GetViewProjection());
         player_->Update();
         enemyManager_->Update();
         enemyManager_->SetPosition(player_->GetCenterPosition());
         skyDome_->Update();
         ground_->Update();
     }
-        ui_->Update();
+    ui_->SetEneNum(enemyManager_->GetEnemyNum());
+    ui_->Update();
 }
 
 void GameScene::Draw() {

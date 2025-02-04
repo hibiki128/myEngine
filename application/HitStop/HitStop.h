@@ -1,5 +1,7 @@
 #pragma once
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 #include "json.hpp"
 #include <fstream>
 

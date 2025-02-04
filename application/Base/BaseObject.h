@@ -55,6 +55,7 @@ class BaseObject : public Collider {
     /// getter
     /// ===================================================
     const WorldTransform &GetTransform() { return transform_; }
+    Matrix4x4 GetWorldMatrix() { return transform_.matWorld_; }
 
     /// ===================================================
     /// setter
@@ -71,8 +72,10 @@ class BaseObject : public Collider {
     void SetRotationX(float rotate) { transform_.rotation_.x = rotate; }
     void SetRotationZ(float rotate) { transform_.rotation_.z = rotate; }
     void SetScale(Vector3 scale) { transform_.scale_ = scale; }
+    void SetWorldMatrix(Matrix4x4 mat) { transform_.matWorld_ = mat; }
     void SetLighting(bool isLighting) { isLighting_ = isLighting; }
     void SetTexture(const std::string &filePath) { obj3d_->SetTexture(filePath); }
+    void SetParent(const WorldTransform &wt) { transform_.parent_ = &wt; }
 
   private:
     void DebugTransform();

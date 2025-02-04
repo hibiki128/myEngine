@@ -11,6 +11,7 @@ class EnemyManager {
     void Debug();
     int GetDeadCount() { return deadEnemiesCount_; }
     void SetPosition(Vector3 position) { position_ = position; }
+    int GetEnemyNum() { return maxEnemy; }
 
   private:
     void AddEnemy(std::unique_ptr<Enemy> enemy);
@@ -41,4 +42,5 @@ class EnemyManager {
     float nextSpawnTime_ = 0.0f; // 次にスポーンする時間
     int spawnCount_ = 0;         // 何体スポーンしたか
     bool isSpawning_ = false;    // 現在ウェーブ中にスポーン中か
+    int maxEnemy = 10;
 };

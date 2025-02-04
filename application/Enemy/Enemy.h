@@ -61,6 +61,9 @@ class Enemy : public BaseObject {
     std::unique_ptr<ParticleEmitter> hitParticle_ = nullptr;
     std::unique_ptr<ParticleEmitter> slashParticle_ = nullptr;
 
+    std::unique_ptr<BaseObject> HPBar_;
+    std::unique_ptr<BaseObject> HPObj_;
+
     Behavior behavior_ = Behavior::kRoot;
 
     Player *player_ = nullptr;

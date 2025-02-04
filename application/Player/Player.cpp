@@ -58,8 +58,19 @@ void Player::Init(const std::string className) {
 
     startAngle = {0.0f, 0.0f, 0.0f};
     endAngle = {0.0f, 0.0f, 0.0f};
-    
+
     startCoolTime_ = 1.0f;
+
+    HPBar_ = std::make_unique<BaseObject>();
+    HPObj_ = std::make_unique<BaseObject>();
+    HPBar_->Init("HPBar");
+    HPObj_->Init("HPObj");
+    HPBar_->CreateModel("HP/HPBar.obj");
+    HPObj_->CreateModel("HP/HP.obj");
+    HPObj_->SetTexture("debug/white1x1.png");
+    HPObj_->SetObjColor({0.0f, 0.0f, 1.0f, 1.0f});
+
+    // HPObj_->SetParent(HPBar_->GetWorldTransform());
 
     groupName = "NormalAttack";
     globalVariables = GlobalVariables::GetInstance();
@@ -92,14 +103,15 @@ void Player::Init(const std::string className) {
 
     deathParticle_ = std::make_unique<ParticleEmitter>();
     deathParticle_->Initialize("death", "Enemy/deathParticle.obj");
-    
 }
 
 void Player::Update() {
-    if (HP_ <= 0&&isAlive_) {
+    HPObj_->SetScale({2.0f, 1.0f, HP_ / 10.0f});
+    if (HP_ <= 0 && isAlive_) {
         deathParticle_->SetPosition(GetCenterPosition());
         deathParticle_->UpdateOnce();
         isAlive_ = false;
+        HPObj_->SetScale({2.0f, 1.0f, 0.0f});
     }
     if (isAlive_) {
 
@@ -161,7 +173,7 @@ void Player::Update() {
         }
         if (startCoolTime_ > 0) {
             startCoolTime_ -= 1.0f / 60.0f;
-        } 
+        }
 
         // 基礎更新
         BaseObject::Update();
@@ -177,12 +189,16 @@ void Player::Update() {
         shake_->Update();
         R_arm_wt.UpdateMatrix();
         L_arm_wt.UpdateMatrix();
+
+        HPBar_->Update();
+        HPObj_->Update();
+        HPBar_->SetWorldPosition({transform_.translation_.x, transform_.translation_.y + 2.0f, transform_.translation_.z});
+        HPObj_->SetWorldPosition({transform_.translation_.x - 2.0f, transform_.translation_.y + 2.0f, transform_.translation_.z});
         Frash();
     } else {
         BaseObject::SetCollisionEnabled(false);
         weapon_->SetCollisionEnabled(false);
     }
-
 }
 
 void Player::Draw(const ViewProjection &viewProjection) {
@@ -193,6 +209,9 @@ void Player::Draw(const ViewProjection &viewProjection) {
         shadow_->Draw(Shadow_, viewProjection);
         weapon_->Draw(viewProjection);
     }
+
+    HPBar_->Draw(viewProjection);
+    HPObj_->Draw(viewProjection);
 }
 
 void Player::DrawParticle(const ViewProjection &viewProjection) {
@@ -210,7 +229,7 @@ void Player::DrawParticle(const ViewProjection &viewProjection) {
         // ParticleCommon::GetInstance()->SetBlendMode(BlendMode::kAdd);
         weapon_->DrawParticle(viewProjection);
     }
-        deathParticle_->Draw(viewProjection);
+    deathParticle_->Draw(viewProjection);
 }
 
 void Player::DrawCrack(const ViewProjection &viewProjection) {
@@ -252,6 +271,9 @@ void Player::imgui() {
         ImGui::EndTabBar();
     }
     ImGui::End();
+
+    HPBar_->DebugImGui();
+    HPObj_->DebugImGui();
 
     afterImageEmitter_->imgui();
 }
@@ -403,7 +425,8 @@ void Player::Attack() {
 
 void Player::NormalAttack() {
     groupName = "NormalAttack";
-
+    damage = 1;
+    knockBackValue = 0.5f;
     // 補間するための開始角度と終了角度を設定
     startAngle = globalVariables->GetVector3Value(groupName, "startAngle");
     endAngle = globalVariables->GetVector3Value(groupName, "endAngle");
@@ -431,7 +454,8 @@ void Player::NormalAttack() {
 
 void Player::UpAttack() {
     groupName = "UpAttack";
-
+    damage = 1;
+    knockBackValue = 0.5f;
     // 補間するための開始角度と終了角度を設定
     startAngle = globalVariables->GetVector3Value(groupName, "startAngle");
     endAngle = globalVariables->GetVector3Value(groupName, "endAngle");
@@ -468,7 +492,8 @@ void Player::UpAttack() {
 
 void Player::DownAttack() {
     groupName = "DownAttack";
-
+    damage = 4;
+    knockBackValue = 1.5f;
     // 補間するための開始角度と終了角度を設定
     startAngle = globalVariables->GetVector3Value(groupName, "startAngle");
     endAngle = globalVariables->GetVector3Value(groupName, "endAngle");
@@ -510,7 +535,8 @@ void Player::DownAttack() {
 
 void Player::RowlingAttack() {
     groupName = "RowlingAttack";
-
+    damage = 1;
+    knockBackValue = 0.05f;
     // 補間するための開始角度と終了角度を設定
     startAngle = globalVariables->GetVector3Value(groupName, "startAngle");
     endAngle = globalVariables->GetVector3Value(groupName, "endAngle");

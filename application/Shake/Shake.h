@@ -1,9 +1,11 @@
 #pragma once
 #include "ViewProjection.h"
+#ifdef _DEBUG
 #include "imgui.h"
+#endif // _DEBUG
 #include "json.hpp"
-#include <fstream>
 #include <Vector2.h>
+#include <fstream>
 
 class Shake {
   public:

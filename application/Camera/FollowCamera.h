@@ -15,7 +15,7 @@ public:
 	float GetYaw() { return yaw_; }
 
 	void SetTarget(const WorldTransform* target) { target_ = target; }
-	const ViewProjection& GetViewProjection() const { return viewProjection_; }
+	ViewProjection& GetViewProjection() { return viewProjection_; }
 
 private:
 	/// ===================================================

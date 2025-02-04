@@ -48,10 +48,10 @@ void FollowCamera::imgui() {
 }
 
 void FollowCamera::Move() {
-	if (Input::GetInstance()->PushKey(DIK_LEFT)) {
-		yaw_ -= 0.04f; // 左回転
-	}
-	if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
-		yaw_ += 0.04f; // 右回転
-	}
+	//if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+	//	yaw_ -= 0.04f; // 左回転
+	//}
+	//if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+	//	yaw_ += 0.04f; // 右回転
+	//}
 }
