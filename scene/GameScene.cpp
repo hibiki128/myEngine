@@ -107,7 +107,9 @@ void GameScene::Draw() {
     //------------------------
 
     //-----線描画-----
+#ifdef _DEBUG
     DrawLine3D::GetInstance()->Draw(vp_);
+#endif // _DEBUG
     //---------------
 
     /// ----------------------------------
