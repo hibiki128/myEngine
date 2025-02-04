@@ -3,6 +3,8 @@
 #include "application/Camera/FollowCamera.h"
 #include "application/Enemy/Enemy.h"
 #include "myEngine/Frame/Frame.h"
+#include <cstdlib>
+#include <ctime>
 
 void Player::Init(const std::string className) {
     BaseObject::Init(className);
@@ -103,9 +105,18 @@ void Player::Init(const std::string className) {
 
     deathParticle_ = std::make_unique<ParticleEmitter>();
     deathParticle_->Initialize("death", "Enemy/deathParticle.obj");
+
+    crackSE_ = Audio::GetInstance()->LoadWave("crack.wav");
+    damageSE_ = Audio::GetInstance()->LoadWave("damage.wav");
+    preAttackSE_ = Audio::GetInstance()->LoadWave("preAttack1.wav");
+
+    preAttackSE2_ = Audio::GetInstance()->LoadWave("preAttack2.wav");
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 void Player::Update() {
+    PlaySE();
     HPObj_->SetScale({2.0f, 1.0f, HP_ / 10.0f});
     if (HP_ <= 0 && isAlive_) {
         deathParticle_->SetPosition(GetCenterPosition());
@@ -153,6 +164,7 @@ void Player::Update() {
             quake_->SetPosition({GetCenterPosition().x, 0.0f, GetCenterPosition().z});
             quake_->UpdateOnce();
             shake_->StartShake();
+            Audio::GetInstance()->PlayWave(crackSE_, 0.2f);
             isCrack_ = false;
         }
 
@@ -406,6 +418,19 @@ void Player::Frash() {
     }
 }
 
+void Player::PlaySE() {
+    if (isAttack_) {
+        // 50% の確率で preAttackSE_ または preAttackSE2_ を選択
+        int randomIndex = std::rand() % 2;
+        int selectedSE = (randomIndex == 0) ? preAttackSE_ : preAttackSE2_;
+
+        // 選択されたSEを再生
+        Audio::GetInstance()->PlayWave(selectedSE, 0.15f);
+
+        isAttack_ = false;
+    }
+}
+
 void Player::Attack() {
     switch (comboStage_) {
     case 0:
@@ -435,7 +460,9 @@ void Player::NormalAttack() {
     endAngle.y = transform_.rotation_.y - endAngle.y;     // 最終角度a
     // easeTMax = 1.0f;
 
-    // タイマーを進める
+    if (attackTimer_ == 0) {
+        isAttack_ = true;
+    }
     if (attackTimer_ < easeTMax) {
         attackTimer_ += Frame::DeltaTime(); // 時間を進める
     }
@@ -470,8 +497,9 @@ void Player::UpAttack() {
     startAngle.y = transform_.rotation_.y - startAngle.y; // 初期角度
     endAngle.y = transform_.rotation_.y - endAngle.y;     // 最終角度a
     // easeTMax = 1.0f;
-
-    // タイマーを進める
+    if (attackTimer_ == 0) {
+        isAttack_ = true;
+    }
     if (attackTimer_ < easeTMax) {
         attackTimer_ += Frame::DeltaTime(); // 時間を進める
     }
@@ -508,8 +536,9 @@ void Player::DownAttack() {
     startAngle.y = transform_.rotation_.y - startAngle.y; // 初期角度
     endAngle.y = transform_.rotation_.y - endAngle.y;     // 最終角度a
     // easeTMax = 1.0f;
-
-    // タイマーを進める
+    if (attackTimer_ == 0) {
+        isAttack_ = true;
+    }
     if (attackTimer_ < easeTMax) {
         attackTimer_ += Frame::DeltaTime(); // 時間を進める
     }
@@ -544,8 +573,9 @@ void Player::RowlingAttack() {
     startAngle.y = transform_.rotation_.y - startAngle.y; // 初期角度
     endAngle.y = transform_.rotation_.y - endAngle.y;     // 最終角度a
     // easeTMax = 1.0f;
-
-    // タイマーを進める
+    if (attackTimer_ == 0) {
+        isAttack_ = true;
+    }
     if (attackTimer_ < easeTMax) {
         attackTimer_ += Frame::DeltaTime(); // 時間を進める
     }
@@ -722,6 +752,7 @@ void Player::OnCollisionEnter(Collider *other) {
     if (dynamic_cast<Enemy *>(other) && invincibleTime == 0 && startCoolTime_ < 0.0f) {
         HP_--;
         invincibleTime = 1.0f;
+        Audio::GetInstance()->PlayWave(damageSE_, 0.2f);
     }
 }
 

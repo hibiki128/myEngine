@@ -7,6 +7,7 @@
 #include "Weapon/Weapon.h"
 #include "application/Base/BaseObject.h"
 #include "application/Shake/Shake.h"
+#include"Audio.h"
 
 class FollowCamera;
 class Player : public BaseObject {
@@ -93,6 +94,8 @@ class Player : public BaseObject {
 
     void Frash();
 
+    void PlaySE();
+
   private:
     FollowCamera *camera_;
     std::unique_ptr<Weapon> weapon_;
@@ -148,6 +151,7 @@ class Player : public BaseObject {
     bool isJKeyPressed_ = false;
     bool isCrack_ = false;
     bool isAlive_ = true;
+    bool isAttack_ = false;
     Vector3 startAngle;
     Vector3 endAngle;
     Vector3 startPosition;
@@ -157,4 +161,9 @@ class Player : public BaseObject {
 
     GlobalVariables *globalVariables = nullptr;
     const char *groupName = nullptr;
+
+    int32_t crackSE_;
+    int32_t preAttackSE_;
+    int32_t preAttackSE2_;
+    int32_t damageSE_;
 };

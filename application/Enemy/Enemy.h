@@ -80,4 +80,7 @@ class Enemy : public BaseObject {
     float fallSpeed = 0.0f;
 
     const float knockbackTMax_ = 0.2f;
+
+    int32_t damageSE_;
+    int32_t damageSE2_;
 };

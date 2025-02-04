@@ -33,6 +33,10 @@ void Enemy::Init(const std::string className) {
     HPObj_->SetRotationY(degreesToRadians(90.0f));
 
     isEffect_ = false;
+
+    damageSE_ = Audio::GetInstance()->LoadWave("attack1.wav");
+    damageSE2_ = Audio::GetInstance()->LoadWave("attack2.wav");
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 void Enemy::Update() {
@@ -305,6 +309,12 @@ void Enemy::OnCollisionEnter(Collider *other) {
             HP_ -=player_->GetDamage();
             isHit_ = true;
             isEffect_ = true;
+            // 50% の確率で preAttackSE_ または preAttackSE2_ を選択
+            int randomIndex = std::rand() % 2;
+            int selectedSE = (randomIndex == 0) ? damageSE_ : damageSE2_;
+
+            // 選択されたSEを再生
+            Audio::GetInstance()->PlayWave(selectedSE, 0.2f);
         }
     }
 }
