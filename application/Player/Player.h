@@ -166,4 +166,5 @@ class Player : public BaseObject {
     int32_t preAttackSE_;
     int32_t preAttackSE2_;
     int32_t damageSE_;
+    int32_t dashSE_;
 };

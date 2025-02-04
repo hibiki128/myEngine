@@ -109,8 +109,8 @@ void Player::Init(const std::string className) {
     crackSE_ = Audio::GetInstance()->LoadWave("crack.wav");
     damageSE_ = Audio::GetInstance()->LoadWave("damage.wav");
     preAttackSE_ = Audio::GetInstance()->LoadWave("preAttack1.wav");
-
     preAttackSE2_ = Audio::GetInstance()->LoadWave("preAttack2.wav");
+    dashSE_ = Audio::GetInstance()->LoadWave("dash.wav");
 
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
@@ -644,6 +644,7 @@ void Player::Move() {
 
     // ダッシュ処理
     if ((Input::GetInstance()->PushKey(DIK_D) || Input::GetInstance()->PushKey(DIK_W) || Input::GetInstance()->PushKey(DIK_A) || Input::GetInstance()->PushKey(DIK_S)) && Input::GetInstance()->TriggerKey(DIK_LSHIFT) && dashCoolTime_ <= 0.0f) {
+        Audio::GetInstance()->PlayWave(dashSE_, 0.2f);
         dashSpeed_ = kDashSpeed;
         dashCoolTime_ = 1.0f; // クールタイム設定
     }
