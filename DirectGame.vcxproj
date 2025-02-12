@@ -65,7 +65,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\light;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)myEngine\utility\graphics\srv;$(ProjectDir)myEngine\utility\graphics\pso;$(ProjectDir)myEngine\utility\graphics\texture;$(ProjectDir)myEngine\utility\graphics\model;$(ProjectDir)externals\assimp\include;$(ProjectDir)myEngine\utility\imgui;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\light;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)externals\assimp\include;$(ProjectDir)myEngine\utility\imgui;$(ProjectDir)externals\imgui;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,7 +91,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\light;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)myEngine\utility\graphics\srv;$(ProjectDir)myEngine\utility\graphics\pso;$(ProjectDir)myEngine\utility\graphics\texture;$(ProjectDir)myEngine\utility\graphics\model;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)myEngine\2d;$(ProjectDir)myEngine\3d;$(ProjectDir)myEngine\3d\light;$(ProjectDir)myEngine\3d\particle;$(ProjectDir)myEngine\3d\model;$(ProjectDir)myEngine\3d\transform;$(ProjectDir)myEngine\3d\camera;$(ProjectDir)myEngine\base;$(ProjectDir)myEngine\input;$(ProjectDir)myEngine\utility;$(ProjectDir)myEngine\utility\graphics;$(ProjectDir)myEngine\utility\debug;$(ProjectDir)myEngine\utility\string;$(ProjectDir)scene;$(ProjectDir)myEngine\core;$(ProjectDir)myEngine\utility\edit;$(ProjectDir)myEngine\utility\collider;$(ProjectDir)myEngine\utility\scene;$(ProjectDir)particle;$(ProjectDir)math;$(ProjectDir)externals\assimp\include;$(ProjectDir)externals\DirectXTex;$(ProjectDir)myEngine\Audio;$(ProjectDir)scene\MyGame;$(ProjectDir)scene\MyGame;$(ProjectDir)scene</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,15 +107,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="application\Camera\FollowCamera.cpp" />
-    <ClCompile Include="application\Enemy\Enemy.cpp" />
-    <ClCompile Include="application\Enemy\EnemyManager.cpp" />
-    <ClCompile Include="application\Field\Ground\Ground.cpp" />
-    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp" />
-    <ClCompile Include="application\Player\Player.cpp" />
-    <ClCompile Include="application\Player\Weapon\Weapon.cpp" />
-    <ClCompile Include="application\UI\Ui.cpp" />
-    <ClCompile Include="application\HitStop\HitStop.cpp" />
+    <ClCompile Include="scene\DemoScene.cpp" />
+    <ClCompile Include="scene\ClearScene.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Bone.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Animator.cpp" />
@@ -135,6 +128,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\utility\edit\LevelData.cpp" />
     <ClCompile Include="math\Quaternion.cpp" />
     <ClCompile Include="myEngine\3d\transform\ObjColor.cpp" />
+    <ClCompile Include="myEngine\utility\edit\Liner.cpp" />
     <ClCompile Include="myEngine\3d\particle\ParticleEmitter.cpp" />
     <ClCompile Include="myEngine\3d\camera\ViewProjection.cpp" />
     <ClCompile Include="myEngine\3d\transform\WorldTransform.cpp" />
@@ -157,29 +151,29 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="myEngine\utility\debug\Logger.cpp" />
     <ClCompile Include="myEngine\3d\model\Model.cpp" />
     <ClCompile Include="myEngine\3d\model\ModelCommon.cpp" />
-    <ClCompile Include="myEngine\utility\graphics\model\ModelManager.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\ModelManager.cpp" />
     <ClCompile Include="myEngine\3d\model\Object3d.cpp" />
     <ClCompile Include="myEngine\3d\model\Object3dCommon.cpp" />
     <ClCompile Include="myEngine\2d\Sprite.cpp" />
     <ClCompile Include="myEngine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="myEngine\utility\graphics\pso\PipeLineManager.cpp" />
-    <ClCompile Include="myEngine\utility\graphics\srv\SrvManager.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\SrvManager.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneManager.cpp" />
     <ClCompile Include="myEngine\utility\string\StringUtility.cpp" />
-    <ClCompile Include="myEngine\utility\graphics\texture\TextureManager.cpp" />
+    <ClCompile Include="myEngine\utility\graphics\TextureManager.cpp" />
     <ClCompile Include="myEngine\base\WinApp.cpp" />
     <ClCompile Include="myEngine\core\MyGame.cpp" />
+    <ClCompile Include="myEngine\3d\line\LineManager.cpp" />
     <ClCompile Include="myEngine\utility\scene\SceneTransition.cpp" />
     <ClCompile Include="myEngine\offscreen\OffScreen.cpp" />
     <ClCompile Include="scene\BaseScene.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="scene\SelectScene.cpp" />
     <ClCompile Include="scene\TitleScene.cpp" />
     <ClCompile Include="myEngine\3d\model\animation\Skin.cpp" />
-    <ClCompile Include="application\Shake\Shake.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".clang-format" />
     <None Include=".editorconfig" />
     <None Include="resources\shaders\OffScreen\FullScreen.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -203,15 +197,8 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\Camera\FollowCamera.h" />
-    <ClInclude Include="application\Enemy\Enemy.h" />
-    <ClInclude Include="application\Enemy\EnemyManager.h" />
-    <ClInclude Include="application\Field\Ground\Ground.h" />
-    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
-    <ClInclude Include="application\Player\Player.h" />
-    <ClInclude Include="application\Player\Weapon\Weapon.h" />
-    <ClInclude Include="application\UI\Ui.h" />
-    <ClInclude Include="application\HitStop\HitStop.h" />
+    <ClInclude Include="scene\DemoScene.h" />
+    <ClInclude Include="scene\ClearScene.h" />
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h" />
     <ClInclude Include="myEngine\3d\model\animation\Bone.h" />
     <ClInclude Include="myEngine\3d\model\animation\Animator.h" />
@@ -232,6 +219,7 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\utility\edit\LevelData.h" />
     <ClInclude Include="math\Quaternion.h" />
     <ClInclude Include="myEngine\3d\transform\ObjColor.h" />
+    <ClInclude Include="myEngine\utility\edit\Liner.h" />
     <ClInclude Include="myEngine\3d\particle\ParticleEmitter.h" />
     <ClInclude Include="myEngine\3d\camera\ViewProjection.h" />
     <ClInclude Include="myEngine\3d\transform\WorldTransform.h" />
@@ -259,30 +247,37 @@ copy "$(WindowsSdkDIr)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="myEngine\utility\debug\Logger.h" />
     <ClInclude Include="myEngine\3d\model\Model.h" />
     <ClInclude Include="myEngine\3d\model\ModelCommon.h" />
-    <ClInclude Include="myEngine\utility\graphics\model\ModelManager.h" />
+    <ClInclude Include="myEngine\utility\graphics\ModelManager.h" />
     <ClInclude Include="myEngine\3d\model\Object3d.h" />
     <ClInclude Include="myEngine\3d\model\Object3dCommon.h" />
     <ClInclude Include="myEngine\2d\Sprite.h" />
     <ClInclude Include="myEngine\2d\SpriteCommon.h" />
-    <ClInclude Include="myEngine\utility\graphics\pso\PipeLineManager.h" />
-    <ClInclude Include="myEngine\utility\graphics\srv\SrvManager.h" />
+    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h" />
+    <ClInclude Include="myEngine\utility\graphics\SrvManager.h" />
     <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h" />
     <ClInclude Include="myEngine\utility\scene\SceneFactory.h" />
     <ClInclude Include="myEngine\utility\scene\SceneManager.h" />
     <ClInclude Include="myEngine\utility\string\StringUtility.h" />
-    <ClInclude Include="myEngine\utility\graphics\texture\TextureManager.h" />
+    <ClInclude Include="myEngine\utility\graphics\TextureManager.h" />
     <ClInclude Include="myEngine\base\WinApp.h" />
     <ClInclude Include="myEngine\core\MyGame.h" />
+    <ClInclude Include="myEngine\3d\line\LineManager.h" />
     <ClInclude Include="myEngine\utility\scene\SceneTransition.h" />
     <ClInclude Include="myEngine\offscreen\OffScreen.h" />
     <ClInclude Include="scene\BaseScene.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="scene\SelectScene.h" />
     <ClInclude Include="scene\TitleScene.h" />
     <ClInclude Include="myEngine\3d\model\animation\Skin.h" />
-    <ClInclude Include="application\Shake\Shake.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\OffScreen\BoxFilter.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\OffScreen\Cinematic.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

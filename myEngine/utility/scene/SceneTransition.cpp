@@ -1,7 +1,10 @@
 #include "SceneTransition.h"
+#include "Easing.h"
+#include "SpriteCommon.h"
 #include "TextureManager.h"
 #include "algorithm"
-#include <Easing.h>
+#include "myEngine/Frame/Frame.h"
+#include <vector>
 
 SceneTransition::SceneTransition() {}
 
@@ -9,7 +12,7 @@ SceneTransition::~SceneTransition() {}
 
 void SceneTransition::Initialize() {
     sprite_ = std::make_unique<Sprite>();
-    sprite_->Initialize("debug/white1x1.png", {0, 0}, {0.0f, 0.0f, 0.0f, 1.0f});
+    sprite_->Initialize("debug/black1x1.png", {0, 0}, {1.0f, 1.0f, 1.0f, 1.0f});
     sprite_->SetSize(Vector2(1280, 720)); // 画面全体を覆うサイズ
     sprite_->SetAlpha(0.0f);              // 最初は完全に透明
     duration_ = 1.0f;                     // フェードの持続時間（例: 1秒）
@@ -44,6 +47,28 @@ void SceneTransition::Initialize() {
 }
 
 void SceneTransition::Update() {
+    FadeUpdate();
+}
+
+void SceneTransition::Draw() {
+    SpriteCommon::GetInstance()->DrawCommonSetting();
+     sprite_->Draw();
+
+    // 各スプライトを描画
+   /* for (const auto &row : transition_) {
+        for (const auto &sprite : row) {
+            sprite->Draw();
+        }
+    }*/
+}
+
+void SceneTransition::Debug() {
+    ImGui::Begin("遷移");
+    ImGui::DragFloat2("位置", &spPos_.x, 0.1f);
+    ImGui::End();
+}
+
+void SceneTransition::FadeUpdate() {
     if (fadeInStart) {
         // フェードイン中
         if (!fadeInFinish) {
@@ -65,21 +90,9 @@ void SceneTransition::Update() {
     }
 }
 
-void SceneTransition::Draw() {
-    //sprite_->Draw();
-
-     // 各スプライトを描画
-    for (const auto &row : transition_) {
-        for (const auto &sprite : row) {
-            sprite->Draw();
-        }
-    }
-}
-
 void SceneTransition::FadeIn() {
-
-    ReverseFadeIn();
-    // DefaultFadeIn();
+     DefaultFadeIn();
+   // ReverseFadeIn();
 
     counter_ += 1.0f / 60.0f; // フレームレートを基にカウント（1フレームごとに0.0167秒進む）
     if (counter_ >= duration_) {
@@ -89,8 +102,8 @@ void SceneTransition::FadeIn() {
 }
 
 void SceneTransition::FadeOut() {
-    ReverseFadeOut();
-    // DefaultFadeOut();
+     DefaultFadeOut();
+    //ReverseFadeOut();
 
     // カウンターを減少（フレームレートに基づく）
     counter_ -= 1.0f / 60.0f;

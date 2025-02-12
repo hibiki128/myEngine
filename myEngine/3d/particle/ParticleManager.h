@@ -33,6 +33,8 @@ public:
 	/// <param name="textureFilePath"></param>
 	void CreateParticleGroup(const std::string name, const std::string& filename);
 
+	std::string GetTexturePath() { return modelData.material.textureFilePath; }
+
 	void SetBillBorad(bool isBillBoard) { isBillboard = isBillBoard; }
 	void SetRandomRotate(bool isRandomRotate) { isRandomRotate_ = isRandomRotate; }
 	void SetAcceMultipy(bool isAcceMultipy) { isAcceMultipy_ = isAcceMultipy; }

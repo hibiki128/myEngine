@@ -24,11 +24,9 @@ void LightGroup::Initialize()
 	CreateCamera();
 	CreatePointLight();
 	CreateDirectionLight();
-	CreateSpotLight();
 
 	LoadDirectionalLight();
 	LoadPointLight();
-	LoadSpotLight();
 
 }
 
@@ -47,12 +45,6 @@ void LightGroup::Update(const ViewProjection& viewProjection)
 	else {
 		pointLightData->active = false;
 	}
-	if (isSpotLight) {
-		spotLightData->active = true;
-	}
-	else {
-		spotLightData->active = false;
-	}
 }
 
 void LightGroup::Draw()
@@ -63,12 +55,10 @@ void LightGroup::Draw()
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraForGPUResource->GetGPUVirtualAddress());
 
 	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
-
-	obj3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
 }
 
 void LightGroup::imgui() {
-
+	
 
 	if (ImGui::BeginTabBar("Direction")) {
 		if (ImGui::BeginTabItem("Direction")) {
@@ -133,41 +123,7 @@ void LightGroup::imgui() {
 		ImGui::EndTabBar();
 	}
 
-	if (ImGui::BeginTabBar("Spot")) {
-		if (ImGui::BeginTabItem("Spot")) {
-			ImGui::Checkbox("spotLight", &isSpotLight);
-			if (spotLightData->active) {
-				ImGui::DragFloat3("Position", &spotLightData->position.x, 0.1f);
-				ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f);
-				ImGui::DragFloat3("LightDirection", &spotLightData->direction.x, 0.1f);
-				spotLightData->direction = spotLightData->direction.Normalize();
-				ImGui::DragFloat("Decay", &spotLightData->decay, 0.1f);
-				ImGui::DragFloat("Distance", &spotLightData->distance, 0.1f);
-				ImGui::DragFloat("cosAngle", &spotLightData->cosAngle, 0.1f);
-				ImGui::ColorEdit3("Color", &spotLightData->color.x);
-				// "HalfLambert", "BlinnPhong" の2つの選択肢を用意
-				const char* lightingTypes[] = { "HalfLambert", "BlinnPhong" };
-
-				int selectedLightingType = spotLightData->BlinnPhong ? 1 : 0; // 初期値はBlinnPhong
-
-				// Comboで選択されたインデックスに基づいてフラグを設定
-				if (ImGui::Combo("Lighting Type", &selectedLightingType, lightingTypes, IM_ARRAYSIZE(lightingTypes)))
-				{
-					// フラグの設定
-					spotLightData->HalfLambert = (selectedLightingType == 0) ? 1 : 0;
-					spotLightData->BlinnPhong = (selectedLightingType == 1) ? 1 : 0;
-				}
-			}
-			if (ImGui::Button("Save")) {
-				SaveSpotLight();
-				std::string message = std::format("SpotLight saved.");
-				MessageBoxA(nullptr, message.c_str(), "LightGroup", 0);
-			}
-			ImGui::EndTabItem();
-		}
-		ImGui::EndTabBar();
-	}
-
+	
 }
 
 void LightGroup::SaveDirectionalLight() {
@@ -218,36 +174,6 @@ void LightGroup::SavePointLight() {
 	std::ofstream outFile(filePath);
 	if (outFile.is_open()) {
 		outFile << pointLightJson.dump(4); // インデントを4スペースに設定
-		outFile.close();
-	}
-}
-
-void LightGroup::SaveSpotLight()
-{
-	// 保存先の固定パス
-	const std::string filePath = "resources/jsons/LightGroup/spotLightData.json";
-
-
-	// 必要なフォルダを作成
-	std::filesystem::create_directories("resources/jsons/LightGroup");
-
-	// JSONデータ作成
-	nlohmann::json spotLightJson = {
-		{"active", isSpotLight},
-		{"direction", {spotLightData->direction.x, spotLightData->direction.y, spotLightData->direction.z}},
-		{"intensity", spotLightData->intensity},
-		{"color", {spotLightData->color.x, spotLightData->color.y, spotLightData->color.z}},
-		{"decay", spotLightData->decay},
-		{"distance", spotLightData->distance},
-		{"cosAngle",spotLightData->cosAngle},
-		{"HalfLambert", spotLightData->HalfLambert},  // 追加
-		{"BlinnPhong", spotLightData->BlinnPhong}   // 追加
-	};
-
-	// ファイルに書き込み
-	std::ofstream outFile(filePath);
-	if (outFile.is_open()) {
-		outFile << spotLightJson.dump(4); // インデントを4スペースに設定
 		outFile.close();
 	}
 }
@@ -332,51 +258,6 @@ void LightGroup::LoadPointLight() {
 		pointLightData->BlinnPhong = pointLightJson["BlinnPhong"];
 }
 
-void LightGroup::LoadSpotLight()
-{
-	// 読み込み元の固定パス
-	const std::string filePath = "resources/jsons/LightGroup/spotLightData.json";
-
-	// ファイルが存在しない場合は早期リターン
-	std::ifstream inFile(filePath);
-	if (!inFile.is_open()) return;
-
-	// JSONデータ読み込み
-	nlohmann::json spotLightJson;
-	inFile >> spotLightJson;
-	inFile.close();
-
-	// Spot Lightの情報を設定
-	if (spotLightJson.contains("active"))
-		isSpotLight = spotLightJson["active"];
-	if (spotLightJson.contains("direction"))
-		spotLightData->direction = {
-			spotLightJson["direction"][0],
-			spotLightJson["direction"][1],
-			spotLightJson["direction"][2]
-	};
-	if (spotLightJson.contains("intensity"))
-		spotLightData->intensity = spotLightJson["intensity"];
-	if (spotLightJson.contains("color"))
-		spotLightData->color = {
-			spotLightJson["color"][0],
-			spotLightJson["color"][1],
-			spotLightJson["color"][2]
-	};
-	if (spotLightJson.contains("decay"))
-		spotLightData->decay = spotLightJson["decay"];
-	if (spotLightJson.contains("distance"))
-		spotLightData->distance = spotLightJson["distance"];
-	if (spotLightJson.contains("cosAngle"))
-		spotLightData->cosAngle = spotLightJson["cosAngle"];
-
-	// HalfLambert, BlinnPhong の値を読み込む
-	if (spotLightJson.contains("HalfLambert"))
-		spotLightData->HalfLambert = spotLightJson["HalfLambert"];
-	if (spotLightJson.contains("BlinnPhong"))
-		spotLightData->BlinnPhong = spotLightJson["BlinnPhong"];
-}
-
 void LightGroup::CreatePointLight()
 {
 	pointLightResource = obj3dCommon->GetDxCommon()->CreateBufferResource(sizeof(PointLight));
@@ -391,24 +272,6 @@ void LightGroup::CreatePointLight()
 	pointLightData->active = false;
 	pointLightData->HalfLambert = false;
 	pointLightData->BlinnPhong = true;
-}
-
-void LightGroup::CreateSpotLight()
-{
-	spotLightResource = obj3dCommon->GetDxCommon()->CreateBufferResource(sizeof(SpotLight));
-	// 書き込むためのアドレスを取得
-	spotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
-	// デフォルト値
-	spotLightData->color = { 1.0f,1.0f,1.0f,1.0f };
-	spotLightData->position = { 0.0f,-4.0f,-3.0f };
-	spotLightData->direction = { 0.0f,-1.0f,0.0f };
-	spotLightData->intensity = 1.0f;
-	spotLightData->distance = 10.0f;
-	spotLightData->decay = 1.0f;
-	spotLightData->cosAngle = 3.0f;
-	spotLightData->active = false;
-	spotLightData->HalfLambert = false;
-	spotLightData->BlinnPhong = true;
 }
 
 

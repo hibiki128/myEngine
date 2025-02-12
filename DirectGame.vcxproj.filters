@@ -87,9 +87,6 @@
     <Filter Include="ソースファイル\application">
       <UniqueIdentifier>{ca298d3a-6a09-4beb-b1fc-25b93b845b9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソースファイル\application\Base">
-      <UniqueIdentifier>{faf8b8dc-bf7d-4fc7-ad07-1dd625a6b9a6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソースファイル\myEngine\3d\model\animation">
       <UniqueIdentifier>{1a146714-3e9d-4763-b4ed-a0790ee4f5c0}</UniqueIdentifier>
     </Filter>
@@ -108,26 +105,11 @@
     <Filter Include="リソース ファイル\OffScreen">
       <UniqueIdentifier>{9ad29c48-6718-4748-b2ff-1126d4c8443b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソースファイル\application\Enemy">
-      <UniqueIdentifier>{33a0d9e8-3402-4d16-9ace-c9a8c39b274c}</UniqueIdentifier>
+    <Filter Include="ソースファイル\myEngine\3d\color">
+      <UniqueIdentifier>{c6eb0c55-e4f7-42f8-a51f-9d419b7f4321}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソースファイル\application\Camera">
-      <UniqueIdentifier>{ce8372a9-4d44-41b3-98bd-032f7f15f686}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\application\Field">
-      <UniqueIdentifier>{5602b486-77e9-4caa-8b5b-16a1f74266f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\application\Field\Ground">
-      <UniqueIdentifier>{f357546a-2aaf-4e2f-9563-f5519a634502}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\application\Field\SkyDome">
-      <UniqueIdentifier>{5b5abc6e-48fb-49c9-bf6b-abef583584a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\application\Player">
-      <UniqueIdentifier>{bd54ecc6-fbdf-405b-8294-65cea957e0a9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソースファイル\application\Player\Weapon">
-      <UniqueIdentifier>{94121258-3b24-4fe2-88a4-76e682af5e9d}</UniqueIdentifier>
+    <Filter Include="ソースファイル\application\Base">
+      <UniqueIdentifier>{faf8b8dc-bf7d-4fc7-ad07-1dd625a6b9a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -170,10 +152,10 @@
     <ClCompile Include="math\myMath.cpp">
       <Filter>ソースファイル\math</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\model\ModelManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\ModelManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\texture\TextureManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\TextureManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\camera\Camera.cpp">
@@ -200,7 +182,7 @@
     <ClCompile Include="myEngine\utility\string\StringUtility.cpp">
       <Filter>ソースファイル\myEngine\utility\string</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\srv\SrvManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\SrvManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\utility\debug\ImGuiManager.cpp">
@@ -230,14 +212,14 @@
     <ClCompile Include="myEngine\utility\scene\SceneFactory.cpp">
       <Filter>ソースファイル\myEngine\utility\scene</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\utility\graphics\pso\PipeLineManager.cpp">
+    <ClCompile Include="myEngine\utility\graphics\PipeLineManager.cpp">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\utility\edit\Liner.cpp">
+      <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClCompile>
     <ClCompile Include="math\Quaternion.cpp">
       <Filter>ソースファイル\math</Filter>
-    </ClCompile>
-    <ClCompile Include="myEngine\3d\transform\ObjColor.cpp">
-      <Filter>ソースファイル\myEngine\3d\transform</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\transform\WorldTransform.cpp">
       <Filter>ソースファイル\myEngine\3d\transform</Filter>
@@ -256,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="myEngine\3d\particle\ParticleCommon.cpp">
       <Filter>ソースファイル\myEngine\3d\particle</Filter>
+    </ClCompile>
+    <ClCompile Include="myEngine\3d\line\LineManager.cpp">
+      <Filter>ソースファイル\myEngine\3d\line</Filter>
     </ClCompile>
     <ClCompile Include="math\Easing.cpp">
       <Filter>ソースファイル\math</Filter>
@@ -299,57 +284,38 @@
     <ClCompile Include="application\Base\BaseObject.cpp">
       <Filter>ソースファイル\application\Base</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
     <ClCompile Include="myEngine\3d\model\animation\Animator.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\model\animation\Bone.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
-    <ClCompile Include="myEngine\3d\model\animation\Skin.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソースファイル</Filter>
+    <ClCompile Include="myEngine\3d\model\animation\Skin.cpp">
+      <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
     <ClCompile Include="myEngine\3d\model\animation\ModelAnimation.cpp">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソースファイル\myEngine</Filter>
+    <ClCompile Include="myEngine\3d\transform\ObjColor.cpp">
+      <Filter>ソースファイル\myEngine\3d\color</Filter>
     </ClCompile>
-    <ClCompile Include="application\Camera\FollowCamera.cpp">
+    <ClCompile Include="scene\SelectScene.cpp">
+      <Filter>ソースファイル\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="scene\ClearScene.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="application\Enemy\Enemy.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Enemy\EnemyManager.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Field\Ground\Ground.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Field\SkyDome\SkyDome.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Player\Player.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Player\Weapon\Weapon.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\UI\Ui.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\Shake\Shake.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="application\HitStop\HitStop.cpp">
+    <ClCompile Include="scene\DemoScene.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
     <None Include="resources\shaders\Particle\Particle.hlsli">
       <Filter>リソース ファイル\Particle</Filter>
     </None>
@@ -365,7 +331,9 @@
     <None Include="resources\shaders\OffScreen\FullScreen.hlsli">
       <Filter>リソース ファイル\OffScreen</Filter>
     </None>
-    <None Include=".clang-format" />
+    <None Include=".editorconfig">
+      <Filter>ソースファイル</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -410,6 +378,9 @@
     <ClInclude Include="myEngine\3d\camera\ViewProjection.h">
       <Filter>ソースファイル\myEngine\3d\camera</Filter>
     </ClInclude>
+    <ClInclude Include="myEngine\3d\line\LineManager.h">
+      <Filter>ソースファイル\myEngine\3d\line</Filter>
+    </ClInclude>
     <ClInclude Include="myEngine\3d\model\Model.h">
       <Filter>ソースファイル\myEngine\3d\model</Filter>
     </ClInclude>
@@ -430,9 +401,6 @@
     </ClInclude>
     <ClInclude Include="myEngine\3d\particle\ParticleManager.h">
       <Filter>ソースファイル\myEngine\3d\particle</Filter>
-    </ClInclude>
-    <ClInclude Include="myEngine\3d\transform\ObjColor.h">
-      <Filter>ソースファイル\myEngine\3d\transform</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\3d\transform\WorldTransform.h">
       <Filter>ソースファイル\myEngine\3d\transform</Filter>
@@ -479,16 +447,19 @@
     <ClInclude Include="myEngine\utility\edit\LevelData.h">
       <Filter>ソースファイル\myEngine\utility\edit</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\model\ModelManager.h">
+    <ClInclude Include="myEngine\utility\edit\Liner.h">
+      <Filter>ソースファイル\myEngine\utility\edit</Filter>
+    </ClInclude>
+    <ClInclude Include="myEngine\utility\graphics\ModelManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\pso\PipeLineManager.h">
+    <ClInclude Include="myEngine\utility\graphics\PipeLineManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\srv\SrvManager.h">
+    <ClInclude Include="myEngine\utility\graphics\SrvManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="myEngine\utility\graphics\texture\TextureManager.h">
+    <ClInclude Include="myEngine\utility\graphics\TextureManager.h">
       <Filter>ソースファイル\myEngine\utility\graphics</Filter>
     </ClInclude>
     <ClInclude Include="myEngine\utility\scene\AbstractSceneFactory.h">
@@ -557,6 +528,9 @@
     <ClInclude Include="myEngine\offscreen\OffScreen.h">
       <Filter>ソースファイル\myEngine\offscreen</Filter>
     </ClInclude>
+    <ClInclude Include="application\Base\BaseObject.h">
+      <Filter>ソースファイル\application\Base</Filter>
+    </ClInclude>
     <ClInclude Include="myEngine\3d\model\animation\Animator.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
@@ -569,22 +543,17 @@
     <ClInclude Include="myEngine\3d\model\animation\Skin.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
-    <ClInclude Include="application\Base\BaseObject.h">
-      <Filter>ソースファイル\application\Base</Filter>
-    </ClInclude>
     <ClInclude Include="myEngine\3d\model\animation\ModelAnimation.h">
       <Filter>ソースファイル\myEngine\3d\model\animation</Filter>
     </ClInclude>
-    <ClInclude Include="application\Camera\FollowCamera.h" />
-    <ClInclude Include="application\Enemy\Enemy.h" />
-    <ClInclude Include="application\Enemy\EnemyManager.h" />
-    <ClInclude Include="application\Field\Ground\Ground.h" />
-    <ClInclude Include="application\Field\SkyDome\SkyDome.h" />
-    <ClInclude Include="application\Player\Player.h" />
-    <ClInclude Include="application\Player\Weapon\Weapon.h" />
-    <ClInclude Include="application\UI\Ui.h" />
-    <ClInclude Include="application\Shake\Shake.h" />
-    <ClInclude Include="application\HitStop\HitStop.h" />
+    <ClInclude Include="myEngine\3d\transform\ObjColor.h">
+      <Filter>ソースファイル\myEngine\3d\color</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\SelectScene.h">
+      <Filter>ソースファイル\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="scene\ClearScene.h" />
+    <ClInclude Include="scene\DemoScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Particle\Particle.PS.hlsl">
@@ -638,7 +607,10 @@
     <FxCompile Include="resources\shaders\OffScreen\Vignette.PS.hlsl">
       <Filter>リソース ファイル\OffScreen</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\OffScreen\RadialBlur.PS.hlsl" />
+    <FxCompile Include="resources\shaders\OffScreen\RadialBlur.PS.hlsl">
+      <Filter>リソース ファイル\OffScreen</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\OffScreen\Cinematic.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt">

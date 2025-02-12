@@ -4,10 +4,8 @@
 #include"sstream"
 #include "TextureManager.h"
 #include"myEngine/Frame/Frame.h"
-#include"Object3dCommon.h"
+#include <Object3dCommon.h>
 
-
-bool Model::isGltf = false;
 std::unordered_set<std::string> Model::jointNames = {};
 
 
@@ -30,7 +28,6 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 	// 単位行列を書き込んでおく
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 }
-
 
 void Model::Draw()
 {
@@ -67,7 +64,6 @@ void Model::Draw()
 		Object3dCommon::GetInstance()->DrawCommonSetting();
 	}
 }
-
 
 void Model::SetTextureIndex(const std::string& filePath)
 {
@@ -234,7 +230,6 @@ ModelData Model::LoadModelFile(const std::string& directoryPath, const std::stri
 	modelData.rootNode = ReadNode(scene->mRootNode);
 	return modelData;
 }
-
 
 Node Model::ReadNode(aiNode* node)
 {

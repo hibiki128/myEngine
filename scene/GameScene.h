@@ -3,17 +3,12 @@
 #include "BaseScene.h"
 #include "DebugCamera.h"
 #include "Input.h"
+#include "Object3d.h"
 #include "Object3dCommon.h"
 #include "ParticleCommon.h"
+#include "ParticleEmitter.h"
 #include "SpriteCommon.h"
-#include "ViewProjection.h"
-#include "application/Camera/FollowCamera.h"
-#include "application/Enemy/EnemyManager.h"
-#include "application/Field/Ground/Ground.h"
-#include "application/Field/SkyDome/SkyDome.h"
-#include "application/Player/Player.h"
-#include "application/UI/Ui.h"
-#include <application/HitStop/HitStop.h>
+#include "WorldTransform.h"
 
 class GameScene : public BaseScene {
   public: // メンバ関数
@@ -58,35 +53,6 @@ class GameScene : public BaseScene {
     SpriteCommon *spCommon_;
     ParticleCommon *ptCommon_;
 
-    // ビュープロジェクション
     ViewProjection vp_;
     std::unique_ptr<DebugCamera> debugCamera_;
-
-    /// ===================================================
-    /// オブジェクト
-    /// ===================================================
-
-    // プレイヤー
-    std::unique_ptr<Player> player_;
-
-    // エネミーマネージャ
-    std::unique_ptr<EnemyManager> enemyManager_;
-
-    // 追従カメラ
-    std::unique_ptr<FollowCamera> followCamera_;
-
-    // 天球
-    std::unique_ptr<SkyDome> skyDome_;
-
-    // 地面
-    std::unique_ptr<Ground> ground_;
-
-    // UI
-    std::unique_ptr<UI> ui_;
-
-    // HitStop
-    std::unique_ptr<HitStop> hitStop_;
-    
-    bool isFinish_ = false;
-
 };

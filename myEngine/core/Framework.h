@@ -13,7 +13,6 @@
 #include"CollisionManager.h"
 #include"ModelManager.h"
 #include"TextureManager.h"
-
 #include"myEngine/offscreen/OffScreen.h"
 #include <line/DrawLine3D.h>
 
@@ -81,7 +80,6 @@ protected:
 	SrvManager* srvManager = nullptr;
 	TextureManager* textureManager_ = nullptr;
 	ModelManager* modelManager_ = nullptr;
-	
 
 	SpriteCommon* spriteCommon = nullptr;
 	Object3dCommon* object3dCommon = nullptr;
@@ -89,6 +87,7 @@ protected:
 	
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<OffScreen> offscreen_;
+	std::unique_ptr<OffScreen> offscreen2_;
 
 	bool endRequest_;
 };

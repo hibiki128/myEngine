@@ -356,16 +356,15 @@ void DirectXCommon::RenderTargetViewInitialize()
 	//=================RenderTextureResource用のRTVの設定======================
 	// RenderTextureResourceの作成
 	clearColorValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	//clearColorValue.Color[0] = 0.6f;  // 赤 (R)
-	//clearColorValue.Color[1] = 0.5f;  // 緑 (G)
-	//clearColorValue.Color[2] = 0.1f;  // 青 (B)
-	//clearColorValue.Color[3] = 1.0f;  // アルファ (A)
-	// 背景色をさらに暗めのブルーグレーに設定
-	clearColorValue.Color[0] = 0.02f;  // 赤成分 (非常に暗い)
-	clearColorValue.Color[1] = 0.02f;  // 緑成分 (非常に暗い)
-	clearColorValue.Color[2] = 0.05f;  // 青成分 (少し強め)
+	clearColorValue.Color[0] = 0.1f;  // 赤成分 (非常に暗い)
+	clearColorValue.Color[1] = 0.25f;  // 緑成分 (非常に暗い)
+	clearColorValue.Color[2] = 0.5f;  // 青成分 (少し強め)
 	clearColorValue.Color[3] = 1.0f;   // アルファ値 (完全な不透明)
-
+	//clearColorValue.Color[0] = 0.02f;  // 赤成分 (非常に暗い)
+	//clearColorValue.Color[1] = 0.02f;  // 緑成分 (非常に暗い)
+	//clearColorValue.Color[2] = 0.05f;  // 青成分 (少し強め)
+	//clearColorValue.Color[3] = 1.0f;   // アルファ値 (完全な不透明)
+	/*0.1f, 0.25f, 0.5f, 1.0f*/
 	offScreenResource = CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, clearColorValue.Format, clearColorValue);
 
 	rtvHandles[2].ptr = rtvHandles[1].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);

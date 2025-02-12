@@ -95,9 +95,4 @@ public:
 		// 指定した列を取り出してVector3で返す
 		return Vector3(m[0][col], m[1][col], m[2][col]);
 	}
-	Vector3 GetForward() const
-	{
-		// 回転行列の前方向（右手系の場合、-Z軸が前方向）
-		return Vector3(-m[2][0], -m[2][1], -m[2][2]);
-	}
 };

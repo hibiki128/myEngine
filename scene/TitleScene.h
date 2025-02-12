@@ -1,71 +1,62 @@
 #pragma once
 #include "Audio.h"
-#include "BaseScene.h"
-#include "DebugCamera.h"
+#include"BaseScene.h"
 #include "Input.h"
-#include "Object3d.h"
-#include "Object3dCommon.h"
-#include "ParticleCommon.h"
-#include "ParticleEmitter.h"
+#include"Object3dCommon.h"
 #include "SpriteCommon.h"
-#include "WorldTransform.h"
-#include "application/Base/BaseObject.h"
-#include <application/Field/SkyDome/SkyDome.h>
-#include <application/Field/Ground/Ground.h>
-#include"Sprite.h"
+#include"ParticleCommon.h"
+#include"DebugCamera.h"
+#include"Object3d.h"
+#include"WorldTransform.h"
+#include"ParticleEmitter.h"
 
-class TitleScene : public BaseScene {
-  public: // メンバ関数
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    void Initialize() override;
+class TitleScene :public BaseScene
+{
+public: // メンバ関数
 
-    /// <summary>
-    /// 終了
-    /// </summary>
-    void Finalize() override;
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize()override;
 
-    /// <summary>
-    /// 更新
-    /// </summary>
-    void Update() override;
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize()override;
 
-    /// <summary>
-    /// 描画
-    /// </summary>
-    void Draw() override;
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update()override;
 
-    /// <summary>
-    /// オフスクリーン上に描画
-    /// </summary>
-    void DrawForOffScreen() override;
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw()override;
 
-    ViewProjection *GetViewProjection() override { return &vp_; }
+	/// <summary>
+	/// オフスクリーン上に描画
+	/// </summary>
+	void DrawForOffScreen()override;
 
-  private:
-    void Debug();
+	ViewProjection* GetViewProjection()override { return &vp_; }
 
-    void CameraUpdate();
+private:
 
-    void ChangeScene();
+	void Debug();
 
-  private:
-    Audio *audio_;
-    Input *input_;
-    Object3dCommon *objCommon_;
-    SpriteCommon *spCommon_;
-    ParticleCommon *ptCommon_;
+	void CameraUpdate();
 
-    ViewProjection vp_;
-    std::unique_ptr<DebugCamera> debugCamera_;
+	void ChangeScene();
 
-        // 天球
-    std::unique_ptr<SkyDome> skyDome_;
+private:
+	Audio* audio_;
+	Input* input_;
+	Object3dCommon* objCommon_;
+	SpriteCommon* spCommon_;
+	ParticleCommon* ptCommon_;
 
-    // 地面
-    std::unique_ptr<Ground> ground_;
+	ViewProjection vp_;
+	std::unique_ptr<DebugCamera> debugCamera_;
 
-    std::unique_ptr<Sprite> title_;
-    std::unique_ptr<Sprite> space_;
 };

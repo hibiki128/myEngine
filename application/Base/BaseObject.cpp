@@ -10,8 +10,10 @@ void BaseObject::Init(const std::string className) {
 	objColor_.SetColor(Vector4(1, 1, 1, 1));
 	// ライティングのセット
 	isLighting_ = true;
+	isCollider = false;
 
 	LoadFromJson();
+	AnimaLoadFromJson();
 }
 
 void BaseObject::Update() {
@@ -25,12 +27,28 @@ void BaseObject::Update() {
 	}
 }
 
-void BaseObject::Draw(const ViewProjection& viewProjection) {
-	obj3d_->Draw(transform_, viewProjection, &objColor_, isLighting_);
-	if (skeletonDraw_) {
-		obj3d_->DrawSkeleton(transform_, viewProjection);
-	}
+void BaseObject::Draw(const ViewProjection &viewProjection, Vector3 offSet) {
+    // オフセットを加える前の現在の位置を取得
+    Vector3 currentPosition = transform_.translation_;
+
+    // オフセットを加えて新しい位置を計算
+    Vector3 newPosition = currentPosition + offSet;
+
+    // 新しい位置を設定
+    transform_.translation_ = newPosition;
+
+    // オブジェクトの描画
+    obj3d_->Draw(transform_, viewProjection, &objColor_, isLighting_);
+
+    // スケルトンの描画が必要な場合
+    if (skeletonDraw_) {
+        obj3d_->DrawSkeleton(transform_, viewProjection);
+    }
+
+    // 描画後に元の位置に戻す場合は、以下の行を追加
+    transform_.translation_ = currentPosition;
 }
+
 
 Vector3 BaseObject::GetWorldPosition() const {
 	Vector3 worldPos;
@@ -49,8 +67,8 @@ void BaseObject::CreateModel(const std::string modelname) {
 
 void BaseObject::CreateCollider()
 {
-
 	Collider::Initialize(className_);
+	isCollider = true;
 }
 
 void BaseObject::DebugImGui()
@@ -58,14 +76,15 @@ void BaseObject::DebugImGui()
 	ImGui::Begin(className_.c_str());
 	if (ImGui::BeginTabBar(className_.c_str())) {
 		DebugTransform();
-		DebugCollider();
+		if (isCollider) {
+			DebugCollider();
+		}
 		ImGui::EndTabBar();
 	}
 	ImGui::End();
 }
 
-void BaseObject::DebugTransform()
-{
+void BaseObject::DebugTransform() {
 	if (ImGui::BeginTabItem("トランスフォーム")) {
 		ImGui::DragFloat3("位置", &transform_.translation_.x, 0.1f);
 		float rotationDegrees[3] = {
@@ -97,6 +116,11 @@ void BaseObject::DebugTransform()
 			if (ImGui::TreeNode("setAnima")) {
 				ShowFileSelector();
 				ImGui::TreePop();
+			}
+			if (ImGui::Button("セーブ")) {
+				AnimaSaveToJson();
+				std::string message = std::format("Anima saved.");
+				MessageBoxA(nullptr, message.c_str(), "Object", 0);
 			}
 			ImGui::EndTabItem();
 		}
@@ -144,7 +168,31 @@ void BaseObject::LoadFromJson() {
 	transform_.translation_ = { j["translate"][0],j["translate"][1], j["translate"][2] };
 	transform_.rotation_ = { j["rotation"][0],j["rotation"][1], j["rotation"][2] };
 	transform_.scale_ = { j["scale"][0],j["scale"][1], j["scale"][2] };
+}
 
+void BaseObject::AnimaSaveToJson()
+{
+	json j;
+
+	j["loop"] = isLoop_;
+
+	// ディレクトリを作成し、JSONファイルを保存
+	std::filesystem::create_directories("resources/jsons/Anima/");
+	std::ofstream outFile("resources/jsons/Anima/" + className_ + ".json");
+	outFile << j.dump(4);
+}
+
+void BaseObject::AnimaLoadFromJson()
+{
+	std::ifstream inFile("resources/jsons/Anima/" + className_ + ".json");
+	if (!inFile.is_open()) {
+		return; // JSONファイルがない場合は早期リターン
+	}
+
+	json j;
+	inFile >> j;
+
+	isLoop_ = j["loop"];
 }
 
 void BaseObject::ShowFileSelector()

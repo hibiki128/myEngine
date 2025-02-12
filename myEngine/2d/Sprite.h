@@ -26,7 +26,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(bool isBackMost = false);
 
 	/// <summary>
 	/// getter
@@ -57,13 +57,14 @@ public: // メンバ関数
 	void SetFlipY(bool isFlipY) { isFlipY_ = isFlipY; }
 	void SetTexLeftTop(const Vector2& textureLeftTop) { this->textureLeftTop = textureLeftTop; }
 	void SetTexSize(const Vector2& textureSize) { this->textureSize = textureSize; }
+	void SetUVTransform(const Matrix4x4& uvTransform) { materialData->uvTransform = uvTransform; }
 
 private: // メンバ関数
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(bool isbackmost_);
 
 	/// <summary>
 	/// 頂点データ作成
@@ -139,7 +140,7 @@ private:
 	float rotation = 0.0f;
 	Vector2 size = { 640.0f,360.0f };
 
-	std::string directoryPath_ = "resources/images";
+	//std::string directoryPath_ = "resources/images";
 	std::string fullpath;
 	Vector2 anchorPoint_ = { 0.0f,0.0f };
 
@@ -148,6 +149,8 @@ private:
 
 	// 上下フリップ
 	bool isFlipY_ = false;
+
+	bool isbackmost_ = false;
 
 	// テクスチャ左上座標
 	Vector2 textureLeftTop = { 0.0f,0.0f };

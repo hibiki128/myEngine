@@ -3,8 +3,7 @@
 #include"SrvManager.h"
 #include <myMath.h>
 #include <cassert>
-#include <algorithm>
-
+#include"algorithm"
 
 void Skin::Initialize(const Skeleton& skeleton, const ModelData& modelData)
 {

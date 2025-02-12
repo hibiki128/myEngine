@@ -60,10 +60,8 @@ public:
 	/// <param name="filePath"></param>
 	void SaveDirectionalLight();
 	void SavePointLight();
-	void SaveSpotLight();
 	void LoadDirectionalLight();
 	void LoadPointLight();
-	void LoadSpotLight();
 
 private:
 
@@ -76,11 +74,6 @@ private:
 	/// 点光源データ作成
 	/// </summary>
 	void CreatePointLight();
-
-	/// <summary>
-	/// スポットライト作成
-	/// </summary>
-	void CreateSpotLight();
 
 	/// <summary>
 	/// カメラ作成
@@ -109,20 +102,6 @@ private:
 		int32_t BlinnPhong;
 	};
 
-	struct SpotLight{
-		Vector4 color;
-		Vector3 position;
-		float intensity;
-		Vector3 direction;
-		float distance;
-		float decay;
-		float cosAngle;
-		int32_t active;
-		int32_t HalfLambert;
-		int32_t BlinnPhong;
-		float padding[2];
-	};
-
 	struct CameraForGPU {
 		Vector3 worldPosition;
 	};
@@ -138,11 +117,6 @@ private:
 	PointLight* pointLightData = nullptr;
 
 	// バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> spotLightResource;
-	// バッファリソース内のデータを指すポインタ
-	SpotLight* spotLightData = nullptr;
-
-	// バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> cameraForGPUResource;
 	// バッファリソース内のデータを指すポインタ
 	CameraForGPU* cameraForGPUData = nullptr;
@@ -150,6 +124,5 @@ private:
 	Object3dCommon* obj3dCommon = nullptr;
 	bool isDirectionalLight = true;
 	bool isPointLight = false;
-	bool isSpotLight = false;
 };
 
